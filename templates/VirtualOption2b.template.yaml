@@ -1,0 +1,243 @@
+Description: IMC Quickstart backend integration
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  EdgeInstanceGreengrassInstanceProfile:
+    Type: String
+    Description: The instance profile for the EC2 instance running Greengrass 
+  GreengrassInstanceType:
+    Type: String
+    Default: Instance type for for the EC2 instance running Greengrass 
+  IoTEndpoint: 
+    Type: String
+    Description: IoT Endpoint, retrieved from custom resource lambda in workload template
+  EdgeDeviceID:
+    Type: String
+    Description: Name for the edge device. 
+  EC2AMI:
+    Description: The AMI that the EC2 instances will be using
+    Type: AWS::EC2::Image::Id
+  IgnitionInstanceType:
+    Description: Amazon EC2 instance type for the EC2 instances.
+    Type: String
+  EC2KeyPairName:
+    Description: Name of an existing EC2 key pair. All instances will launch with
+      this key pair.
+    Type: AWS::EC2::KeyPair::KeyName
+  EC2Subnet:
+    ConstraintDescription: Must be a valid subnet ID 
+    Description: This is the subnit ID where the EC2(s) will be deployed
+    Type: AWS::EC2::Subnet::Id
+  DeploymentType:
+    Description: Type of edge deployment
+    Type: String
+  DeploymentOption:
+    Description: They further defined deployment type
+      --- Option1 (or OPC-UA Path via SiteWise)
+      --- Option 2a (MQTT Ignition --> Iot Core)
+      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
+    Type: String
+  EIIgnitionInstanceProfile:
+    Description: Profile for the ignition instance that is running at the edge
+    Type: String
+  EdgeSecGroupResourceGroupID:
+    Description: This is the group id for the security group for the edge instance
+    Type: 'List<AWS::EC2::SecurityGroup::Id>'
+  DeviceBucketRes:
+    Description: Information for the device bucket 
+    Type: String
+  QSS3BucketRegion: 
+    Description: Region for the Quickstart bucket
+    Type: String
+  QSS3BucketName:
+    Description: Name of the Quickstart Bucket
+    Type: String
+  QSS3KeyPrefix: 
+    Description: Quickstart key prefix for S3 Quickstart bucket
+    Type: String
+  VpcID:
+    Description: ID for the VpcID
+    Type: String
+  LambdaZipsBucket:
+    Description: Bucket location of the project zip files
+    Type: String
+  LambdaExecRole:
+    Description: IAM Role policy for project lambdas
+    Type: String
+  IMCBucketArn:
+    Description: ARN of the projects IMC Bucket
+    Type: String
+  KinesisDelRoleArn:
+    Description: ARN of the IAM role for Kinesis Delivery
+    Type: String
+  IoTTopicRuleRoleArn:
+    Description: ARN for the projects IoT Topic rule 
+    Type: String
+  AMCIncomingRes:
+    Description: Reference to the Assest Model Incoming Resource
+    Type: String
+  AMCConvertLambdaResArn:
+    Description: ARN for the Asset Model Converter Lambda
+    Type: String
+  AMCIncomingResArn:
+    Description: ARN for the Assest Model Incoming Resource
+    Type: String
+  RestAPIId:
+    Description: ID for the Rest API
+    Type: String
+
+Resources:
+  mqttProcessLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: !Ref LambdaExecRole
+      Handler: mqttdataprocess.handler
+      Timeout: 120
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/MQTTDataProcess/mqttdataprocess.js.zip'
+      Description: Invoke a function during stack creation.
+
+  KinesisDeliveryStreamMQTT:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !Ref IMCBucketArn
+        BufferingHints:
+          IntervalInSeconds: "60"
+          SizeInMBs: "50"
+        CompressionFormat: UNCOMPRESSED
+        Prefix: mqtt/
+        ProcessingConfiguration:
+          Enabled: "true"
+          Processors:
+            - Parameters:
+                - ParameterName: LambdaArn
+                  ParameterValue:
+                    Fn::GetAtt:
+                      - mqttProcessLambda
+                      - Arn
+              Type: Lambda
+        RoleARN: !Ref KinesisDelRoleArn
+
+  DeviceDataRuleMQTT:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT * FROM 'spBv1.0/AWS Smart Factory/DDATA/#'
+        Actions:
+          - Firehose:
+              DeliveryStreamName:
+                Ref: KinesisDeliveryStreamMQTT
+              RoleArn: !Ref IoTTopicRuleRoleArn
+
+  EdgeInstanceGreengrassResource:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !Sub '${AWS::Region}a'
+      IamInstanceProfile:
+        Ref: EdgeInstanceGreengrassInstanceProfile
+      ImageId: !Ref 'EC2AMI'
+      InstanceType: !Ref 'GreengrassInstanceType'
+      KeyName: !Ref 'EC2KeyPairName'
+      SecurityGroupIds: !Ref EdgeSecGroupResourceGroupID
+      SubnetId: !Ref 'EC2Subnet'
+      Tags:
+        - Key: Name
+          Value: !Sub '${DeploymentType}/${DeploymentOption}/Greengrass' 
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - >-
+                #!/bin/bash
+
+                                set -ex
+
+                                apt update -y
+                                # apt upgrade -y
+                                apt install -y awscli unzip fail2ban
+
+                                addgroup --system ggc_group
+                                adduser --system --ingroup ggc_group ggc_user
+                                mkdir -p /greengrass
+                                mkdir -p /greengrass/certs
+                                cd /greengrass/certs/
+                                wget -O root.ca.pem https://www.amazontrust.com/repository/AmazonRootCA1.pem
+                                wget --inet4-only -O aws-iot-greengrass-keyring.deb https://d1onfpft10uf5o.cloudfront.net/greengrass-apt/downloads/aws-iot-greengrass-keyring.deb
+                                dpkg -i aws-iot-greengrass-keyring.deb
+                                wget --inet4-only -O aws-iot-greengrass-keyring.deb https://d1onfpft10uf5o.cloudfront.net/greengrass-apt/downloads/aws-iot-greengrass-keyring.deb
+                                dpkg -i aws-iot-greengrass-keyring.deb
+                                echo "deb https://dnw9lb6lzp2d8.cloudfront.net stable main" | tee /etc/apt/sources.list.d/greengrass.list
+                                apt update -y
+                                apt install aws-iot-greengrass-core unzip python3.7 openjdk-8-jre -y
+                                systemctl enable greengrass.service
+                                ln -s /usr/bin/java /usr/bin/java8
+                                mkdir /var/sitewise 
+                                chown ggc_user /var/sitewise
+                                chmod 700 /var/sitewise
+
+                                aws s3api get-object --bucket
+              - " "
+              - Ref: DeviceBucketRes
+              - " --key "
+              - Ref: EdgeDeviceID
+              - /
+              - Ref: EdgeDeviceID
+              - !Sub | 
+                Core.tar.gz group.tar.gz
+                                tar -xzvf group.tar.gz -C /greengrass
+                                /greengrass/ggc/core/greengrassd start
+                                sleep 10
+                                wget -O /home/ubuntu/opcclient.der https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/deploygg/${EdgeDeviceID}
+              - "\n\n                "
+
+  EdgeInstanceIgnitionResource:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !Sub '${AWS::Region}a'
+      IamInstanceProfile: !Ref EIIgnitionInstanceProfile
+      ImageId: !Ref EC2AMI
+      InstanceType: !Ref IgnitionInstanceType
+      KeyName: !Ref EC2KeyPairName
+      SecurityGroupIds: !Ref EdgeSecGroupResourceGroupID
+      SubnetId: !Ref EC2Subnet
+      Tags:
+        - Key: Name
+          Value: !Sub '${DeploymentType}/${DeploymentOption}/Ignition'
+      UserData:
+        Fn::Base64: !Join
+            - ""
+            - - !Sub |
+                #!/bin/bash
+
+                                    set -ex
+
+                                    apt update -y
+                                    # apt upgrade -y
+                                    apt install -y awscli unzip fail2ban
+
+                                    # Get Ignition automation files 
+                                    wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip https://imc-user-data-public-bucket.s3.amazonaws.com/Ignition-AWS-Kit-MQTT-v4.zip
+                                    unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
+                                    cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
+                                    chmod +x install.sh
+
+                                    # Set up certs for running installation script 
+                                    wget https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/updateconnectivity/${EdgeDeviceID}/withip/${EdgeInstanceGreengrassResource.PrivateIp}
+                                    sleep 10
+                                    wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/deploygg/${EdgeDeviceID}
+              - !Sub |
+                                    aws s3api get-object --bucket ${DeviceBucketRes} --key ${EdgeDeviceID}/${EdgeDeviceID}Device.tar.gz group.tar.gz
+                                    tar -xzvf group.tar.gz -C /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts
+                                    mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs/* /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/mqtt
+                                    cp /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der  /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/mqtt/root.ca.pem
+                                    rmdir /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs
+                                    sed -i 's/a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com/${EdgeInstanceGreengrassResource.PrivateIp}/g' /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+                                    sed -i 's/defaultclient/${EdgeDeviceID}Device/g' /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+                                    sed -i "s%a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com%${IoTEndpoint}%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+                                    python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
+                                    # Run installation\ 
+                                    ./install.sh
+

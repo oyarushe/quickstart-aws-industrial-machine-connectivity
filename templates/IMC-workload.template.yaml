@@ -1,0 +1,1475 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'IMC Backend Quickstart (Please do not remove)'
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Edge Deployment Configuration
+        Parameters:
+          - EdgeDeviceID
+          - DeploymentType
+          - DeploymentOption
+      - Label:
+          default: Amazon EC2 Configuration
+        Parameters:
+          - EC2KeyPairName
+          - VpcId
+          - GreengrassInstanceType
+          - IgnitionInstanceType
+          - EC2AMI 
+          - EC2Subnet
+      - Label:
+          default: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+    ParameterLabels:
+      QSS3BucketName:
+        default: Quick Start S3 Bucket Name
+      QSS3KeyPrefix:
+        default: Quick Start S3 Key Prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
+      EC2KeyPairName:
+        default: SSH Key Name
+      EdgeDeviceID:
+        default: Name for the edge device 
+      DeploymentType:
+        default: This is the type of deployment (virtual or physical)
+      DeploymentOption:
+        default: The different defined deployment flows
+      VpcId:
+        default: This is the VPC id where the solution will be deployed
+      GreengrassInstanceType:
+        default: This is the instance type the Greengrass EC2 will use
+      IgnitionInstanceType:
+        default: This is the instance type the Ignition EC2 will use
+      EC2AMI:
+        default: This is the EC2 AMI operating systen
+      EC2Subnet:
+        default: This is the ID of the subnet the EC2(s) will be deployed in
+
+Parameters:
+  EdgeDeviceID:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Edge Device ID name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Type: String
+    Default: Virtual
+    Description: Name for the edge device. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
+  EC2KeyPairName:
+    Description: Name of an existing EC2 key pair. All instances will launch with
+      this key pair.
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: SiteWiseTest
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
+    Default: quickstart-IMC/
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+    Type: String
+  DeploymentType:
+    AllowedValues:
+      - Virtual
+      - Physical
+    ConstraintDescription: Must contain valid deployment type
+    Description: Type of edge deployment
+    Type: String
+    Default: Virtual
+  DeploymentOption:
+    AllowedValues:
+      - Option1
+      - Option2a
+      - Option2b
+    ConstraintDescription: Must be a valid deployment option selection 
+    Description: They further defined deployment type
+      --- Option1 (or OPC-UA Path via SiteWise)
+      --- Option 2a (MQTT Ignition --> Iot Core)
+      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
+    Type: String
+    Default: Option1 
+  VpcId:
+    ConstraintDescription: Must be a valid VPC ID
+    Description: The ID of the VPC that the solution will be hosted in
+    # Type: String
+    # Default: vpc-79595403
+    Type: "AWS::EC2::VPC::Id"
+  GreengrassInstanceType:
+    Description: Amazon EC2 instance type for the Greengrass EC2 instances.
+    Type: String
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+      - t3.medium
+  IgnitionInstanceType:
+    Description: Amazon EC2 instance type for the Ignition EC2 instances.
+    Type: String
+    Default: t3.large
+    AllowedValues:
+      - t3.large
+      - t3.xlarge
+  EC2AMI:
+    ConstraintDescription: Must be a valid AMI
+    Description: The AMI that the EC2 instances will be using
+    Type: AWS::EC2::Image::Id
+    Default: ami-085925f297f89fce1   
+  EC2Subnet:
+    ConstraintDescription: Must be a valid subnet ID 
+    Description: This is the subnet ID where the EC2(s) will be deployed
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-7c5fde31
+Conditions:
+  UsingDefaultBucket: !Equals
+    - !Ref QSS3BucketName
+    - 'test-quickstart'
+
+Resources:
+  # AMCAssetTable:
+  #   Type: 'AWS::DynamoDB::Table'
+  #   Properties:
+  #       KeySchema: 
+  #       - AttributeName: 'assetArn'
+  #         KeyType: 
+  #       AttributeDefinitions:
+  #       - AttributeName: 'Username'
+  #         AttributeType: 'S'
+  #       ProvisionedThroughput:
+  #         ReadCapacityUnits : 1
+  #         WriteCapacityUnits : 1
+  IoTEndpoint:
+    DependsOn:
+      - IoTEndpointRole
+      - IoTEndpointFunction
+    Type: 'Custom::IoTEndpoint'
+    Properties:
+      ServiceToken: !GetAtt 'IoTEndpointFunction.Arn'
+  IoTEndpointFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: IoTEndpointFunction2
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Role: !GetAtt 'IoTEndpointRole.Arn'
+      Code:
+        ZipFile: | 
+          var aws = require("aws-sdk");
+
+          exports.handler = function(event, context) {
+              console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
+
+              // For Delete requests, immediately send a SUCCESS response.
+              if (event.RequestType == "Delete") {
+                  sendResponse(event, context, "SUCCESS");
+                  return;
+              }
+
+              const iot = new aws.Iot();
+              iot.describeEndpoint({endpointType: "iot:Data-ATS"}, (err, data) => {
+              let responseData, responseStatus;
+                  if (err) {
+                      responseStatus = "FAILED";
+                      responseData = { Error: "describeEndpoint call failed" };
+                      console.log(responseData.Error + ":\n", err);
+                  } else  {
+                      responseStatus = "SUCCESS";
+                      responseData = { IoTEndpointAddress: data.endpointAddress };
+                      console.log('response data: ' + JSON.stringify(responseData));
+                  }
+
+                  sendResponse(event, context, responseStatus, responseData);
+              });
+          };
+
+          // Send response to the pre-signed S3 URL 
+          function sendResponse(event, context, responseStatus, responseData) {
+
+              var responseBody = JSON.stringify({
+                  Status: responseStatus,
+                  Reason: "See the details in CloudWatch Log Stream: " + context.logStreamName,
+                  PhysicalResourceId: context.logStreamName,
+                  StackId: event.StackId,
+                  RequestId: event.RequestId,
+                  LogicalResourceId: event.LogicalResourceId,
+                  Data: responseData
+              });
+
+              console.log("RESPONSE BODY:\n", responseBody);
+
+              var https = require("https");
+              var url = require("url");
+
+              var parsedUrl = url.parse(event.ResponseURL);
+              var options = {
+                  hostname: parsedUrl.hostname,
+                  port: 443,
+                  path: parsedUrl.path,
+                  method: "PUT",
+                  headers: {
+                      "content-type": "",
+                      "content-length": responseBody.length
+                  }
+              };
+
+              console.log("SENDING RESPONSE...\n");
+
+              var request = https.request(options, function(response) {
+                  console.log("STATUS: " + response.statusCode);
+                  console.log("HEADERS: " + JSON.stringify(response.headers));
+                  // Tell AWS Lambda that the function execution is done  
+                  context.done();
+              });
+
+              request.on("error", function(error) {
+                  console.log("sendResponse Error:" + error);
+                  // Tell AWS Lambda that the function execution is done  
+                  context.done();
+              });
+
+              // write data to request body
+              request.write(responseBody);
+              request.end();
+          }
+                MemorySize: 128
+                Timeout: 3
+  IoTEndpointRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: lambda-endpoint
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iot:DescribeEndpoint
+                Resource:
+                  - '*'
+  CopyZips:
+    Type: Custom::CopyZips
+    DependsOn:
+      - CopyZipsRole
+      - CopyZipsFunction
+    Properties:
+      ServiceToken: !GetAtt 'CopyZipsFunction.Arn'
+      DestBucket: !Ref 'LambdaZipsBucket'
+      SourceBucket: !Ref 'QSS3BucketName'
+      Prefix: !Ref 'QSS3KeyPrefix'
+      Objects:
+        - functions/packages/AssetModelConverter/AssetModelConverter.zip
+        - functions/packages/AssetModelIngestion/AssetModelIngestion.zip
+        - functions/packages/GreengrassLambda/GreengrassLambda.zip
+        - functions/packages/KinesisProcessor/kinesisprocessor.zip
+        - functions/packages/Quicksight/quicksightfunction.zip
+        - functions/packages/SitewiseMonitor/sitewisemonitorfunction.zip
+        - functions/packages/MQTTDataProcess/mqttdataprocess.js.zip
+        - functions/packages/GGDeployer/ggdeployer.zip
+        - scripts/physical-brownfield-all-options.sh
+        - scripts/physical-greenfield-option1.sh
+        - scripts/physical-greenfield-option2a.sh
+        - scripts/physical-greenfield-option2b.sh
+  CopyZipsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies:
+        - PolicyName: lambda-copier
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource:
+                  - !Sub 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  - !Sub 'arn:aws:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}*'
+  CopyZipsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Copies objects from a source S3 bucket to a destination
+      Handler: index.handler
+      Runtime: python2.7
+      Role: !GetAtt 'CopyZipsRole.Arn'
+      Timeout: 240
+      InlineCode: |
+        import json
+        import logging
+        import threading
+        import boto3
+        import cfnresponse
+        
+        
+        def copy_objects(source_bucket, dest_bucket, prefix, objects):
+            s3 = boto3.client('s3')
+            for o in objects:
+                key = prefix + o
+                copy_source = {
+                    'Bucket': source_bucket,
+                    'Key': key
+                }
+                print('copy_source: %s' % copy_source)
+                print('dest_bucket = %s'%dest_bucket)
+                print('key = %s' %key)
+                s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,
+                      Key=key)
+        
+        
+        def delete_objects(bucket, prefix, objects):
+            s3 = boto3.client('s3')
+            objects = {'Objects': [{'Key': prefix + o} for o in objects]}
+            s3.delete_objects(Bucket=bucket, Delete=objects)
+        
+        
+        def timeout(event, context):
+            logging.error('Execution is about to time out, sending failure response to CloudFormation')
+            cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+        
+        
+        def handler(event, context):
+            # make sure we send a failure to CloudFormation if the function
+            # is going to timeout
+            timer = threading.Timer((context.get_remaining_time_in_millis()
+                      / 1000.00) - 0.5, timeout, args=[event, context])
+            timer.start()
+
+            print('Received event: %s' % json.dumps(event))
+            status = cfnresponse.SUCCESS
+            try:
+                source_bucket = event['ResourceProperties']['SourceBucket']
+                dest_bucket = event['ResourceProperties']['DestBucket']
+                prefix = event['ResourceProperties']['Prefix']
+                objects = event['ResourceProperties']['Objects']
+                if event['RequestType'] == 'Delete':
+                    delete_objects(dest_bucket, prefix, objects)
+                else:
+                    copy_objects(source_bucket, dest_bucket, prefix, objects)
+            except Exception as e:
+                logging.error('Exception: %s' % e, exc_info=True)
+                status = cfnresponse.FAILED
+            finally:
+                timer.cancel()
+                cfnresponse.send(event, context, status, {}, None)
+  LambdaZipsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      Tags: []
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "*"
+                Resource: "*"
+  quicksight:
+    DependsOn: CopyZips
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.8
+      Role:
+        Fn::GetAtt:
+          - LambdaExecutionRole
+          - Arn
+      Handler: lambda_function.lambda_handler
+      Timeout: 180
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/Quicksight/quicksightfunction.zip'
+      Description: Invoke a function during stack creation.
+      Environment:
+        Variables:
+          imcdatabucket:
+            Ref: imcs3bucket
+          imcmonitorrole:
+            Fn::GetAtt:
+              - IoTSitewiseMonitorRole
+              - Arn
+          imcawsaccount:
+            Ref: AWS::AccountId
+  quicksightiotruletrigger:
+    Type: AWS::IoT::TopicRule
+    DependsOn: CopyZips
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: Select * FROM 'imc/control/quicksight'
+        Actions:
+          - Lambda:
+              FunctionArn:
+                Fn::GetAtt:
+                  - quicksight
+                  - Arn
+  quicksightFunctionInvocationPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: CopyZips
+    Properties:
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:iot:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - :rule/
+            - Ref: quicksightiotruletrigger
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName:
+        Fn::GetAtt:
+          - quicksight
+          - Arn
+      SourceAccount:
+        Ref: AWS::AccountId
+
+  sitewisemonitor:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      Runtime: python3.8
+      Role:
+        Fn::GetAtt:
+          - LambdaExecutionRole
+          - Arn
+      Handler: lambda_function.lambda_handler
+      Timeout: 180
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/SitewiseMonitor/sitewisemonitorfunction.zip'
+      Description: Invoke a function during stack creation.
+      Environment:
+        Variables:
+          imcdatabucket:
+            Ref: imcs3bucket
+          imcmonitorrole:
+            Fn::GetAtt:
+              - IoTSitewiseMonitorRole
+              - Arn
+          imcawsaccount:
+            Ref: AWS::AccountId
+  sitewisemonitoriotruletrigger:
+    Type: AWS::IoT::TopicRule
+    DependsOn: CopyZips
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: Select * FROM 'imc/control/sitewisemonitor'
+        Actions:
+          - Lambda:
+              FunctionArn:
+                Fn::GetAtt:
+                  - sitewisemonitor
+                  - Arn
+  sitewisemonitorFunctionInvocationPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: CopyZips
+    Properties:
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:iot:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - :rule/
+            - Ref: sitewisemonitoriotruletrigger
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName:
+        Fn::GetAtt:
+          - sitewisemonitor
+          - Arn
+      SourceAccount:
+        Ref: AWS::AccountId
+
+  processLambda:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      Runtime: nodejs12.x
+      Role:
+        Fn::GetAtt:
+          - LambdaExecutionRole
+          - Arn
+      Handler: index.handler
+      Timeout: 120
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/KinesisProcessor/kinesisprocessor.zip'
+      Description: Invoke a function during stack creation.
+  KinesisDeliveryStream:
+    DependsOn:
+      - KinesisDeliveryPolicy
+      - CopyZips
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      ExtendedS3DestinationConfiguration:
+        BucketARN:
+          Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - Ref: imcs3bucket
+        BufferingHints:
+          IntervalInSeconds: "60"
+          SizeInMBs: "50"
+        CompressionFormat: UNCOMPRESSED
+        Prefix: firehose/
+        ProcessingConfiguration:
+          Enabled: "true"
+          Processors:
+            - Parameters:
+                - ParameterName: LambdaArn
+                  ParameterValue:
+                    Fn::GetAtt:
+                      - processLambda
+                      - Arn
+              Type: Lambda
+        RoleARN:
+          Fn::GetAtt:
+            - KinesisDeliveryRole
+            - Arn
+  imcs3bucket:
+    Type: AWS::S3::Bucket
+    DependsOn: CopyZips
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+  KinesisDeliveryRole:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ""
+            Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId:
+                  Ref: AWS::AccountId
+  KinesisDeliveryPolicy:
+    Type: AWS::IAM::Policy
+    DependsOn: CopyZips
+    Properties:
+      PolicyName: imc_firehose_delivery_policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "*"
+            Resource: "*"
+      Roles:
+        - Ref: KinesisDeliveryRole
+
+  DeviceDataRule:
+    Type: AWS::IoT::TopicRule
+    DependsOn: CopyZips
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT * FROM '$aws/sitewise/asset-models/+/assets/+/properties/+'
+        Actions:
+          - Firehose:
+              DeliveryStreamName:
+                Ref: KinesisDeliveryStream
+              RoleArn:
+                Fn::Sub: ${IoTTopicRuleRole.Arn}
+  IoTTopicRuleRole:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: imc_iot_role_policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Effect: Allow
+              Action:
+                - firehose:DescribeDeliveryStream
+                - firehose:ListDeliveryStreams
+                - firehose:PutRecord
+                - firehose:PutRecordBatch
+              Resource:
+                Fn::Sub: ${KinesisDeliveryStream.Arn}
+  IoTSitewiseMonitorRole:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - monitor.iotsitewise.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: imc_iot_role_policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Effect: Allow
+              Action:
+                - iotsitewise:*
+                - sso-directory:*
+              Resource: "*"
+  DevicesBucketResource:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  GGResourceRoleResource:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: greengrass.amazonaws.com
+        Version: "2012-10-17"
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: arn:aws:logs:*:*:*
+              - Action: iot:*
+                Effect: Allow
+                Resource: "*"
+              - Action: iotsitewise:BatchPutAssetPropertyValue
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+          PolicyName: GGResourcePolicy
+  LambdaExecRoleResource:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: arn:aws:logs:*:*:*
+              - Action: iot:*
+                Effect: Allow
+                Resource: "*"
+              - Action: greengrass:*
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:GetRole
+                  - iam:DeleteRole
+                  - iam:PassRole
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:ListStackResources
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Effect: Allow
+                Resource:
+                  - Fn::GetAtt:
+                      - DevicesBucketResource
+                      - Arn
+                  - Fn::Join:
+                      - ""
+                      - - Fn::GetAtt:
+                            - DevicesBucketResource
+                            - Arn
+                        - /*
+            Version: "2012-10-17"
+          PolicyName: GGLambdaPolicy
+  GreengrassLambdaResource:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/GreengrassLambda/GreengrassLambda.zip'
+      Handler: handler.handler
+      Role:
+        Fn::GetAtt:
+          - LambdaExecRoleResource
+          - Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          DevicesBucket: !Ref DevicesBucketResource
+      Timeout: 60
+    DependsOn:
+      - LambdaExecRoleResource
+  ManageGreengrassDefault:
+    Type: Custom::ManageGreengrass
+    DependsOn: CopyZips
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - GreengrassLambdaResource
+          - Arn
+      EventType: ManageGreengrass
+      StackName:
+        Ref: AWS::StackName
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+
+  EdgeGroupThingCoreDefault:
+    Type: Custom::IoTThing
+    DependsOn: CopyZips
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - GreengrassLambdaResource
+          - Arn
+      StackName:
+        Ref: AWS::StackName
+      EventType: CreateIoTThing
+      ThingName:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - Core
+      GatewayID:
+        Fn::Sub: ${EdgeDeviceID}
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  EdgeGroupThingDeviceDefault:
+    Type: Custom::IoTThing
+    DependsOn: CopyZips
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - GreengrassLambdaResource
+          - Arn
+      StackName:
+        Ref: AWS::StackName
+      EventType: CreateIoTThing
+      ThingName:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - Device
+      GatewayID:
+        Fn::Sub: ${EdgeDeviceID}
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  EdgeGroupFuncDef:
+    Type: AWS::Greengrass::FunctionDefinition
+    DependsOn: CopyZips
+    Properties:
+      Name:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - FuncDef,
+  EdgeGroupFuncDefVersion:
+    Type: AWS::Greengrass::FunctionDefinitionVersion
+    DependsOn: CopyZips
+    Properties:
+      FunctionDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupFuncDef
+          - Id
+      Functions: []
+      DefaultConfig:
+        Execution:
+          IsolationMode: NoContainer
+  EdgeGroupSubDef:
+    Type: AWS::Greengrass::SubscriptionDefinition
+    DependsOn: CopyZips
+    Properties:
+      Name:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - SubDef
+  EdgeGroupSubDefVersion:
+    Type: AWS::Greengrass::SubscriptionDefinitionVersion
+    DependsOn: CopyZips
+    Properties:
+      SubscriptionDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupSubDef
+          - Id
+      Subscriptions:
+        - Id: DeviceToIoTCore
+          Source:
+            Fn::GetAtt:
+              - EdgeGroupThingDeviceDefault
+              - thingArn
+          Subject: "#"
+          Target: cloud
+  EdgeGroupConDef:
+    Type: AWS::Greengrass::ConnectorDefinition
+    DependsOn: CopyZips
+    Properties:
+      Name:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - ConDef
+  EdgeGroupConDefVersion:
+    Type: AWS::Greengrass::ConnectorDefinitionVersion
+    DependsOn: CopyZips
+    Properties:
+      ConnectorDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupConDef
+          - Id
+      Connectors:
+        - ConnectorArn: arn:aws:greengrass:us-east-1::/connectors/IoTSiteWise/versions/5
+          Id: SiteWiseConnector
+  EdgeGroupCoreDef:
+    Type: AWS::Greengrass::CoreDefinition
+    DependsOn: CopyZips
+    Properties:
+      Name: EdgeGroupCoreDef
+  EdgeGroupCoreDefVersion:
+    Type: AWS::Greengrass::CoreDefinitionVersion
+    DependsOn: CopyZips
+    Properties:
+      CoreDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupCoreDef
+          - Id
+      Cores:
+        - CertificateArn:
+            Fn::GetAtt:
+              - EdgeGroupThingCoreDefault
+              - certificateArn
+          Id: EdgeGroupCoreDefCore
+          ThingArn:
+            Fn::GetAtt:
+              - EdgeGroupThingCoreDefault
+              - thingArn
+  EdgeGroupDeviceDef:
+    Type: AWS::Greengrass::DeviceDefinition
+    DependsOn: CopyZips
+    Properties:
+      Name: EdgeGroupDeviceDef
+      InitialVersion:
+        Devices:
+          - CertificateArn:
+              Fn::GetAtt:
+                - EdgeGroupThingDeviceDefault
+                - certificateArn
+            Id: EdgeGroupDeviceDefDevice
+            ThingArn:
+              Fn::GetAtt:
+                - EdgeGroupThingDeviceDefault
+                - thingArn
+  EdgeGroup:
+    Type: AWS::Greengrass::Group
+    DependsOn: CopyZips
+    Properties:
+      Name:
+        Fn::Sub: ${EdgeDeviceID}
+      RoleArn:
+        Fn::GetAtt:
+          - GGResourceRoleResource
+          - Arn
+  EdgeGroupVersion:
+    Type: AWS::Greengrass::GroupVersion
+    DependsOn: CopyZips
+    Properties:
+      GroupId:
+        Fn::GetAtt:
+          - EdgeGroup
+          - Id
+      ConnectorDefinitionVersionArn:
+        Ref: EdgeGroupConDefVersion
+      CoreDefinitionVersionArn:
+        Ref: EdgeGroupCoreDefVersion
+      DeviceDefinitionVersionArn:
+        Fn::GetAtt:
+          - EdgeGroupDeviceDef
+          - LatestVersionArn
+      FunctionDefinitionVersionArn:
+        Ref: EdgeGroupFuncDefVersion
+      SubscriptionDefinitionVersionArn:
+        Ref: EdgeGroupSubDefVersion
+
+  AMCIncomingResource:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  AMCOutputResource:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  AMCLambdaRoleResource:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: arn:aws:logs:*:*:*
+              - Action:
+                  - iot:*
+                  - iotsitewise:*
+                Effect: Allow
+                Resource: "*"
+              - Action: s3:*
+                Effect: Allow
+                Resource:
+                  - Fn::GetAtt:
+                      - AMCIncomingResource
+                      - Arn
+                  - Fn::Join:
+                      - ""
+                      - - Fn::GetAtt:
+                            - AMCIncomingResource
+                            - Arn
+                        - "*"
+                  - Fn::GetAtt:
+                      - AMCOutputResource
+                      - Arn
+                  - Fn::Join:
+                      - ""
+                      - - Fn::GetAtt:
+                            - AMCOutputResource
+                            - Arn
+                        - "*"
+            Version: "2012-10-17"
+          PolicyName: AMCLambdaPolicy
+  AssetModelIngestionLambdaResource:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/AssetModelIngestion/AssetModelIngestion.zip'
+      Handler: assetModelIngestion.handler
+      Role:
+        Fn::GetAtt:
+          - AMCLambdaRoleResource
+          - Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          IncomingBucket:
+            Ref: AMCIncomingResource
+      Timeout: 60
+    DependsOn:
+      - AMCLambdaRoleResource
+  AssetModelIngestionLambdaIngestionDBirthRulePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: CopyZips
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - AssetModelIngestionLambdaResource
+          - Arn
+      Principal: iot.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - IngestionDBirthRule
+          - Arn
+  AssetModelIngestionLambdaIngestionNBirthRulePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: CopyZips
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - AssetModelIngestionLambdaResource
+          - Arn
+      Principal: iot.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - IngestionNBirthRule
+          - Arn
+  IngestionDBirthRule:
+    Type: AWS::IoT::TopicRule
+    DependsOn: CopyZips
+    Properties:
+      TopicRulePayload:
+        Actions:
+          - Lambda:
+              FunctionArn:
+                Fn::GetAtt:
+                  - AssetModelIngestionLambdaResource
+                  - Arn
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: false
+        Sql: SELECT *, topic() as topic FROM 'spBv1.0/+/DBIRTH/#'
+  IngestionNBirthRule:
+    Type: AWS::IoT::TopicRule
+    DependsOn: CopyZips
+    Properties:
+      TopicRulePayload:
+        Actions:
+          - Lambda:
+              FunctionArn:
+                Fn::GetAtt:
+                  - AssetModelIngestionLambdaResource
+                  - Arn
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: false
+        Sql: SELECT *, topic() as topic FROM 'spBv1.0/+/NBIRTH/#'
+  AssetModelConverterLambdaResource:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/AssetModelConverter/AssetModelConverter.zip'
+      Handler: assetModelConverter.handler
+      Role:
+        Fn::GetAtt:
+          - AMCLambdaRoleResource
+          - Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          IncomingBucket:
+            Ref: AMCIncomingResource
+      Timeout: 900
+    DependsOn:
+      - AMCLambdaRoleResource
+
+  ApiHandlerRole:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: ''
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+        PolicyName: ApiHandlerRolePolicy
+  RestAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      EndpointConfiguration: EDGE
+      StageName: api
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: '1.0'
+          title: ggdeployer
+        schemes:
+        - https
+        paths:
+          /:
+            get:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+          /deployggwithsitewise/{groupname}:
+            get:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+              parameters:
+              - name: groupname
+                in: path
+                required: true
+                type: string
+          /deploygg/{groupname}:
+            get:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+              parameters:
+              - name: groupname
+                in: path
+                required: true
+                type: string
+          /updateconnectivity/{group_name}/withip/{core_ip}:
+            get:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${APIHandler.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+              parameters:
+              - name: group_name
+                in: path
+                required: true
+                type: string
+              - name: core_ip
+                in: path
+                required: true
+                type: string
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+        x-amazon-apigateway-binary-media-types:
+        - application/octet-stream
+        - application/x-tar
+        - application/zip
+        - audio/basic
+        - audio/ogg
+        - audio/mp4
+        - audio/mpeg
+        - audio/wav
+        - audio/webm
+        - image/png
+        - image/jpg
+        - image/jpeg
+        - image/gif
+        - video/ogg
+        - video/mpeg
+        - video/webm
+  APIHandler:
+    DependsOn: CopyZips
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.7
+      Handler: app.app
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/GGDeployer/ggdeployer.zip'
+      Timeout: 60
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+        - ApiHandlerRole
+        - Arn
+  APIHandlerInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: APIHandler
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPIId}/*
+        - RestAPIId:
+            Ref: RestAPI
+
+
+  Ec2RoleResource:
+    Type: AWS::IAM::Role
+    DependsOn: CopyZips
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+        Version: "2012-10-17"
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action: s3:*
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - greengrass:ListGroups
+                  - greengrass:CreateDeployment
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+          PolicyName: Ec2S3Access
+  EdgeSecurityGroupResource:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: CopyZips
+    Properties:
+      GroupDescription: VirtualOption1/EdgeSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow world ssh access
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: 0.0.0.0/0
+          Description: Allow world Ignition UI access
+          FromPort: 8088
+          IpProtocol: tcp
+          ToPort: 8088
+        - CidrIp: 0.0.0.0/0
+          Description: Allow world MQTT GG Access
+          FromPort: 8883
+          IpProtocol: tcp
+          ToPort: 8883
+        - CidrIp: 0.0.0.0/0
+          Description: Allow Ignition API access
+          FromPort: 62541
+          IpProtocol: tcp
+          ToPort: 62541
+      VpcId: !Ref 'VpcId'
+  EdgeInstanceGreengrassInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    DependsOn: CopyZips
+    Properties:
+      Roles:
+        - Ref: Ec2RoleResource
+  EdgeInstanceIgnitionInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    DependsOn: CopyZips
+    Properties:
+      Roles:
+        - Ref: Ec2RoleResource
+
+  IMCDeploymentStack:
+    Type: 'AWS::CloudFormation::Stack'
+    DependsOn:
+      - Ec2RoleResource
+      - CopyZips
+      - KinesisDeliveryPolicy
+      - IoTEndpoint
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.amazonaws.com/${QSS3KeyPrefix}templates/${DeploymentType}${DeploymentOption}.template.yaml
+        - S3Bucket: !Ref 'QSS3BucketName'
+      Parameters:
+        EC2Subnet: !Ref EC2Subnet
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        VpcID: !Ref VpcId
+        EdgeDeviceID: !Ref EdgeDeviceID
+        DeploymentType: !Ref DeploymentType
+        DeploymentOption: !Ref DeploymentOption
+        EC2KeyPairName: !Ref EC2KeyPairName
+        IgnitionInstanceType: !Ref IgnitionInstanceType
+        EC2AMI: !Ref EC2AMI
+        EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
+        EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
+        DeviceBucketRes: !Ref DevicesBucketResource
+        LambdaZipsBucket: !Ref LambdaZipsBucket
+        LambdaExecRole: !GetAtt LambdaExecutionRole.Arn
+        IMCBucketArn: !GetAtt imcs3bucket.Arn 
+        KinesisDelRoleArn: !GetAtt KinesisDeliveryRole.Arn
+        IoTTopicRuleRoleArn: !GetAtt IoTTopicRuleRole.Arn
+        AMCIncomingRes: !Ref AMCIncomingResource
+        AMCIncomingResArn: !GetAtt AMCIncomingResource.Arn
+        AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
+        RestAPIId: !Ref RestAPI
+        IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
+        EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
+        GreengrassInstanceType: !Ref GreengrassInstanceType
+
+
+Outputs:
+  imcs3bucketname:
+    Description: IMC S3 Data Bucket Name
+    Value:
+      Ref: imcs3bucket
+  SitewiseRoleArn:
+    Description: IMC S3 assets Bucket Name
+    Value:
+      Fn::GetAtt:
+        - IoTSitewiseMonitorRole
+        - Arn
+  MyStacksAccount:
+    Value:
+      Ref: AWS::AccountId
+  StackData:
+    Value:
+      Fn::Join:
+        - ""
+        - - '{"S3Buckets": {"DevicesBucket": "'
+          - Ref: DevicesBucketResource
+          - '", "AMCIncomingBucket": "'
+          - Ref: AMCIncomingResource
+          - '", "AMCOutputBucket": "'
+          - Ref: AMCOutputResource
+          - '"}}'      
+  RestAPIId:
+    Value:
+      Ref: RestAPI
+  APIHandlerName:
+    Value:
+      Ref: APIHandler
+  APIHandlerArn:
+    Value:
+      Fn::GetAtt:
+      - APIHandler
+      - Arn
+  EndpointURL:
+    Value:
+      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/api/

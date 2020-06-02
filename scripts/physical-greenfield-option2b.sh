@@ -1,0 +1,78 @@
+#!/bin/bash
+# set -x
+
+if [[ $# -ne 7 ]] ; then
+    echo ""
+    echo "Get the parameters listed below from the output of the CloudFormation template, except for the hardware's Public IP. Check the device's network." 
+    echo ""
+    echo "Usage: ./physical-greenfield-option2b.sh [DeviceBucket] [DeviceKeyGreengrass] [RestAPIId] [Region] [EdgeDeviceID] [hardwarePublicIP] [DeviceKeyAwareDevice]"
+    echo ""
+    exit 1
+fi
+
+DEVICEBUCKET=$1
+DEVICEKEYGREENGRASS=$2
+RESTAPIID=$3
+REGION=$4
+EDGEDEVICEID=$5
+HARDWAREIP=$6
+DEVICEKEYGREENGRASSAD=$7 
+
+apt update -y
+# apt upgrade -y
+apt install -y awscli unzip fail2ban
+
+# Install Greengrass
+addgroup --system ggc_group
+adduser --system --ingroup ggc_group ggc_user
+mkdir -p /greengrass
+mkdir -p /greengrass/certs
+cd /greengrass/certs/
+wget -O root.ca.pem https://www.amazontrust.com/repository/AmazonRootCA1.pem
+wget --inet4-only -O aws-iot-greengrass-keyring.deb https://d1onfpft10uf5o.cloudfront.net/greengrass-apt/downloads/aws-iot-greengrass-keyring.deb
+dpkg -i aws-iot-greengrass-keyring.deb
+echo "deb https://dnw9lb6lzp2d8.cloudfront.net stable main" | tee /etc/apt/sources.list.d/greengrass.list
+apt update -y
+apt install aws-iot-greengrass-core unzip python3.7 openjdk-8-jre -y
+systemctl enable greengrass.service
+ln -s /usr/bin/java /usr/bin/java8
+mkdir /var/sitewise 
+chown ggc_user /var/sitewise
+chmod 700 /var/sitewise
+
+# Get Greengrass group certs and store as /home/ubuntu/group.tar.gz directory
+aws s3api get-object --bucket $DEVICEBUCKET --key $DEVICEKEYGREENGRASS /home/ubuntu/group.tar.gz
+tar -xzvf /home/ubuntu/group.tar.gz -C /greengrass
+/greengrass/ggc/core/greengrassd start
+sleep 10
+wget -O /home/ubuntu/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/deploygg/$EDGEDEVICEID
+
+# Get Ignition automation files
+# TODO: Replace imc-user-data-public-bucket with aws-quickstart? 
+wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip https://imc-user-data-public-bucket.s3.amazonaws.com/Ignition-AWS-Kit-MQTT-v4-Physical.zip
+unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
+mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4-Physical /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
+cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
+chmod +x install.sh
+
+# Give AWS the ability to find and successfully deploy the Greengrass Group 
+wget https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/updateconnectivity/$EDGEDEVICEID/withip/$HARDWAREIP
+sleep 10
+wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/deploygg/$EDGEDEVICEID
+
+# Get AWS IoT device certs and store as /home/ubuntu/device.tar.gz 
+aws s3api get-object --bucket $DEVICEBUCKET --key $DEVICEKEYGREENGRASSAD /home/ubuntu/device.tar.gz
+tar -xzvf /home/ubuntu/device.tar.gz -C /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts
+mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs/* /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/mqtt
+cp /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der  /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/mqtt/root.ca.pem
+rmdir /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs
+
+IP=`hostname -I`
+IP=${IP::-1}
+sed -i "s/defaultclient/$EDGEDEVICEID\Device/g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+sed -i "s%a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com%$IP%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+
+python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
+
+# Run installation
+./install.sh

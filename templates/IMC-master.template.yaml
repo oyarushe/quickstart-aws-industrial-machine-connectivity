@@ -1,0 +1,278 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: IMC Quickstart
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network configuration
+        Parameters:
+          - AvailabilityZones
+          - VPCCIDR
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+          - RemoteAccessCIDR
+          - VPCTenancy
+          - KeyPairName
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+      - Label:
+          default: Edge Deployment Configuration
+        Parameters:
+          - EdgeDeviceID
+          - DeploymentType
+          - DeploymentOption
+      - Label:
+          default: Amazon EC2 Configuration
+        Parameters:
+          - EC2KeyPairName
+          - VpcId
+          - GreengrassInstanceType
+          - IgnitionInstanceType
+          - EC2AMI 
+          - EC2Subnet
+    ParameterLabels:
+      AvailabilityZones:
+        default: Availability Zones
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
+      PrivateSubnet1CIDR:
+        default: Private subnet 1 CIDR
+      PrivateSubnet2CIDR:
+        default: Private subnet 2 CIDR
+      PublicSubnet1CIDR:
+        default: Public subnet 1 CIDR
+      PublicSubnet2CIDR:
+        default: Public subnet 2 CIDR
+      VPCTenancy:
+        default: VPC tenancy
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      RemoteAccessCIDR:
+        default: Allowed EC2 external access CIDR
+      VPCCIDR:
+        default: VPC CIDR
+      EC2KeyPairName:
+        default: SSH Key Name
+      KeyPairName:
+        default: Key pair name
+      EdgeDeviceID:
+        default: Name for the edge device 
+      DeploymentType:
+        default: This is the type of deployment (virtual or physical)
+      DeploymentOption:
+        default: The different defined deployment flows
+      VpcId:
+        default: This is the VPC id where the solution will be deployed
+      GreengrassInstanceType:
+        default: This is the instance type the Greengrass EC2 will use
+      IgnitionInstanceType:
+        default: This is the instance type the Ignition EC2 will use
+      EC2AMI:
+        default: This is the EC2 AMI operating systen
+      EC2Subnet:
+        default: This is the ID of the subnet the EC2(s) will be deployed in
+
+  cfn-lint: { config: { ignore_checks: [E9007] } }
+Parameters:
+  AvailabilityZones:
+    Description: 'List of Availability Zones to use for the subnets in the VPC. Note: ( The logical order is preserved and only 2 AZs are used for this deployment.'
+    Type: 'List<AWS::EC2::AvailabilityZone::Name>'
+  KeyPairName:
+    Description: Name of an existing public/private key pair, which allows you
+      to securely connect to your instance after it launches.
+    Type: AWS::EC2::KeyPair::KeyName
+  PrivateSubnet1CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/19
+    Description: CIDR block for private subnet 1 located in Availability Zone 1.
+    Type: String
+  PrivateSubnet2CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.32.0/19
+    Description: CIDR block for private subnet 2 located in Availability Zone 2.
+    Type: String
+  PublicSubnet1CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.128.0/20
+    Description: CIDR Block for the public DMZ subnet 1 located in Availability Zone 1.
+    Type: String
+  PublicSubnet2CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.144.0/20
+    Description: CIDR Block for the public DMZ subnet 2 located in Availability Zone 2.
+    Type: String
+  VPCTenancy:
+    AllowedValues:
+      - default
+      - dedicated
+    Default: default
+    Description: The allowed tenancy of instances launched into the VPC.
+    Type: String
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: S3 bucket name for the Quick Start assets. Quick Start bucket name can
+      include numbers, lowercase letters, uppercase letters, and hyphens (-). It
+      cannot start or end with a hyphen (-).
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
+    Default: quickstart-IMC/
+    Description:       S3 key prefix for the Quick Start assets. Quick Start key prefix can
+      include numbers, lowercase letters, uppercase letters, hyphens (-), dots
+      (.) and forward slash (/) and it should end with a forward slash (/).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+    Type: String
+  RemoteAccessCIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for external SSH access to the EC2(s)
+    Type: String
+  VPCCIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/16
+    Description: CIDR Block for the VPC.
+    Type: String
+  EdgeDeviceID:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Edge Device ID name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Type: String
+    Default: Virtual
+    Description: Name for the edge device. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
+  EC2KeyPairName:
+    Description: Name of an existing EC2 key pair. All instances will launch with
+      this key pair.
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: SiteWiseTest
+  DeploymentType:
+    AllowedValues:
+      - Virtual
+      - Physical_Greenfield
+      - Physical_Brownfield
+    ConstraintDescription: Must contain valid deployment type
+    Description: Type of edge deployment
+    Type: String
+    Default: Virtual
+  DeploymentOption:
+    AllowedValues:
+      - Option1
+      - Option2A
+      - Option2B
+    ConstraintDescription: Must be a valid deployment option selection 
+    Description: They further defined deployment type
+      --- Option1 (or OPC-UA Path via SiteWise)
+      --- Option 2a (MQTT Ignition --> Iot Core)
+      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
+    Type: String
+    Default: Option1 
+  VpcId:
+    ConstraintDescription: Must be a valid VPC ID
+    Description: The ID of the VPC that the solution will be hosted in
+    Type: AWS::EC2::VPC::ID
+    Default: vpc-79595403
+  GreengrassInstanceType:
+    Description: Amazon EC2 instance type for the Greengrass EC2 instances.
+    Type: String
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+      - t3.medium
+  IgnitionInstanceType:
+    Description: Amazon EC2 instance type for the Ignition EC2 instances.
+    Type: String
+    Default: t3.large
+    AllowedValues:
+      - t3.large
+      - t3.xlarge
+  EC2AMI:
+    ConstraintDescription: Must be a valid AMI
+    Description: The AMI that the EC2 instances will be using
+    Type: AWS::EC2::Image::Id
+    Default: ami-085925f297f89fce1   
+  EC2Subnet:
+    ConstraintDescription: Must be a valid subnet ID 
+    Description: This is the subnit ID where the EC2(s) will be deployed
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-7c5fde31
+Conditions:
+  UsingDefaultBucket: !Equals
+    - !Ref QSS3BucketName
+    - 'aws-quickstart'
+Resources:
+  VPCStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        AvailabilityZones: !Join 
+          - ','
+          - !Ref AvailabilityZones
+        KeyPairName: !Ref KeyPairName
+        NumberOfAZs: '2'
+        PrivateSubnet1ACIDR: !Ref PrivateSubnet1CIDR
+        PrivateSubnet2ACIDR: !Ref PrivateSubnet2CIDR
+        PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+        PublicSubnet2CIDR: !Ref PublicSubnet2CIDR
+        VPCCIDR: !Ref VPCCIDR
+        VPCTenancy: !Ref VPCTenancy
+  IMCWorkloadStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/IMC-workload.template
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        EC2Subnet: !GetAtt 
+          - VPCStack
+          - Outputs.PublicSubnet1ID
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        VpcID: !GetAtt 
+          - VPCStack
+          - Outputs.VPCID
+        EdgeDeviceID: !Ref EdgeDeviceID
+        DeploymentType: !Ref DeploymentType
+        DeploymentOption: !Ref DeploymentOption
+        EC2KeyPairName: !Ref EC2KeyPairName
+        GreengrassInstanceType: !Ref GreengrassInstanceType
+        IgnitionInstanceType: !Ref IgnitionInstanceType
+        EC2AMI: !Ref EC2AMI
