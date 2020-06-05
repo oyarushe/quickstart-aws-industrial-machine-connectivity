@@ -59,7 +59,7 @@ chmod +x install.sh
 # Give AWS the ability to find and successfully deploy the Greengrass Group 
 wget https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/updateconnectivity/$EDGEDEVICEID/withip/$HARDWAREIP
 sleep 10
-wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/deploygg/$EDGEDEVICEID
+wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/deployggwithsitewise/$EDGEDEVICEID?ignition-ip=localhost
 
 # Get AWS IoT device certs and store as /home/ubuntu/device.tar.gz 
 aws s3api get-object --bucket $DEVICEBUCKET --key $DEVICEKEYGREENGRASSAD /home/ubuntu/device.tar.gz

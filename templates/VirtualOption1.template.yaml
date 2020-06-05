@@ -84,8 +84,6 @@ Parameters:
   RestAPIId:
     Description: ID for the Rest API
     Type: String
-    
-
 
 Resources:
   AMCIncomingNotificationsResource:

@@ -104,6 +104,193 @@ Resources:
       ExtendedS3DestinationConfiguration:
         BucketARN: !Ref IMCBucketArn
         BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '50'
+        CompressionFormat: UNCOMPRESSED
+        Prefix: mqtt/
+        ProcessingConfiguration:
+          Enabled: 'true'
+          Processors:
+            - Parameters:
+                - ParameterName: LambdaArn
+                  ParameterValue: !GetAtt mqttProcessLambda.Arn 
+              Type: Lambda
+        RoleARN: !Ref KinesisDelRoleArn
+
+  DeviceDataRuleMQTT:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT * FROM 'spBv1.0/AWS Smart Factory/DDATA/#'
+        Actions:
+          - Firehose:
+              DeliveryStreamName: !Ref KinesisDeliveryStreamMQTT
+              RoleArn: !Ref IoTTopicRuleRoleArn
+            
+  MQTTLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt mqttProcessLambda.Arn
+      Action: lambda:InvokeFunction
+      Principal: firehose.amazonaws.com
+      SourceArn: !GetAtt KinesisDeliveryStreamMQTT.Arn
+
+  AMCIncomingNotificationsResource:
+    Type: Custom::S3BucketNotifications
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - BucketNotificationsHandlerResource
+          - Arn
+      BucketName: !Ref AMCIncomingRes 
+      NotificationConfiguration:
+        LambdaFunctionConfigurations:
+          - Events:
+              - s3:ObjectCreated:*
+            LambdaFunctionArn: !Ref AMCConvertLambdaResArn
+    DependsOn:
+      - AssetModelConverterLambdaAllowBucketNotificationsFromVirtualOption1AMCIncoming
+  
+  AssetModelConverterLambdaAllowBucketNotificationsFromVirtualOption1AMCIncoming:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AMCConvertLambdaResArn
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref "AWS::AccountId"
+      SourceArn: !Ref AMCIncomingResArn
+
+  BucketNotificationsHandlerRoleResource:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  BucketNotificationsHandlerRoleDefaultPolicyResource:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: s3:PutBucketNotification
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: BucketNotificationsHandlerRoleDefaultPolicyResource
+      Roles:
+        - Ref: BucketNotificationsHandlerRoleResource
+
+  BucketNotificationsHandlerResource:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)
+      Code:
+        ZipFile: >-
+          exports.handler = (event, context) => {
+              // eslint-disable-next-line @typescript-eslint/no-require-imports, import/no-extraneous-dependencies
+              const s3 = new (require('aws-sdk').S3)();
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const https = require('https');
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const url = require('url');
+              log(JSON.stringify(event, undefined, 2));
+              const props = event.ResourceProperties;
+              if (event.RequestType === 'Delete') {
+                  props.NotificationConfiguration = {}; // this is how you clean out notifications
+              }
+              const req = {
+                  Bucket: props.BucketName,
+                  NotificationConfiguration: props.NotificationConfiguration,
+              };
+              return s3.putBucketNotificationConfiguration(req, (err, data) => {
+                  log({ err, data });
+                  if (err) {
+                      return submitResponse('FAILED', err.message + `\nMore information in CloudWatch Log Stream: ${context.logStreamName}`);
+                  }
+                  else {
+                      return submitResponse('SUCCESS');
+                  }
+              });
+              function log(obj) {
+                  console.error(event.RequestId, event.StackId, event.LogicalResourceId, obj);
+              }
+              // tslint:disable-next-line:max-line-length
+              // adapted from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-cfnresponsemodule
+              // to allow sending an error messge as a reason.
+              function submitResponse(responseStatus, reason) {
+                  const responseBody = JSON.stringify({
+                      Status: responseStatus,
+                      Reason: reason || 'See the details in CloudWatch Log Stream: ' + context.logStreamName,
+                      PhysicalResourceId: event.PhysicalResourceId || event.LogicalResourceId,
+                      StackId: event.StackId,
+                      RequestId: event.RequestId,
+                      LogicalResourceId: event.LogicalResourceId,
+                      NoEcho: false,
+                  });
+                  log({ responseBody });
+                  const parsedUrl = url.parse(event.ResponseURL);
+                  const options = {
+                      hostname: parsedUrl.hostname,
+                      port: 443,
+                      path: parsedUrl.path,
+                      method: 'PUT',
+                      headers: {
+                          'content-type': '',
+                          'content-length': responseBody.length,
+                      },
+                  };
+                  const request = https.request(options, (r) => {
+                      log({ statusCode: r.statusCode, statusMessage: r.statusMessage });
+                      context.done();
+                  });
+                  request.on('error', (error) => {
+                      log({ sendError: error });
+                      context.done();
+                  });
+                  request.write(responseBody);
+                  request.end();
+              }
+          };
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - BucketNotificationsHandlerRoleResource
+          - Arn
+      Runtime: nodejs10.x
+      Timeout: 300
+    DependsOn:
+      - BucketNotificationsHandlerRoleDefaultPolicyResource
+      - BucketNotificationsHandlerRoleResource
+
+  mqttProcessLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: !Ref LambdaExecRole
+      Handler: mqttdataprocess.handler
+      Timeout: 120
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/MQTTDataProcess/mqttdataprocess.js.zip'
+      Description: Invoke a function during stack creation.
+
+  KinesisDeliveryStreamMQTT:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !Ref IMCBucketArn
+        BufferingHints:
           IntervalInSeconds: "60"
           SizeInMBs: "50"
         CompressionFormat: UNCOMPRESSED
@@ -236,7 +423,7 @@ Resources:
                                     rmdir /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs
                                     sed -i 's/a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com/${EdgeInstanceGreengrassResource.PrivateIp}/g' /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
                                     sed -i 's/defaultclient/${EdgeDeviceID}Device/g' /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
-                                    sed -i "s%a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com%${IoTEndpoint}%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+                                    #sed -i "s%a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com%${IoTEndpoint}%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
                                     python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
                                     # Run installation\ 
                                     ./install.sh

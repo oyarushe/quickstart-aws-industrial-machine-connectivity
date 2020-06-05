@@ -86,6 +86,56 @@ Parameters:
     Type: String
 
 Resources:
+  mqttProcessLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: !Ref LambdaExecRole
+      Handler: mqttdataprocess.handler
+      Timeout: 120
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/MQTTDataProcess/mqttdataprocess.js.zip'
+      Description: Invoke a function during stack creation.
+
+  KinesisDeliveryStreamMQTT:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !Ref IMCBucketArn
+        BufferingHints:
+          IntervalInSeconds: '60'
+          SizeInMBs: '50'
+        CompressionFormat: UNCOMPRESSED
+        Prefix: mqtt/
+        ProcessingConfiguration:
+          Enabled: 'true'
+          Processors:
+            - Parameters:
+                - ParameterName: LambdaArn
+                  ParameterValue: !GetAtt mqttProcessLambda.Arn 
+              Type: Lambda
+        RoleARN: !Ref KinesisDelRoleArn
+
+  DeviceDataRuleMQTT:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT * FROM 'spBv1.0/AWS Smart Factory/DDATA/#'
+        Actions:
+          - Firehose:
+              DeliveryStreamName: !Ref KinesisDeliveryStreamMQTT
+              RoleArn: !Ref IoTTopicRuleRoleArn
+            
+  MQTTLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt mqttProcessLambda.Arn
+      Action: lambda:InvokeFunction
+      Principal: firehose.amazonaws.com
+      SourceArn: !GetAtt KinesisDeliveryStreamMQTT.Arn
+      
   AMCIncomingNotificationsResource:
     Type: Custom::S3BucketNotifications
     Properties:
@@ -272,3 +322,41 @@ Outputs:
     Description: IoT Endpoint for the account being deployed into
     Value: 
       Ref: IoTEndpoint
+  FullScriptParamsGreenfield1and2a:
+    Description: Full Script Params Greenfield Option 1, 2a 
+    Value:
+      !Join
+        - ' '
+        - - './physical-greenfield-option1.sh'
+          - !Ref DeviceBucketRes
+          - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Core.tar.gz
+          - !Ref RestAPIId
+          - !Ref AWS::Region
+          - !Ref EdgeDeviceID
+          - '[Hardware-IP]'
+          - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Device.tar.gz
+          - !Ref IoTEndpoint
+  FullScriptParamsGreenfield2b:
+    Description: Full Script Params Greenfield Option 1, 2a 
+    Value:
+      !Join
+        - ' '
+        - - './physical-greenfield-option1.sh'
+          - !Ref DeviceBucketRes
+          - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Core.tar.gz
+          - !Ref RestAPIId
+          - !Ref AWS::Region
+          - !Ref EdgeDeviceID
+          - '[Hardware-IP]'
+          - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Device.tar.gz
+  FullScriptParamsBrownField:
+    Description: Full Script Params Brownfield All Options
+    Value:
+      !Join
+        - ' '
+        - - './physical-brownfield-all-options.sh'
+          - !Ref DeviceBucketRes
+          - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Core.tar.gz
+          - !Ref RestAPIId
+          - !Ref AWS::Region
+          - !Ref EdgeDeviceID
