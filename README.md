@@ -14,7 +14,7 @@ Whichever option is chosen, we just need to make sure we have the appropriate .p
 
 ### Quickstart Bucket Preparation
 Next we need an S3 bucket to store all the Cloudformation artifacts that aren't simply inline'd into the template.
-Once it's created we should just copy the contents of the 'quickstart' folder into the bucket. 
+Once it's created, we copy the 'quickstart' folder into the bucket. 
 
 At this point, the contents of our Quickstart bucket should look something like this:
 ```
@@ -102,4 +102,23 @@ properly sending data through to AWS IoT Sitewise.
 
 #### View Sitewise Portal Data
 For a more visual display of the data, let's head over to the 'Portals' section of the AWS Iot Sitewise page. You should
-select the most recently added Portal.
+select the "name" of the Portal most recently added (the topmost on the list). Add yourself as an administrator of the Portal, click the "URL", then click on the single dashboard to view your data in real-time. 
+
+## FAQs
+
+Can I update a stack to a different deployment type (Physical, Virtual) or dataflow option (Option1, 2a, 2b)? 
+- Updates are currently not supported. To achieve a different deployemnt type or dataflow type, you'll need to deploy a new stack. 
+
+Can I deploy multiple times in the same AWS account? 
+- Yes, you may deploy multiple stacks in the same account. Be aware that data ingestion pipelines are not deployment specific. This means if both a "Virtual Option 1" and "Virtual Option 2a" deployment exists, data from the "Virtual Option 1" deployment will appear in the "Virtual Option 2a" S3 bucket. To temporarily prevent this, you may disable the IoT Rules associated with the deployment you no longer want to receive data from. Find the IoT Rules associated with a specific deployment by the CloudFormation stack name. 
+
+How do I delete a prior deployment?
+- Navigate to the CloudFormation console and delete the base stack (not the stack named "nested"), in order to clean up the account as much as possible.
+- Depending on the health of the stack, the deletion will fail due to non-empty S3 buckets and a deployed Greengrass Group. Empty the S3 buckets, force a reset of the Greengrass group, then navigate back to the CloudFormation console and once again delete the base stack. 
+- Other resources to clean up after stack deletion (if desired): IoT SiteWise Portal, IoT SiteWise Gateway, Iot SiteWise Models and Assets, QuickSight dataset.
+
+## Troubleshooting
+
+Quarantined certificate in Ignition doesn't show up for Option 1 deployments
+- Navigate to the "Gateways" in the IoT SiteWise console, find the Gateway associated with your deployment (compare to the Greengrass Group ID if required), hit "Edit" then hit "Save". Look out for the Quarantined certificate in the Ignition console. 
+
