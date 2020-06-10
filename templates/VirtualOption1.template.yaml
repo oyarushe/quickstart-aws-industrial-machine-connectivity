@@ -332,33 +332,3 @@ Resources:
                                 python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
                                 # Run installation
                                 ./install.sh
-
-
-
-
-# Outputs:
-#   imcs3bucketname:
-#     Description: IMC S3 Data Bucket Name
-#     Value:
-#       Ref: imcs3bucket
-#   SitewiseRoleArn:
-#     Description: IMC S3 assets Bucket Name
-#     Value:
-#       Fn::GetAtt:
-#         - IoTSitewiseMonitorRole
-#         - Arn
-#   MyStacksAccount:
-#     Value:
-#       Ref: AWS::AccountId
-#   StackData:
-#     Value:
-#       Fn::Join:
-#         - ""
-#         - - '{"S3Buckets": {"DevicesBucket": "'
-#           - Ref: DevicesBucketResource
-#           - '", "AMCIncomingBucket": "'
-#           - Ref: AMCIncomingResource
-#           - '", "AMCOutputBucket": "'
-#           - Ref: AMCOutputResource
-#           - '"}}'      
-

@@ -358,9 +358,6 @@ Resources:
         - scripts/physical-greenfield-option1.sh
         - scripts/physical-greenfield-option2a.sh
         - scripts/physical-greenfield-option2b.sh
-        # - scripts/editConfig-Physical.py
-        # - scripts/editConfig-Virtual.py
-        # - temporaryIgnition/Ignition-AWS-Kit-MQTT-v4.zip
   CopyZipsRole:
     Type: AWS::IAM::Role
     Properties:

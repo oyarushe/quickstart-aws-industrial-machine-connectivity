@@ -55,4 +55,4 @@ aws s3api get-object --bucket $DEVICEBUCKET --key $DEVICEKEYGREENGRASS /home/ubu
 tar -xzvf /home/ubuntu/group.tar.gz -C /greengrass
 /greengrass/ggc/core/greengrassd start
 sleep 10
-wget -O /home/ubuntu/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/deploygg/$EDGEDEVICEID
+wget -O /home/ubuntu/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazonaws.com/api/deployggwithsitewise/$EDGEDEVICEID?ignition-ip=localhost

@@ -427,4 +427,3 @@ Resources:
                                     python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
                                     # Run installation\ 
                                     ./install.sh
-
