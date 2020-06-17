@@ -337,11 +337,11 @@ Outputs:
           - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Device.tar.gz
           - !Ref IoTEndpoint
   FullScriptParamsGreenfield2b:
-    Description: Full Script Params Greenfield Option 1, 2a 
+    Description: Full Script Params Greenfield Option 2b
     Value:
       !Join
         - ' '
-        - - './physical-greenfield-option1.sh'
+        - - './physical-greenfield-option2b.sh'
           - !Ref DeviceBucketRes
           - Fn::Sub: ${EdgeDeviceID}/${EdgeDeviceID}Core.tar.gz
           - !Ref RestAPIId

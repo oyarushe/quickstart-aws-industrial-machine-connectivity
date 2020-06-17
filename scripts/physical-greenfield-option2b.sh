@@ -40,6 +40,19 @@ mkdir /var/sitewise
 chown ggc_user /var/sitewise
 chmod 700 /var/sitewise
 
+# Harderning Steps
+# Fail 2 ban
+apt install -y fail2ban
+# Firewall
+#ufw allow ssh
+#ufw --force enable
+# Shared memory
+echo "none /run/shm tmpfs defaults,ro 0 0" >> /etc/fstab
+# Change SSH port
+#echo "Port 22" >> /etc/ssh/sshd_config
+#echo "AllowUsers vagrant" >> /etc/ssh/sshd_config
+#systemctl restart sshd
+
 # Get Greengrass group certs and store as /home/ubuntu/group.tar.gz directory
 aws s3api get-object --bucket $DEVICEBUCKET --key $DEVICEKEYGREENGRASS /home/ubuntu/group.tar.gz
 tar -xzvf /home/ubuntu/group.tar.gz -C /greengrass

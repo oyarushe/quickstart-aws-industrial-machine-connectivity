@@ -44,7 +44,7 @@ apt install -y fail2ban
 # ufw allow ssh
 # ufw --force enable
 # Shared memory
-# echo "none /run/shm tmpfs defaults,ro 0 0" >> /etc/fstab
+echo "none /run/shm tmpfs defaults,ro 0 0" >> /etc/fstab
 # Change SSH port
 #echo "Port 22" >> /etc/ssh/sshd_config
 #echo "AllowUsers vagrant" >> /etc/ssh/sshd_config
