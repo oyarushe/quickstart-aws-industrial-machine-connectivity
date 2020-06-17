@@ -63,7 +63,7 @@ wget -O /home/ubuntu/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazon
 
 # Get Ignition automation files
 # TODO: Replace imc-user-data-public-bucket with aws-quickstart? 
-wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip https://imc-user-data-public-bucket.s3.amazonaws.com/Ignition-AWS-Kit-MQTT-v4-Physical.zip
+wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip http://files.inductiveautomation.com/aws-imc-kit/Ignition-AWS-Kit-MQTT-v4-Physical.zip
 unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
 mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4-Physical /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
 cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
