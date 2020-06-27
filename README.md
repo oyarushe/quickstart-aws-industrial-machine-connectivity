@@ -1,5 +1,4 @@
 # IMC Quickstart for AWS IoT Sitewise
-something about virtual option 1
 
 ## Requirements:
 - AWS account with SSO enabled: https://docs.aws.amazon.com/singlesignon/latest/userguide/getting-started.html
