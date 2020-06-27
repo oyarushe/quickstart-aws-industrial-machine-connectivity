@@ -17,7 +17,6 @@ Metadata:
           - VpcId
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - EC2AMI 
           - EC2Subnet
       - Label:
           default: AWS Quick Start Configuration
@@ -48,8 +47,6 @@ Metadata:
         default: This is the instance type the Greengrass EC2 will use
       IgnitionInstanceType:
         default: This is the instance type the Ignition EC2 will use
-      EC2AMI:
-        default: This is the EC2 AMI operating systen
       EC2Subnet:
         default: This is the ID of the subnet the EC2(s) will be deployed in
       AMCDriver:
@@ -145,13 +142,17 @@ Parameters:
     AllowedValues:
       - t3.large
       - t3.xlarge
-  EC2AMI:
-    ConstraintDescription: Must be a valid AMI
-    Description: The AMI that the EC2 instances will be using
-    Type: AWS::EC2::Image::Id
-    # Default: ami-085925f297f89fce1
-    AllowedValues: 
-      - ami-085925f297f89fce1
+  # EC2AMI:
+  #   ConstraintDescription: Must be a valid AMI
+  #   Description: The AMI that the EC2 instances will be using
+  #   Type: AWS::EC2::Image::Id
+  #   # Default: ami-085925f297f89fce1
+  #   # AllowedValues: 
+  #   #   - ami-085925f297f89fce1
+  #   AllowedValues:
+  #     - ami-0ac80df6eff0e70b5
+  #     - ami-003634241a8fcdec0
+  #     - ami-089cc16f7f08c4457
   EC2Subnet:
     ConstraintDescription: Must be a valid subnet ID 
     Description: This is the subnet ID where the EC2(s) will be deployed
@@ -168,6 +169,15 @@ Conditions:
   IfVirtual: !Equals
     - !Ref DeploymentType
     - 'Virtual'
+
+Mappings: 
+    EC2AMI: 
+      us-east-1: 
+        ami: ami-0ac80df6eff0e70b5
+      us-west-2: 
+        ami: ami-003634241a8fcdec0
+      eu-west-1: 
+        ami: ami-089cc16f7f08c4457
 
 Resources:
   AMCAssetTable:
@@ -1477,7 +1487,7 @@ Resources:
         DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        EC2AMI: !Ref EC2AMI
+        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
         DeviceBucketRes: !Ref DevicesBucketResource
@@ -1516,7 +1526,7 @@ Resources:
         DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        EC2AMI: !Ref EC2AMI
+        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
         DeviceBucketRes: !Ref DevicesBucketResource

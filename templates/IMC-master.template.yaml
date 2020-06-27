@@ -6,7 +6,6 @@ Metadata:
       - Label:
           default: Network configuration
         Parameters:
-          - AvailabilityZones
           - VPCCIDR
           - PublicSubnet1CIDR
           - VPCTenancy
@@ -28,12 +27,9 @@ Metadata:
           - EC2KeyPairName
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - EC2AMI 
           - AMCDriver
           - UserPublicIP          
     ParameterLabels:
-      AvailabilityZones:
-        default: Availability Zones
       QSS3BucketRegion:
         default: Quick Start S3 bucket region
       PublicSubnet1CIDR:
@@ -51,17 +47,15 @@ Metadata:
       EdgeDeviceID:
         default: Name for the edge device 
       DeploymentType:
-        default: This is the type of deployment (virtual or physical)
+        default: Type of deployment (virtual or physical)
       DeploymentOption:
-        default: The different defined deployment flows
+        default: Deployment flows
       GreengrassInstanceType:
-        default: This is the instance type the Greengrass EC2 will use
+        default: Greengrass EC2 instance type
       IgnitionInstanceType:
-        default: This is the instance type the Ignition EC2 will use
-      EC2AMI:
-        default: This is the EC2 AMI operating systen
+        default: Ignition EC2 instance type
       AMCDriver:
-        default: Select the AssetModelConverter driver for your deployment
+        default: AssetModelConverter driver
       UserPublicIP:
         default: Input your public IP address so that you have SSH access to EC2 instances        
 
@@ -78,9 +72,6 @@ Parameters:
       - IgnitionFileExport
       - KepwareFileExport
     Description: Choose the driver that the AssetModelConverter uses to translate hierarchy data.   
-  AvailabilityZones:
-    Description: 'List of Availability Zones to use for the subnets in the VPC. Note: ( The logical order is preserved and only 2 AZs are used for this deployment.'
-    Type: AWS::EC2::AvailabilityZone::Name
   PublicSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -97,7 +88,6 @@ Parameters:
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
-    Default: aws-quickstart
     Description: S3 bucket name for the Quick Start assets. Quick Start bucket name can
       include numbers, lowercase letters, uppercase letters, and hyphens (-). It
       cannot start or end with a hyphen (-).
@@ -105,7 +95,6 @@ Parameters:
   QSS3KeyPrefix:
     AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
-    Default: quickstart-IMC/
     Description:       S3 key prefix for the Quick Start assets. Quick Start key prefix can
       include numbers, lowercase letters, uppercase letters, hyphens (-), dots
       (.) and forward slash (/) and it should end with a forward slash (/).
@@ -138,8 +127,7 @@ Parameters:
   DeploymentType:
     AllowedValues:
       - Virtual
-      - Physical_Greenfield
-      - Physical_Brownfield
+      - Physical
     ConstraintDescription: Must contain valid deployment type
     Description: Type of edge deployment
     Type: String
@@ -147,8 +135,8 @@ Parameters:
   DeploymentOption:
     AllowedValues:
       - Option1
-      - Option2A
-      - Option2B
+      - Option2a
+      - Option2b
     ConstraintDescription: Must be a valid deployment option selection 
     Description: They further defined deployment type
       --- Option1 (or OPC-UA Path via SiteWise)
@@ -170,11 +158,6 @@ Parameters:
     AllowedValues:
       - t3.large
       - t3.xlarge
-  EC2AMI:
-    ConstraintDescription: Must be a valid AMI
-    Description: The AMI that the EC2 instances will be using
-    Type: AWS::EC2::Image::Id
-    Default: ami-085925f297f89fce1   
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
@@ -194,7 +177,7 @@ Resources:
             - !Ref 'AWS::Region'
             - !Ref 'QSS3BucketRegion'
       Parameters:
-        AvailabilityZones: !Ref AvailabilityZones
+        AvailabilityZones: !Sub '${AWS::Region}a'
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         VPCCIDR: !Ref VPCCIDR
         VPCTenancy: !Ref VPCTenancy
@@ -227,6 +210,5 @@ Resources:
         EC2KeyPairName: !Ref EC2KeyPairName
         GreengrassInstanceType: !Ref GreengrassInstanceType
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        EC2AMI: !Ref EC2AMI
         AMCDriver: !Ref AMCDriver
         UserPublicIP: !Ref UserPublicIP
