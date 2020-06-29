@@ -39,9 +39,6 @@ Parameters:
   EIIgnitionInstanceProfile:
     Description: Profile for the ignition instance that is running at the edge
     Type: String
-  EdgeSecGroupResourceGroupID:
-    Description: This is the group id for the security group for the edge instance
-    Type: 'List<AWS::EC2::SecurityGroup::Id>'
   DeviceBucketRes:
     Description: Information for the device bucket 
     Type: String
