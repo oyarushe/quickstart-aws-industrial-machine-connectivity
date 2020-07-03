@@ -54,7 +54,6 @@ class CreateSitewiseResources:
                 payload.extend(response['Items'])
 
         return payload
-        # return response['Items']
 
     def getChangedModels(self):
         response = self.assetModelTable.query(
@@ -73,7 +72,6 @@ class CreateSitewiseResources:
                 payload.extend(response['Items'])
 
         return payload
-        # return response['Items']
 
     def getModelByName(self, name):
         response = self.assetModelTable.get_item(Key={'assetModelName': name})
