@@ -42,16 +42,38 @@ class CreateSitewiseResources:
             IndexName="change-index",
             KeyConditionExpression=Key('change').eq('YES'),
         )
+        if 'Items' in response: 
+            payload=response['Items']
 
-        return response['Items']
+            while 'LastEvaluatedKey' in response: 
+                response = self.assetTable.query(
+                    IndexName="change-index",
+                    KeyConditionExpression=Key('change').eq('YES'),
+                    ExclusiveStartKey=response['LastEvaluatedKey']
+                )
+                payload.extend(response['Items'])
+
+        return payload
+        # return response['Items']
 
     def getChangedModels(self):
         response = self.assetModelTable.query(
             IndexName="change-index",
             KeyConditionExpression=Key('change').eq('YES'),
         )
+        if 'Items' in response: 
+            payload=response['Items']
 
-        return response['Items']
+            while 'LastEvaluatedKey' in response:
+                response=self.assetModelTable.query(
+                    IndexName="change-index",
+                    KeyConditionExpression=Key('change').eq('YES'),
+                    ExclusiveStartKey=response['LastEvaluatedKey']
+                )
+                payload.extend(response['Items'])
+
+        return payload
+        # return response['Items']
 
     def getModelByName(self, name):
         response = self.assetModelTable.get_item(Key={'assetModelName': name})
