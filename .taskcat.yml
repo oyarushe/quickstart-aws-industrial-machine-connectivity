@@ -1,0 +1,91 @@
+project:
+  name: imc-quickstart
+  owner: shahan@tensoriot.com # change
+  package_lambda: false
+  s3_bucket: ''
+  shorten_stack_name: true
+tests:
+  virginia:
+    parameters:
+      AvailabilityZones: us-east-1a,us-east-1b
+      CreateAdditionalPrivateSubnets: 'true'
+      CreatePrivateSubnets: 'true'
+      NumberOfAZs: '2'
+      PrivateSubnet1ACIDR: 10.0.0.0/19
+      PrivateSubnet1BCIDR: 10.0.192.0/21
+      PrivateSubnet2ACIDR: 10.0.32.0/19
+      PrivateSubnet2BCIDR: 10.0.200.0/21
+      PrivateSubnet3ACIDR: 10.0.64.0/19
+      PrivateSubnet3BCIDR: 10.0.208.0/21
+      PrivateSubnet4ACIDR: 10.0.96.0/19
+      PrivateSubnet4BCIDR: 10.0.216.0/21
+      PublicSubnet1CIDR: 10.0.128.0/20
+      PublicSubnet2CIDR: 10.0.144.0/20
+      PublicSubnet3CIDR: 10.0.160.0/20
+      PublicSubnet4CIDR: 10.0.176.0/20
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
+      QSS3BucketName: submodule-test-quickstart # will need to follow 'virtual deployment' instructions in user guide 
+      QSS3KeyPrefix: quickstart/ # will need to follow 'virtual deployment' instructions in user guide 
+      UserPublicIP: '47.232.192.250' # change
+      EC2KeyPairName: SiteWiseTest # change
+    regions:
+      - us-east-1
+    s3_bucket: ''
+    template: templates/IMC-master.template.yaml
+  oregon:
+    parameters:
+      AvailabilityZones: us-west-1a,us-west-1b
+      CreateAdditionalPrivateSubnets: 'true'
+      CreatePrivateSubnets: 'true'
+      NumberOfAZs: '2'
+      PrivateSubnet1ACIDR: 10.0.0.0/19
+      PrivateSubnet1BCIDR: 10.0.192.0/21
+      PrivateSubnet2ACIDR: 10.0.32.0/19
+      PrivateSubnet2BCIDR: 10.0.200.0/21
+      PrivateSubnet3ACIDR: 10.0.64.0/19
+      PrivateSubnet3BCIDR: 10.0.208.0/21
+      PrivateSubnet4ACIDR: 10.0.96.0/19
+      PrivateSubnet4BCIDR: 10.0.216.0/21
+      PublicSubnet1CIDR: 10.0.128.0/20
+      PublicSubnet2CIDR: 10.0.144.0/20
+      PublicSubnet3CIDR: 10.0.160.0/20
+      PublicSubnet4CIDR: 10.0.176.0/20
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
+      QSS3BucketName: submodule-test-quickstart # will need to follow 'virtual deployment' instructions in user guide 
+      QSS3KeyPrefix: quickstart/ # will need to follow 'virtual deployment' instructions in user guide 
+      UserPublicIP: '47.232.192.250' # change
+      EC2KeyPairName: SiteWiseTest # change
+    regions: 
+      - us-west-2
+    s3_bucket: ''
+    template: templates/IMC-master.template.yaml
+  ireland:
+    parameters:
+      AvailabilityZones: eu-west-1a,eu-west-1b
+      CreateAdditionalPrivateSubnets: 'true'
+      CreatePrivateSubnets: 'true'
+      NumberOfAZs: '2'
+      PrivateSubnet1ACIDR: 10.0.0.0/19
+      PrivateSubnet1BCIDR: 10.0.192.0/21
+      PrivateSubnet2ACIDR: 10.0.32.0/19
+      PrivateSubnet2BCIDR: 10.0.200.0/21
+      PrivateSubnet3ACIDR: 10.0.64.0/19
+      PrivateSubnet3BCIDR: 10.0.208.0/21
+      PrivateSubnet4ACIDR: 10.0.96.0/19
+      PrivateSubnet4BCIDR: 10.0.216.0/21
+      PublicSubnet1CIDR: 10.0.128.0/20
+      PublicSubnet2CIDR: 10.0.144.0/20
+      PublicSubnet3CIDR: 10.0.160.0/20
+      PublicSubnet4CIDR: 10.0.176.0/20
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
+      QSS3BucketName: submodule-test-quickstart # will need to follow 'virtual deployment' instructions in user guide 
+      QSS3KeyPrefix: quickstart/ # will need to follow 'virtual deployment' instructions in user guide 
+      UserPublicIP: '47.232.192.250' # change
+      EC2KeyPairName: SiteWiseTest # change
+    regions: 
+      - eu-west-1
+    s3_bucket: ''
+    template: templates/IMC-master.template.yaml
