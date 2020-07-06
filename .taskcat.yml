@@ -27,7 +27,7 @@ tests:
       VPCTenancy: default
       QSS3BucketName: submodule-test-quickstart # will need to follow 'virtual deployment' instructions in user guide 
       QSS3KeyPrefix: quickstart/ # will need to follow 'virtual deployment' instructions in user guide 
-      UserPublicIP: '47.232.192.250' # change
+      UserPublicIP: 'x.x.x.x' # change
       EC2KeyPairName: SiteWiseTest # change
     regions:
       - us-east-1
@@ -55,7 +55,7 @@ tests:
       VPCTenancy: default
       QSS3BucketName: submodule-test-quickstart # will need to follow 'virtual deployment' instructions in user guide 
       QSS3KeyPrefix: quickstart/ # will need to follow 'virtual deployment' instructions in user guide 
-      UserPublicIP: '47.232.192.250' # change
+      UserPublicIP: 'x.x.x.x' # change      
       EC2KeyPairName: SiteWiseTest # change
     regions: 
       - us-west-2
@@ -83,7 +83,7 @@ tests:
       VPCTenancy: default
       QSS3BucketName: submodule-test-quickstart # will need to follow 'virtual deployment' instructions in user guide 
       QSS3KeyPrefix: quickstart/ # will need to follow 'virtual deployment' instructions in user guide 
-      UserPublicIP: '47.232.192.250' # change
+      UserPublicIP: 'x.x.x.x' # change      
       EC2KeyPairName: SiteWiseTest # change
     regions: 
       - eu-west-1
