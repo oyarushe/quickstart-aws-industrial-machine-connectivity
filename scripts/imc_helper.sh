@@ -19,11 +19,11 @@ aws iam create-service-linked-role --aws-service-name iotsitewise.amazonaws.com
 
 # Creating S3 bucket and uploading files
 aws s3api create-bucket --bucket ${imc_bucket_name} --region ${EC2_REGION} --create-bucket-configuration LocationConstraint=${EC2_REGION}
-aws s3 cp ./ s3://${imc_bucket_name}/quickstart/ --recursive
+aws s3 cp ./ s3://${imc_bucket_name}/quickstart-IMC/ --recursive
 #echo "aws s3api delete-bucket --bucket "${imc_bucket_name}" --region "${EC2_REGION}
 echo "************************"
 echo "**** Copy and paste the below url for workload cloudformation temaplte ****"
-echo "https://"${imc_bucket_name}".s3."${EC2_REGION}".amazonaws.com/quickstart/templates/IMC-workload.template.yaml"
+echo "https://"${imc_bucket_name}".s3."${EC2_REGION}".amazonaws.com/quickstart-IMC/templates/IMC-workload.template.yaml"
 echo "************************"
 echo "################"
 echo "#### To Delete your assets and bucket #####"
