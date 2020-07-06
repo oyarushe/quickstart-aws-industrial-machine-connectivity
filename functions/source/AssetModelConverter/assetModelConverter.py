@@ -163,7 +163,7 @@ def handler(event, context):
     assetModelClass = AssetModelConverter()
     assetModelClass.processEvent(event)
 
-
+# For testing purposes
 if __name__ == '__main__':
     consoleHandler = logging.StreamHandler(sys.stdout)
     consoleHandler.setLevel(logging.INFO)
