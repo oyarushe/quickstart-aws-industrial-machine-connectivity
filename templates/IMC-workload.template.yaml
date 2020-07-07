@@ -483,7 +483,35 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: "*"
+                  # - s3:*
+                  # - quicksight:*
+                  # - iotsitewise:*
+                  # - lambda:*
+                  # - logs:*
                 Resource: "*"
+                # ADDING
+              # - Effect: Allow
+              #   Action:
+              #     - s3:PutObject
+              #   Resource: 
+              #     - !Sub 'arn:aws:s3:::${imcs3bucket}*'
+              # - Effect: Allow
+              #   Action:
+              #     - quicksight:*
+              #   Resource:
+              #     - "*"
+              # - Effect: Allow
+              #   Action: 
+              #     - iotsitewise:ListAssociatedAssets
+              #     - iotsitewise:DescribeAsset
+              #     - iotsitewise:ListAssets
+              #     - iotsitewise:DescribePortal
+              #     - iotsitewise:CreatePortal
+              #     - iotsitewise:CreateProject
+              #     - iotsitewise:BatchAssociateProjectAssets
+              #     - iotsitewise:CreateDashboard
+              #   Resource:
+              #     - "*"
   quicksight:
     DependsOn: CopyZips
     Type: AWS::Lambda::Function
@@ -1072,12 +1100,31 @@ Resources:
                 Effect: Allow
                 Resource: arn:aws:logs:*:*:*
               - Action:
-                  - dynamodb:*
-                  - iot:*
-                  - iotsitewise:*
+                  - iot:Publish
+                  - iotsitewise:DescribeAssetModel
+                  - iotsitewise:CreateAssetModel
+                  - iotsitewise:ListAssetModels
+                  - iotsitewise:UpdateAssetModel
+                  - iotsitewise:DeleteAssetModel
+                  - iotsitewise:CreateAsset
+                  - iotsitewise:DescribeAsset
+                  - iotsitewise:UpdateAssetProperty
+                  - iotsitewise:ListAssets
+                  - iotsitewise:ListAssociatedAssets
+                  - iotsitewise:DeleteAsset
+                  - iotsitewise:DisassociateAssets
+                  - iotsitewise:AssociateAssets
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                  - dynamodb:GetItem
                 Effect: Allow
                 Resource: "*"
-              - Action: s3:*
+              - Action:
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                  - s3:PutObject
+                  - s3:GetObject
                 Effect: Allow
                 Resource:
                   - Fn::GetAtt:
@@ -1404,14 +1451,10 @@ Resources:
       Policies:
         - PolicyDocument:
             Statement:
-              - Action: s3:*
+              - Action: s3:GetObject
                 Effect: Allow
-                Resource: "*"
-              - Action:
-                  - greengrass:ListGroups
-                  - greengrass:CreateDeployment
-                Effect: Allow
-                Resource: "*"
+                Resource: 
+                  - !Sub 'arn:aws:s3:::${DevicesBucketResource}*'
             Version: "2012-10-17"
           PolicyName: Ec2S3Access
   EdgeSecurityGroupResource:
