@@ -9,8 +9,6 @@ Metadata:
           - VPCCIDR
           - PublicSubnet1CIDR
           - VPCTenancy
-          - AvailabilityZones
-          - NumberOfAZs
       - Label:
           default: AWS Quick Start configuration
         Parameters:
@@ -32,13 +30,6 @@ Metadata:
           - AMCDriver
           - UserPublicIP          
     ParameterLabels:
-      AvailabilityZones:
-        default: Availability Zones
-      NumberOfAZs: 
-        AllowedValues:
-          - '2'
-          - '3'
-          - '4'
       QSS3BucketRegion:
         default: Quick Start S3 bucket region
       PublicSubnet1CIDR:
@@ -70,17 +61,6 @@ Metadata:
 
   cfn-lint: { config: { ignore_checks: [E9007] } }
 Parameters:
-  AvailabilityZones:
-    Description: 'List of Availability Zones to use for the subnets in the VPC. Note:
-      The logical order is preserved.'
-    Type: List<AWS::EC2::AvailabilityZone::Name>
-  NumberOfAZs:
-    Type: String
-    AllowedValues:
-      - '2'
-      - '3'
-      - '4'
-    Default: '2'
   PublicSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -185,7 +165,7 @@ Conditions:
     - 'aws-quickstart'
 
 Resources:
-  VPCStack:
+  VPC:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
@@ -199,17 +179,15 @@ Resources:
             - !Ref 'AWS::Region'
             - !Ref 'QSS3BucketRegion'
       Parameters:
-        AvailabilityZones: !Join
-          - ','
-          - !Ref AvailabilityZones
+        AvailabilityZones: !Sub "${AWS::Region}a,${AWS::Region}b"
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         VPCCIDR: !Ref VPCCIDR
         VPCTenancy: !Ref VPCTenancy
-        NumberOfAZs: !Ref NumberOfAZs
+        NumberOfAZs: 2
 
-  IMCWorkloadStack:
+  Workload:
     DependsOn:
-      - VPCStack
+      - VPC
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
@@ -224,12 +202,12 @@ Resources:
             - !Ref 'QSS3BucketRegion'
       Parameters:
         EC2Subnet:
-          Fn::GetAtt: [VPCStack, Outputs.PublicSubnet1ID]        
+          Fn::GetAtt: [VPC, Outputs.PublicSubnet1ID]        
         QSS3BucketRegion: !Ref QSS3BucketRegion
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         VpcId:
-          Fn::GetAtt: [VPCStack, Outputs.VPCID]        
+          Fn::GetAtt: [VPC, Outputs.VPCID]        
         EdgeDeviceID: !Ref EdgeDeviceID
         DeploymentType: !Ref DeploymentType
         DeploymentOption: !Ref DeploymentOption

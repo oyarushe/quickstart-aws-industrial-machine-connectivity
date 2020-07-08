@@ -462,7 +462,7 @@ Resources:
     Properties:
       Tags: []
 
-  LambdaExecutionRole:
+  LambdaExecRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -482,12 +482,14 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Action: "*"
-                  # - s3:*
-                  # - quicksight:*
-                  # - iotsitewise:*
-                  # - lambda:*
-                  # - logs:*
+                # Action: "*"
+                Action:
+                  - s3:*
+                  - quicksight:*
+                  - iotsitewise:*
+                  - lambda:*
+                  - logs:*
+                  - sso:*
                 Resource: "*"
                 # ADDING
               # - Effect: Allow
@@ -519,7 +521,7 @@ Resources:
       Runtime: python3.8
       Role:
         Fn::GetAtt:
-          - LambdaExecutionRole
+          - LambdaExecRole
           - Arn
       Handler: lambda_function.lambda_handler
       Timeout: 180
@@ -533,7 +535,7 @@ Resources:
             Ref: imcs3bucket
           imcmonitorrole:
             Fn::GetAtt:
-              - IoTSitewiseMonitorRole
+              - SwMonitorRole
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
@@ -579,7 +581,7 @@ Resources:
       Runtime: python3.8
       Role:
         Fn::GetAtt:
-          - LambdaExecutionRole
+          - LambdaExecRole
           - Arn
       Handler: lambda_function.lambda_handler
       Timeout: 180
@@ -593,7 +595,7 @@ Resources:
             Ref: imcs3bucket
           imcmonitorrole:
             Fn::GetAtt:
-              - IoTSitewiseMonitorRole
+              - SwMonitorRole
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
@@ -637,7 +639,7 @@ Resources:
     DependsOn: CopyZips
     Properties:
       Runtime: nodejs12.x
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !GetAtt LambdaExecRole.Arn
       Handler: index.handler
       Timeout: 120
       Code:
@@ -668,7 +670,7 @@ Resources:
                 - ParameterName: LambdaArn
                   ParameterValue: !GetAtt processLambda.Arn 
               Type: Lambda
-        RoleARN: !GetAtt KinesisDeliveryRole.Arn
+        RoleARN: !GetAtt KinesisRole.Arn
 
   imcs3bucket:
     Type: AWS::S3::Bucket
@@ -677,7 +679,7 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
-  KinesisDeliveryRole:
+  KinesisRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -705,7 +707,7 @@ Resources:
             Action: '*'
             Resource: '*'
       Roles:
-        - !Ref KinesisDeliveryRole
+        - !Ref KinesisRole
 
   DeviceDataRule:
     Type: AWS::IoT::TopicRule
@@ -717,9 +719,9 @@ Resources:
         Actions:
           - Firehose:
               DeliveryStreamName: !Ref KinesisDeliveryStream
-              RoleArn: !Sub '${IoTTopicRuleRole.Arn}'
+              RoleArn: !Sub '${IoTRuleRole.Arn}'
 
-  IoTTopicRuleRole:
+  IoTRuleRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -746,7 +748,7 @@ Resources:
                 - firehose:PutRecordBatch
               Resource: '*'
 
-  IoTSitewiseMonitorRole:
+  SwMonitorRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -769,12 +771,13 @@ Resources:
               Action:
                 - iotsitewise:*
                 - sso-directory:*
+                - iam:PassRole
               Resource: "*"
   DevicesBucketResource:
     Type: AWS::S3::Bucket
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  GGResourceRoleResource:
+  GGResourceRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -1048,7 +1051,7 @@ Resources:
         Fn::Sub: ${EdgeDeviceID}
       RoleArn:
         Fn::GetAtt:
-          - GGResourceRoleResource
+          - GGResourceRole
           - Arn
   EdgeGroupVersion:
     Type: AWS::Greengrass::GroupVersion
@@ -1079,7 +1082,7 @@ Resources:
     Type: AWS::S3::Bucket
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  AMCLambdaRoleResource:
+  AMCLambdaRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -1157,7 +1160,7 @@ Resources:
       Handler: assetModelIngestion.handler
       Role:
         Fn::GetAtt:
-          - AMCLambdaRoleResource
+          - AMCLambdaRole
           - Arn
       Runtime: python3.7
       Environment:
@@ -1166,7 +1169,7 @@ Resources:
             Ref: AMCIncomingResource
       Timeout: 60
     DependsOn:
-      - AMCLambdaRoleResource
+      - AMCLambdaRole
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
     DependsOn: CopyZips
@@ -1234,7 +1237,7 @@ Resources:
       Handler: assetModelConverter.handler
       Role:
         Fn::GetAtt:
-          - AMCLambdaRoleResource
+          - AMCLambdaRole
           - Arn
       Runtime: python3.7
       Environment:
@@ -1249,7 +1252,7 @@ Resources:
             Ref: AMCDriver
       Timeout: 900
     DependsOn:
-      - AMCLambdaRoleResource
+      - AMCLambdaRole
 
   ApiHandlerRole:
     Type: AWS::IAM::Role
@@ -1501,7 +1504,7 @@ Resources:
       Roles:
         - Ref: Ec2RoleResource
 
-  IMCDeploymentStackVirtual:
+  Virtual:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfVirtual
     DependsOn:
@@ -1529,10 +1532,10 @@ Resources:
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
         DeviceBucketRes: !Ref DevicesBucketResource
         LambdaZipsBucket: !Ref LambdaZipsBucket
-        LambdaExecRole: !GetAtt LambdaExecutionRole.Arn
+        LambdaExecRole: !GetAtt LambdaExecRole.Arn
         IMCBucketArn: !GetAtt imcs3bucket.Arn 
-        KinesisDelRoleArn: !GetAtt KinesisDeliveryRole.Arn
-        IoTTopicRuleRoleArn: !GetAtt IoTTopicRuleRole.Arn
+        KinesisDelRoleArn: !GetAtt KinesisRole.Arn
+        IoTTopicRuleRoleArn: !GetAtt IoTRuleRole.Arn
         AMCIncomingRes: !Ref AMCIncomingResource
         AMCIncomingResArn: !GetAtt AMCIncomingResource.Arn
         AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
@@ -1540,7 +1543,7 @@ Resources:
         IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
         EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
         GreengrassInstanceType: !Ref GreengrassInstanceType
-  IMCDeploymentStackPhysical:
+  Physical:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfPhysical
     DependsOn:
@@ -1567,10 +1570,10 @@ Resources:
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         DeviceBucketRes: !Ref DevicesBucketResource
         LambdaZipsBucket: !Ref LambdaZipsBucket
-        LambdaExecRole: !GetAtt LambdaExecutionRole.Arn
+        LambdaExecRole: !GetAtt LambdaExecRole.Arn
         IMCBucketArn: !GetAtt imcs3bucket.Arn 
-        KinesisDelRoleArn: !GetAtt KinesisDeliveryRole.Arn
-        IoTTopicRuleRoleArn: !GetAtt IoTTopicRuleRole.Arn
+        KinesisDelRoleArn: !GetAtt KinesisRole.Arn
+        IoTTopicRuleRoleArn: !GetAtt IoTRuleRole.Arn
         AMCIncomingRes: !Ref AMCIncomingResource
         AMCIncomingResArn: !GetAtt AMCIncomingResource.Arn
         AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
@@ -1588,7 +1591,7 @@ Outputs:
     Description: IMC S3 assets Bucket Name
     Value:
       Fn::GetAtt:
-        - IoTSitewiseMonitorRole
+        - SwMonitorRole
         - Arn
   MyStacksAccount:
     Value:
