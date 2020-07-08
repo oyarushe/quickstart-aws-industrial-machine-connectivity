@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+import boto3
+import time
+
+from botocore.exceptions import ClientError
+
+sitewise = boto3.client('iotsitewise', region_name='us-east-1')
+
+models = sitewise.list_asset_models()
+
+
+def describe_asset(asset):
+    try:
+        assetDescription = sitewise.describe_asset(
+            assetId=asset['id']
+        )
+        return assetDescription
+    except Exception as err:
+        return None
+
+
+def describe_model(model):
+    try:
+        modelDescription = sitewise.describe_asset_model(
+            assetModelId=model['id']
+        )
+    except Exception as err:
+        return None
+
+
+for model in models['assetModelSummaries']:
+    assets = sitewise.list_assets(
+        assetModelId = model['id']
+    )
+    
+    for asset in assets['assetSummaries']:
+
+        print(f"Deleting asset: {asset['name']}")
+        sitewise.delete_asset(
+            assetId = asset['id']
+        )
+
+        assetDescription = describe_asset(asset)
+
+        if not assetDescription: 
+            pass
+        else:
+            while assetDescription['assetStatus']['state'] == 'DELETING' or assetDescription['assetStatus']['state'] == 'ACTIVE':
+                print('Waiting until asset deletion completes...')
+                time.sleep(1)
+                assetDescription = describe_asset(asset)
+                if not assetDescription: 
+                    break
+
+    print(f"Deleting model: {model['name']}")
+    sitewise.delete_asset_model(
+        assetModelId=model['id']
+    )
+    modelDescription = describe_model(model)
+    if modelDescription:
+        while modelDescription['assetModelStatus']['state'] == 'DELETING' or modelDescription['assetModelStatus']['state'] == 'ACTIVE':
+            print('Waiting until asset deletion completes...')
+            time.sleep(1)
+            assetDescription = describe_asset(asset)
+            if not assetDescription:
+                break
+
+    print("======")
