@@ -93,11 +93,11 @@ class KepserverFileDriver:
                     'tags': []
                 }
                 for tag in device['tags']:
-                    tagName = tag['common.ALLTYPES_NAME']
-                    tagPath = '/'+channel_name+'/'+device_name+'/'+tagName
+                    tag_name = tag['common.ALLTYPES_NAME']
+                    tag_path = '/'+channel_name+'/'+device_name+'/'+tag_name
                     tag = {
-                        'tagName': tagName,
-                        'tagPath': tagPath
+                        'tagName': tag_name,
+                        'tagPath': tag_path
                     }
                     node['tags'].append(tag)
                 asset_array.append(node)

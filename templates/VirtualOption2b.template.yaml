@@ -161,7 +161,7 @@ Resources:
       SourceAccount: !Ref "AWS::AccountId"
       SourceArn: !Ref AMCIncomingResArn
 
-  BucketNotificationsHandlerRoleResource:
+  BucketNotificationRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -189,7 +189,7 @@ Resources:
         Version: "2012-10-17"
       PolicyName: BucketNotificationsHandlerRoleDefaultPolicyResource
       Roles:
-        - Ref: BucketNotificationsHandlerRoleResource
+        - Ref: BucketNotificationRole
 
   BucketNotificationsHandlerResource:
     Type: AWS::Lambda::Function
@@ -265,13 +265,13 @@ Resources:
       Handler: index.handler
       Role:
         Fn::GetAtt:
-          - BucketNotificationsHandlerRoleResource
+          - BucketNotificationRole
           - Arn
       Runtime: nodejs10.x
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource
-      - BucketNotificationsHandlerRoleResource
+      - BucketNotificationRole
 
   mqttProcessLambda:
     Type: AWS::Lambda::Function

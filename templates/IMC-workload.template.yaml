@@ -17,8 +17,8 @@ Metadata:
           - VpcId
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - EC2AMI 
           - EC2Subnet
+          - PublicSubnet1CIDR
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -39,28 +39,33 @@ Metadata:
       EdgeDeviceID:
         default: Name for the edge device 
       DeploymentType:
-        default: This is the type of deployment (virtual or physical)
+        default: Type of deployment (virtual or physical)
       DeploymentOption:
-        default: The different defined deployment flows
+        default: Deployment flows
       VpcId:
-        default: This is the VPC id where the solution will be deployed
+        default: Default VPC ID
       GreengrassInstanceType:
-        default: This is the instance type the Greengrass EC2 will use
+        default: Greengrass EC2 instance type
       IgnitionInstanceType:
-        default: This is the instance type the Ignition EC2 will use
-      EC2AMI:
-        default: This is the EC2 AMI operating systen
+        default: Ignition EC2 instance type
       EC2Subnet:
-        default: This is the ID of the subnet the EC2(s) will be deployed in
+        default: VPC Subnet (Select {region}a)
       AMCDriver:
-        default: Select the AssetModelConverter driver for your deployment
+        default: AssetModelConverter driver
       UserPublicIP:
-        default: Input your public IP address so that you have SSH access to EC2 instances
+        default: Your public IP address  
+      PublicSubnet1CIDR:
+        default: CIDR range for Ignition/Greengrass access
 
 Parameters:
+  PublicSubnet1CIDR: 
+    Type: String
+    Description: We will narrow this down after the stack deploys.
+    Default: '0.0.0.0/0'
   UserPublicIP:
     Type: String
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})
+    Description: Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
   AMCDriver:
     Type: String
     Default: IgnitionCirrusLink
@@ -89,7 +94,6 @@ Parameters:
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
-    Default: aws-quickstart
     Description: S3 bucket name for the Quick Start assets. This string can include
       numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
       or end with a hyphen (-).
@@ -98,7 +102,6 @@ Parameters:
     AllowedPattern: ^[0-9a-zA-Z-/]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), and forward slash (/).
-    Default: quickstart-IMC/
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
       can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
@@ -145,18 +148,10 @@ Parameters:
     AllowedValues:
       - t3.large
       - t3.xlarge
-  EC2AMI:
-    ConstraintDescription: Must be a valid AMI
-    Description: The AMI that the EC2 instances will be using
-    Type: AWS::EC2::Image::Id
-    # Default: ami-085925f297f89fce1
-    AllowedValues: 
-      - ami-085925f297f89fce1
   EC2Subnet:
     ConstraintDescription: Must be a valid subnet ID 
     Description: This is the subnet ID where the EC2(s) will be deployed
     Type: String
-    Default: subnet-7c5fde31
 
 Conditions:
   UsingDefaultBucket: !Equals
@@ -168,6 +163,15 @@ Conditions:
   IfVirtual: !Equals
     - !Ref DeploymentType
     - 'Virtual'
+
+Mappings: 
+    EC2AMI: 
+      us-east-1: 
+        ami: ami-0ac80df6eff0e70b5
+      us-west-2: 
+        ami: ami-003634241a8fcdec0
+      eu-west-1: 
+        ami: ami-089cc16f7f08c4457
 
 Resources:
   AMCAssetTable:
@@ -458,7 +462,7 @@ Resources:
     Properties:
       Tags: []
 
-  LambdaExecutionRole:
+  LambdaExecRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -478,8 +482,38 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Action: "*"
+                # Action: "*"
+                Action:
+                  - s3:*
+                  - quicksight:*
+                  - iotsitewise:*
+                  - lambda:*
+                  - logs:*
+                  - sso:*
                 Resource: "*"
+                # ADDING
+              # - Effect: Allow
+              #   Action:
+              #     - s3:PutObject
+              #   Resource: 
+              #     - !Sub 'arn:aws:s3:::${imcs3bucket}*'
+              # - Effect: Allow
+              #   Action:
+              #     - quicksight:*
+              #   Resource:
+              #     - "*"
+              # - Effect: Allow
+              #   Action: 
+              #     - iotsitewise:ListAssociatedAssets
+              #     - iotsitewise:DescribeAsset
+              #     - iotsitewise:ListAssets
+              #     - iotsitewise:DescribePortal
+              #     - iotsitewise:CreatePortal
+              #     - iotsitewise:CreateProject
+              #     - iotsitewise:BatchAssociateProjectAssets
+              #     - iotsitewise:CreateDashboard
+              #   Resource:
+              #     - "*"
   quicksight:
     DependsOn: CopyZips
     Type: AWS::Lambda::Function
@@ -487,7 +521,7 @@ Resources:
       Runtime: python3.8
       Role:
         Fn::GetAtt:
-          - LambdaExecutionRole
+          - LambdaExecRole
           - Arn
       Handler: lambda_function.lambda_handler
       Timeout: 180
@@ -501,7 +535,7 @@ Resources:
             Ref: imcs3bucket
           imcmonitorrole:
             Fn::GetAtt:
-              - IoTSitewiseMonitorRole
+              - SwMonitorRole
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
@@ -547,7 +581,7 @@ Resources:
       Runtime: python3.8
       Role:
         Fn::GetAtt:
-          - LambdaExecutionRole
+          - LambdaExecRole
           - Arn
       Handler: lambda_function.lambda_handler
       Timeout: 180
@@ -561,7 +595,7 @@ Resources:
             Ref: imcs3bucket
           imcmonitorrole:
             Fn::GetAtt:
-              - IoTSitewiseMonitorRole
+              - SwMonitorRole
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
@@ -605,7 +639,7 @@ Resources:
     DependsOn: CopyZips
     Properties:
       Runtime: nodejs12.x
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !GetAtt LambdaExecRole.Arn
       Handler: index.handler
       Timeout: 120
       Code:
@@ -636,7 +670,7 @@ Resources:
                 - ParameterName: LambdaArn
                   ParameterValue: !GetAtt processLambda.Arn 
               Type: Lambda
-        RoleARN: !GetAtt KinesisDeliveryRole.Arn
+        RoleARN: !GetAtt KinesisRole.Arn
 
   imcs3bucket:
     Type: AWS::S3::Bucket
@@ -645,7 +679,7 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
-  KinesisDeliveryRole:
+  KinesisRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -673,7 +707,7 @@ Resources:
             Action: '*'
             Resource: '*'
       Roles:
-        - !Ref KinesisDeliveryRole
+        - !Ref KinesisRole
 
   DeviceDataRule:
     Type: AWS::IoT::TopicRule
@@ -685,9 +719,9 @@ Resources:
         Actions:
           - Firehose:
               DeliveryStreamName: !Ref KinesisDeliveryStream
-              RoleArn: !Sub '${IoTTopicRuleRole.Arn}'
+              RoleArn: !Sub '${IoTRuleRole.Arn}'
 
-  IoTTopicRuleRole:
+  IoTRuleRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -714,7 +748,7 @@ Resources:
                 - firehose:PutRecordBatch
               Resource: '*'
 
-  IoTSitewiseMonitorRole:
+  SwMonitorRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -737,12 +771,13 @@ Resources:
               Action:
                 - iotsitewise:*
                 - sso-directory:*
+                - iam:PassRole
               Resource: "*"
   DevicesBucketResource:
     Type: AWS::S3::Bucket
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  GGResourceRoleResource:
+  GGResourceRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -1016,7 +1051,7 @@ Resources:
         Fn::Sub: ${EdgeDeviceID}
       RoleArn:
         Fn::GetAtt:
-          - GGResourceRoleResource
+          - GGResourceRole
           - Arn
   EdgeGroupVersion:
     Type: AWS::Greengrass::GroupVersion
@@ -1047,7 +1082,7 @@ Resources:
     Type: AWS::S3::Bucket
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  AMCLambdaRoleResource:
+  AMCLambdaRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZips
     Properties:
@@ -1068,12 +1103,31 @@ Resources:
                 Effect: Allow
                 Resource: arn:aws:logs:*:*:*
               - Action:
-                  - dynamodb:*
-                  - iot:*
-                  - iotsitewise:*
+                  - iot:Publish
+                  - iotsitewise:DescribeAssetModel
+                  - iotsitewise:CreateAssetModel
+                  - iotsitewise:ListAssetModels
+                  - iotsitewise:UpdateAssetModel
+                  - iotsitewise:DeleteAssetModel
+                  - iotsitewise:CreateAsset
+                  - iotsitewise:DescribeAsset
+                  - iotsitewise:UpdateAssetProperty
+                  - iotsitewise:ListAssets
+                  - iotsitewise:ListAssociatedAssets
+                  - iotsitewise:DeleteAsset
+                  - iotsitewise:DisassociateAssets
+                  - iotsitewise:AssociateAssets
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:Query
+                  - dynamodb:GetItem
                 Effect: Allow
                 Resource: "*"
-              - Action: s3:*
+              - Action:
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                  - s3:PutObject
+                  - s3:GetObject
                 Effect: Allow
                 Resource:
                   - Fn::GetAtt:
@@ -1106,7 +1160,7 @@ Resources:
       Handler: assetModelIngestion.handler
       Role:
         Fn::GetAtt:
-          - AMCLambdaRoleResource
+          - AMCLambdaRole
           - Arn
       Runtime: python3.7
       Environment:
@@ -1115,7 +1169,7 @@ Resources:
             Ref: AMCIncomingResource
       Timeout: 60
     DependsOn:
-      - AMCLambdaRoleResource
+      - AMCLambdaRole
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
     DependsOn: CopyZips
@@ -1183,7 +1237,7 @@ Resources:
       Handler: assetModelConverter.handler
       Role:
         Fn::GetAtt:
-          - AMCLambdaRoleResource
+          - AMCLambdaRole
           - Arn
       Runtime: python3.7
       Environment:
@@ -1198,7 +1252,7 @@ Resources:
             Ref: AMCDriver
       Timeout: 900
     DependsOn:
-      - AMCLambdaRoleResource
+      - AMCLambdaRole
 
   ApiHandlerRole:
     Type: AWS::IAM::Role
@@ -1400,14 +1454,10 @@ Resources:
       Policies:
         - PolicyDocument:
             Statement:
-              - Action: s3:*
+              - Action: s3:GetObject
                 Effect: Allow
-                Resource: "*"
-              - Action:
-                  - greengrass:ListGroups
-                  - greengrass:CreateDeployment
-                Effect: Allow
-                Resource: "*"
+                Resource: 
+                  - !Sub 'arn:aws:s3:::${DevicesBucketResource}*'
             Version: "2012-10-17"
           PolicyName: Ec2S3Access
   EdgeSecurityGroupResource:
@@ -1425,17 +1475,17 @@ Resources:
           FromPort: 22
           IpProtocol: tcp
           ToPort: 22
-        - CidrIp: 0.0.0.0/0
+        - CidrIp: !Sub ${UserPublicIP}/32
           Description: Allow world Ignition UI access
           FromPort: 8088
           IpProtocol: tcp
           ToPort: 8088
-        - CidrIp: 0.0.0.0/0
+        - CidrIp: !Ref PublicSubnet1CIDR
           Description: Allow world MQTT GG Access
           FromPort: 8883
           IpProtocol: tcp
           ToPort: 8883
-        - CidrIp: 0.0.0.0/0
+        - CidrIp: !Ref PublicSubnet1CIDR
           Description: Allow Ignition API access
           FromPort: 62541
           IpProtocol: tcp
@@ -1454,7 +1504,7 @@ Resources:
       Roles:
         - Ref: Ec2RoleResource
 
-  IMCDeploymentStackVirtual:
+  Virtual:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfVirtual
     DependsOn:
@@ -1477,15 +1527,15 @@ Resources:
         DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        EC2AMI: !Ref EC2AMI
+        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
         DeviceBucketRes: !Ref DevicesBucketResource
         LambdaZipsBucket: !Ref LambdaZipsBucket
-        LambdaExecRole: !GetAtt LambdaExecutionRole.Arn
+        LambdaExecRole: !GetAtt LambdaExecRole.Arn
         IMCBucketArn: !GetAtt imcs3bucket.Arn 
-        KinesisDelRoleArn: !GetAtt KinesisDeliveryRole.Arn
-        IoTTopicRuleRoleArn: !GetAtt IoTTopicRuleRole.Arn
+        KinesisDelRoleArn: !GetAtt KinesisRole.Arn
+        IoTTopicRuleRoleArn: !GetAtt IoTRuleRole.Arn
         AMCIncomingRes: !Ref AMCIncomingResource
         AMCIncomingResArn: !GetAtt AMCIncomingResource.Arn
         AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
@@ -1493,7 +1543,7 @@ Resources:
         IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
         EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
         GreengrassInstanceType: !Ref GreengrassInstanceType
-  IMCDeploymentStackPhysical:
+  Physical:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfPhysical
     DependsOn:
@@ -1516,15 +1566,14 @@ Resources:
         DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        EC2AMI: !Ref EC2AMI
+        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
-        EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
         DeviceBucketRes: !Ref DevicesBucketResource
         LambdaZipsBucket: !Ref LambdaZipsBucket
-        LambdaExecRole: !GetAtt LambdaExecutionRole.Arn
+        LambdaExecRole: !GetAtt LambdaExecRole.Arn
         IMCBucketArn: !GetAtt imcs3bucket.Arn 
-        KinesisDelRoleArn: !GetAtt KinesisDeliveryRole.Arn
-        IoTTopicRuleRoleArn: !GetAtt IoTTopicRuleRole.Arn
+        KinesisDelRoleArn: !GetAtt KinesisRole.Arn
+        IoTTopicRuleRoleArn: !GetAtt IoTRuleRole.Arn
         AMCIncomingRes: !Ref AMCIncomingResource
         AMCIncomingResArn: !GetAtt AMCIncomingResource.Arn
         AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
@@ -1542,7 +1591,7 @@ Outputs:
     Description: IMC S3 assets Bucket Name
     Value:
       Fn::GetAtt:
-        - IoTSitewiseMonitorRole
+        - SwMonitorRole
         - Arn
   MyStacksAccount:
     Value:

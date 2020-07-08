@@ -39,9 +39,6 @@ Parameters:
   EIIgnitionInstanceProfile:
     Description: Profile for the ignition instance that is running at the edge
     Type: String
-  EdgeSecGroupResourceGroupID:
-    Description: This is the group id for the security group for the edge instance
-    Type: 'List<AWS::EC2::SecurityGroup::Id>'
   DeviceBucketRes:
     Description: Information for the device bucket 
     Type: String
@@ -161,7 +158,7 @@ Resources:
       SourceAccount: !Ref "AWS::AccountId"
       SourceArn: !Ref AMCIncomingResArn
 
-  BucketNotificationsHandlerRoleResource:
+  BucketNotificationRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -189,7 +186,7 @@ Resources:
         Version: "2012-10-17"
       PolicyName: BucketNotificationsHandlerRoleDefaultPolicyResource
       Roles:
-        - Ref: BucketNotificationsHandlerRoleResource
+        - Ref: BucketNotificationRole
 
   BucketNotificationsHandlerResource:
     Type: AWS::Lambda::Function
@@ -265,13 +262,13 @@ Resources:
       Handler: index.handler
       Role:
         Fn::GetAtt:
-          - BucketNotificationsHandlerRoleResource
+          - BucketNotificationRole
           - Arn
       Runtime: nodejs10.x
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource
-      - BucketNotificationsHandlerRoleResource
+      - BucketNotificationRole
 
 Outputs: 
   DependenciesBucket: 
