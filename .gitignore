@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 
+taskcat_outputs/
 env/
 
 .DS_Store
