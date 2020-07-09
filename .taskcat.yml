@@ -36,38 +36,38 @@ tests:
     regions:
       - us-east-1
     
-  VOption2a:
-    parameters:
-      DeploymentType: Virtual
-      DeploymentOption: Option2a
-    regions:
-      - us-west-2
+  # VOption2a:
+  #   parameters:
+  #     DeploymentType: Virtual
+  #     DeploymentOption: Option2a
+  #   regions:
+  #     - us-west-2
 
-  VOption2b:
-    parameters:
-      DeploymentType: Virtual
-      DeploymentOption: Option2b
-    regions:
-      - eu-west-1
+  # VOption2b:
+  #   parameters:
+  #     DeploymentType: Virtual
+  #     DeploymentOption: Option2b
+  #   regions:
+  #     - eu-west-1
 
-  POption1:
-    parameters:
-      DeploymentType: Physical
-      DeploymentOption: Option1
-    regions:
-      - us-east-1
+  # POption1:
+  #   parameters:
+  #     DeploymentType: Physical
+  #     DeploymentOption: Option1
+  #   regions:
+  #     - us-east-1
 
-  POption2a:
-    parameters:
-      DeploymentType: Physical
-      DeploymentOption: Option2a
-    regions:
-      - us-west-2
+  # POption2a:
+  #   parameters:
+  #     DeploymentType: Physical
+  #     DeploymentOption: Option2a
+  #   regions:
+  #     - us-west-2
 
-  PGOption2b:
-    parameters:
-      DeploymentType: Physical
-      DeploymentOption: Option2b
-    regions:
-      - eu-west-1
+  # PGOption2b:
+  #   parameters:
+  #     DeploymentType: Physical
+  #     DeploymentOption: Option2b
+  #   regions:
+  #     - eu-west-1
 
