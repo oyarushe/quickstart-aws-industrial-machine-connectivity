@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'IMC Backend Quickstart (Please do not remove)'
+Description: Workload template to deploy AWS Quick Start for Industrial machine connectivity. (qs-1qtb0iud5)
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:

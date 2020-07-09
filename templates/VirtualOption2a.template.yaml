@@ -1,5 +1,5 @@
-Description: IMC Quickstart backend integration
 AWSTemplateFormatVersion: "2010-09-09"
+Description: IMC Quickstart backend integration. (qs-1qtb0iue2)
 Parameters:
   EdgeInstanceGreengrassInstanceProfile:
     Type: String

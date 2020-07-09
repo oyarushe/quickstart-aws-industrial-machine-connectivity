@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: IMC Quickstart
+Description: Template to deploy AWS Quick Start for Industrial machine connectivity. (qs-1qtb0iua4)
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
