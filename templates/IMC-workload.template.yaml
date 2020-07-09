@@ -1583,41 +1583,89 @@ Resources:
         GreengrassInstanceType: !Ref GreengrassInstanceType
 
 Outputs:
-  imcs3bucketname:
-    Description: IMC S3 Data Bucket Name
-    Value:
-      Ref: imcs3bucket
-  SitewiseRoleArn:
-    Description: IMC S3 assets Bucket Name
-    Value:
-      Fn::GetAtt:
-        - SwMonitorRole
-        - Arn
-  MyStacksAccount:
-    Value:
-      Ref: AWS::AccountId
-  StackData:
-    Value:
-      Fn::Join:
-        - ""
-        - - '{"S3Buckets": {"DevicesBucket": "'
-          - Ref: DevicesBucketResource
-          - '", "AMCIncomingBucket": "'
-          - Ref: AMCIncomingResource
-          - '", "AMCOutputBucket": "'
-          - Ref: AMCOutputResource
-          - '"}}'      
+  IgnitionURL:
+    Condition: IfVirtual
+    Value: !GetAtt 'Virtual.Outputs.IgnitionURL'
+  DependenciesBucket:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.DependenciesBucket'
+  BootupScriptGreenfieldOption1:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.BootupScriptGreenfieldOption1'
+  BootupScriptGreenfieldOption2a:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.BootupScriptGreenfieldOption2a'
+  BootupScriptGreenfieldOption2b:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.BootupScriptGreenfieldOption2b'
+  BootupScriptBrownfieldAllOptions:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.BootupScriptBrownfieldAllOptions'
+  DeviceBucket:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.DeviceBucket'
+  DeviceKeyGreengrass:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.DeviceKeyGreengrass'
+  DeviceKeyAwareDevice:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.DeviceKeyAwareDevice'
   RestAPIId:
-    Value:
-      Ref: RestAPI
-  APIHandlerName:
-    Value:
-      Ref: APIHandler
-  APIHandlerArn:
-    Value:
-      Fn::GetAtt:
-      - APIHandler
-      - Arn
-  EndpointURL:
-    Value:
-      Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/api/
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.RestAPIId'
+  Region:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.Region'
+  EdgeDeviceID:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.EdgeDeviceID'
+  IoTEndpoint:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.IoTEndpoint'
+  FullScriptParamsGreenfield1and2a:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.FullScriptParamsGreenfield1and2a'
+  FullScriptParamsGreenfield2b:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.FullScriptParamsGreenfield2b'
+  FullScriptParamsBrownField:
+    Condition: IfPhysical
+    Value: !GetAtt 'Physical.Outputs.FullScriptParamsBrownField'
+  # imcs3bucketname:
+  #   Description: IMC S3 Data Bucket Name
+  #   Value:
+  #     Ref: imcs3bucket
+  # SitewiseRoleArn:
+  #   Description: IMC S3 assets Bucket Name
+  #   Value:
+  #     Fn::GetAtt:
+  #       - SwMonitorRole
+  #       - Arn
+  # MyStacksAccount:
+  #   Value:
+  #     Ref: AWS::AccountId
+  # StackData:
+  #   Value:
+  #     Fn::Join:
+  #       - ""
+  #       - - '{"S3Buckets": {"DevicesBucket": "'
+  #         - Ref: DevicesBucketResource
+  #         - '", "AMCIncomingBucket": "'
+  #         - Ref: AMCIncomingResource
+  #         - '", "AMCOutputBucket": "'
+  #         - Ref: AMCOutputResource
+  #         - '"}}'      
+  # RestAPIId:
+  #   Value:
+  #     Ref: RestAPI
+  # APIHandlerName:
+  #   Value:
+  #     Ref: APIHandler
+  # APIHandlerArn:
+  #   Value:
+  #     Fn::GetAtt:
+  #     - APIHandler
+  #     - Arn
+  # EndpointURL:
+  #   Value:
+  #     Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/api/
