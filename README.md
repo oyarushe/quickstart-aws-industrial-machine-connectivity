@@ -54,7 +54,7 @@ In addition to the Virtual/Physical edge hardware distinction, the IMC kit suppo
 
 - Option 1: Edge Software Application OPCUA Server -> AWS IoT SiteWise
     - In this variant, we have the AWS Greengrass SiteWise Connector configured to connect to the Edge Software Application OPCUA Server. All telemetry data will flow directly into AWS IoT SiteWise.
-- Option 2a: Edge Software Application Server -> AWS IoT Core\
+- Option 2a: Edge Software Application Server -> AWS IoT Core
     - In this variant, the Edge Software Application Server has some kind functionality to connect to IoT Core via MQTT. All telemetry data is pushed from the Edge Software Application Server to AWS IoT Core, and from there usually pushed to S3 or a similar data lake for processing.
 - Option 2b: Edge Software Application Server -> AWS Greengrass Core -> IoT Core -> S3
     - Option 2b is almost identical to option 2a, except we instead have the Edge Software Application Server pushing MQTT data messages to AWS Greengrass Core first, and then those messages are forwarded on to AWS IoT Core.
