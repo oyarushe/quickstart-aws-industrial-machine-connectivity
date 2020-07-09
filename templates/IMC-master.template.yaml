@@ -163,6 +163,12 @@ Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
     - 'aws-quickstart'
+  IfPhysical: !Equals
+    - !Ref DeploymentType
+    - 'Physical'
+  IfVirtual: !Equals
+    - !Ref DeploymentType
+    - 'Virtual'
 
 Resources:
   VPC:
@@ -217,3 +223,53 @@ Resources:
         AMCDriver: !Ref AMCDriver
         UserPublicIP: !Ref UserPublicIP
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+
+Outputs:
+  IgnitionURL:
+    Condition: IfVirtual
+    Value: !GetAtt 'Workload.Outputs.IgnitionURL'
+  DependenciesBucket:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DependenciesBucket'
+  BootupScriptGreenfieldOption1:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptGreenfieldOption1'
+  BootupScriptGreenfieldOption2a:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptGreenfieldOption2a'
+  BootupScriptGreenfieldOption2b:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptGreenfieldOption2b'
+  BootupScriptBrownfieldAllOptions:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptBrownfieldAllOptions'
+  DeviceBucket:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DeviceBucket'
+  DeviceKeyGreengrass:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DeviceKeyGreengrass'
+  DeviceKeyAwareDevice:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DeviceKeyAwareDevice'
+  RestAPIId:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.RestAPIId'
+  Region:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.Region'
+  EdgeDeviceID:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.EdgeDeviceID'
+  IoTEndpoint:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.IoTEndpoint'
+  FullScriptParamsGreenfield1and2a:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.FullScriptParamsGreenfield1and2a'
+  FullScriptParamsGreenfield2b:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.FullScriptParamsGreenfield2b'
+  FullScriptParamsBrownField:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.FullScriptParamsBrownField'
