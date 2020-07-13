@@ -317,6 +317,117 @@ Resources:
           }
                 MemorySize: 128
                 Timeout: 3
+  StackCleanup:
+    Type: Custom::StackCleanup
+    DependsOn:
+      - StackCleanupRole
+      - StackCleanupFunction
+    Properties:
+      ServiceToken: !GetAtt 'StackCleanupFunction.Arn'
+      buckets: 
+        - !Ref imcs3bucket
+        - !Ref DevicesBucketResource
+        - !Ref AMCIncomingResource
+        - !Ref AMCOutputResource
+        - !Ref LambdaZipsBucket
+      group_name: !Ref EdgeDeviceID
+
+  StackCleanupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies:
+        - PolicyName: stack-cleanup
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - greengrass:ListGroups
+                  - greengrass:ResetDeployments
+                  - greengrass:GetGroup
+                  - iot:UpdateThingShadow
+                  - s3:*
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+  StackCleanupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Cleans up the required resource to delete the stack
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt 'StackCleanupRole.Arn'
+      Timeout: 240
+      InlineCode: |
+        import os
+        import json
+        import logging
+        import threading
+        import boto3
+        import cfnresponse
+        
+        s3 = boto3.resource("s3")
+        greengrass = boto3.client("greengrass")
+        
+        def clear_s3_buckets(buckets):
+
+            for bucket in buckets:
+                bucket_resource = s3.Bucket(bucket)
+                bucket_resource.objects.all().delete()
+
+        def reset_greengrass_deployment(group_name):
+            groups = greengrass.list_groups()
+            if 'Groups' in groups:
+                payload = groups['Groups']
+                while 'NextToken' in groups:
+                    groups = greenrass.list_groups(
+                        NextToken = groups['NextToken'])
+                    payload.extend(groups['Groups'])
+            for group in payload:
+                if group['Name'] == group_name:
+                    group_id = group['Id']
+                    break
+            response = greengrass.reset_deployments(
+                Force = True,
+                GroupId = group_id)
+        
+        def timeout(event, context):
+            logging.error('Execution is about to time out, sending failure response to CloudFormation')
+            cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+        
+        
+        def handler(event, context):
+            # make sure we send a failure to CloudFormation if the function
+            # is going to timeout
+            timer = threading.Timer((context.get_remaining_time_in_millis()
+                      / 1000.00) - 0.5, timeout, args=[event, context])
+            timer.start()
+
+            print('Received event: %s' % json.dumps(event))
+            status = cfnresponse.SUCCESS
+            try:
+                if event['RequestType'] == 'Delete':
+                    group_name = event['ResourceProperties']['group_name']
+                    reset_greengrass_deployment(group_name)
+                    buckets = event['ResourceProperties']['buckets']
+                    clear_s3_buckets(buckets)
+            except Exception as e:
+                logging.error('Exception: %s' % e, exc_info=True)
+                status = cfnresponse.FAILED
+            finally:
+                timer.cancel()
+                cfnresponse.send(event, context, status, {}, None)
   IoTEndpointRole:
     Type: AWS::IAM::Role
     Properties:
