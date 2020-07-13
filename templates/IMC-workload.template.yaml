@@ -593,7 +593,6 @@ Resources:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                # Action: "*"
                 Action:
                   - s3:*
                   - quicksight:*
@@ -602,29 +601,6 @@ Resources:
                   - logs:*
                   - sso:*
                 Resource: "*"
-                # ADDING
-              # - Effect: Allow
-              #   Action:
-              #     - s3:PutObject
-              #   Resource: 
-              #     - !Sub 'arn:aws:s3:::${imcs3bucket}*'
-              # - Effect: Allow
-              #   Action:
-              #     - quicksight:*
-              #   Resource:
-              #     - "*"
-              # - Effect: Allow
-              #   Action: 
-              #     - iotsitewise:ListAssociatedAssets
-              #     - iotsitewise:DescribeAsset
-              #     - iotsitewise:ListAssets
-              #     - iotsitewise:DescribePortal
-              #     - iotsitewise:CreatePortal
-              #     - iotsitewise:CreateProject
-              #     - iotsitewise:BatchAssociateProjectAssets
-              #     - iotsitewise:CreateDashboard
-              #   Resource:
-              #     - "*"
   quicksight:
     DependsOn: CopyZips
     Type: AWS::Lambda::Function
