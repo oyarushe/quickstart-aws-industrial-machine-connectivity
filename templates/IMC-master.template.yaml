@@ -15,6 +15,7 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
           - QSS3BucketRegion
+          - SitewiseMonitorEmail
       - Label:
           default: Edge Deployment Configuration
         Parameters:
@@ -58,9 +59,15 @@ Metadata:
         default: AssetModelConverter driver
       UserPublicIP:
         default: Your public IP address  
+      SitewiseMonitorEmail:
+        default: Email address for the SiteWise Portal administrator
 
   cfn-lint: { config: { ignore_checks: [E9007] } }
 Parameters:
+  SitewiseMonitorEmail:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address
+    Type: String
   PublicSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -223,6 +230,7 @@ Resources:
         AMCDriver: !Ref AMCDriver
         UserPublicIP: !Ref UserPublicIP
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+        SitewiseMonitorEmail: !Ref SitewiseMonitorEmail
 
 Outputs:
   IgnitionURL:

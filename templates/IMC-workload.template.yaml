@@ -27,6 +27,7 @@ Metadata:
           - QSS3BucketRegion
           - AMCDriver
           - UserPublicIP
+          - SitewiseMonitorEmail
     ParameterLabels:
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
@@ -56,8 +57,14 @@ Metadata:
         default: Your public IP address  
       PublicSubnet1CIDR:
         default: CIDR range for Ignition/Greengrass access
+      SitewiseMonitorEmail:
+        default: Email address for the SiteWise Portal administrator
 
 Parameters:
+  SitewiseMonitorEmail:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address
+    Type: String
   PublicSubnet1CIDR: 
     Type: String
     Description: We will narrow this down after the stack deploys.
@@ -600,6 +607,7 @@ Resources:
                   - lambda:*
                   - logs:*
                   - sso:*
+                  - iam:PassRole
                 Resource: "*"
   quicksight:
     DependsOn: CopyZips
@@ -678,6 +686,8 @@ Resources:
       Description: Invoke a function during stack creation.
       Environment:
         Variables:
+          supportEmail:
+            Ref: SitewiseMonitorEmail
           imcdatabucket:
             Ref: imcs3bucket
           imcmonitorrole:
@@ -763,8 +773,6 @@ Resources:
     Type: AWS::S3::Bucket
     DependsOn: CopyZips
     Properties:
-      VersioningConfiguration:
-        Status: Enabled
 
   KinesisRole:
     Type: AWS::IAM::Role
@@ -1718,41 +1726,3 @@ Outputs:
   FullScriptParamsBrownField:
     Condition: IfPhysical
     Value: !GetAtt 'Physical.Outputs.FullScriptParamsBrownField'
-  # imcs3bucketname:
-  #   Description: IMC S3 Data Bucket Name
-  #   Value:
-  #     Ref: imcs3bucket
-  # SitewiseRoleArn:
-  #   Description: IMC S3 assets Bucket Name
-  #   Value:
-  #     Fn::GetAtt:
-  #       - SwMonitorRole
-  #       - Arn
-  # MyStacksAccount:
-  #   Value:
-  #     Ref: AWS::AccountId
-  # StackData:
-  #   Value:
-  #     Fn::Join:
-  #       - ""
-  #       - - '{"S3Buckets": {"DevicesBucket": "'
-  #         - Ref: DevicesBucketResource
-  #         - '", "AMCIncomingBucket": "'
-  #         - Ref: AMCIncomingResource
-  #         - '", "AMCOutputBucket": "'
-  #         - Ref: AMCOutputResource
-  #         - '"}}'      
-  # RestAPIId:
-  #   Value:
-  #     Ref: RestAPI
-  # APIHandlerName:
-  #   Value:
-  #     Ref: APIHandler
-  # APIHandlerArn:
-  #   Value:
-  #     Fn::GetAtt:
-  #     - APIHandler
-  #     - Arn
-  # EndpointURL:
-  #   Value:
-  #     Fn::Sub: https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/api/
