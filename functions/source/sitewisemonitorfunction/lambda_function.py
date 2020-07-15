@@ -9,6 +9,7 @@ import os
 
 def createSitewiseMonitorDashboard(boto3Session, sitewiseMonitorRole):
     client = boto3Session.client('iotsitewise')
+    supportEmail= os.environ.get('supportEmail')
 
     sitewiseMonitorAssets = []
 
@@ -87,7 +88,7 @@ def createSitewiseMonitorDashboard(boto3Session, sitewiseMonitorRole):
 
     response = client.create_portal(
         portalName='imc_sitewise_portal',
-        portalContactEmail='ravi@tensoriot.com',
+        portalContactEmail=supportEmail,
         roleArn=sitewiseMonitorRole
     )
 
