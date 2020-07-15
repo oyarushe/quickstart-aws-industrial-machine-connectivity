@@ -1,6 +1,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Template to deploy AWS Quick Start for Industrial machine connectivity. (qs-1qtb0iua4)
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch into a new VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -29,7 +31,7 @@ Metadata:
           - GreengrassInstanceType
           - IgnitionInstanceType
           - AMCDriver
-          - UserPublicIP          
+          - UserPublicIP
     ParameterLabels:
       QSS3BucketRegion:
         default: Quick Start S3 bucket region
