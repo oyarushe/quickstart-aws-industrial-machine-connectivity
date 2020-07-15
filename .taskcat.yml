@@ -26,6 +26,7 @@ project:
       QSS3BucketRegion: $[taskcat_current_region]
       UserPublicIP: '205.251.233.48' # change
       EC2KeyPairName: sshvans # change
+      SitewiseMonitorEmail: test@example.com
   template: templates/IMC-master.template.yaml
 
 tests:
