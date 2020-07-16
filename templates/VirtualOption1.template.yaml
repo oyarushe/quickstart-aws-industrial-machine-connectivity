@@ -6,7 +6,7 @@ Parameters:
     Description: The instance profile for the EC2 instance running Greengrass 
   GreengrassInstanceType:
     Type: String
-    Default: Instance type for for the EC2 instance running Greengrass 
+    Description: Instance type for for the EC2 instance running Greengrass 
   IoTEndpoint: 
     Type: String
     Description: IoT Endpoint, retrieved from custom resource lambda in workload template
@@ -45,33 +45,6 @@ Parameters:
   DeviceBucketRes:
     Description: Information for the device bucket 
     Type: String
-  QSS3BucketRegion: 
-    Description: Region for the Quickstart bucket
-    Type: String
-  QSS3BucketName:
-    Description: Name of the Quickstart Bucket
-    Type: String
-  QSS3KeyPrefix: 
-    Description: Quickstart key prefix for S3 Quickstart bucket
-    Type: String
-  VpcID:
-    Description: ID for the VpcID
-    Type: String
-  LambdaZipsBucket:
-    Description: Bucket location of the project zip files
-    Type: String
-  LambdaExecRole:
-    Description: IAM Role policy for project lambdas
-    Type: String
-  IMCBucketArn:
-    Description: ARN of the projects IMC Bucket
-    Type: String
-  KinesisDelRoleArn:
-    Description: ARN of the IAM role for Kinesis Delivery
-    Type: String
-  IoTTopicRuleRoleArn:
-    Description: ARN for the projects IoT Topic rule 
-    Type: String
   AMCIncomingRes:
     Description: Reference to the Assest Model Incoming Resource
     Type: String
@@ -83,6 +56,24 @@ Parameters:
     Type: String
   RestAPIId:
     Description: ID for the Rest API
+    Type: String
+  IMCBucketArn:
+    Description: ARN of the projects IMC Bucket
+    Type: String
+  QSS3KeyPrefix: 
+    Description: Quickstart key prefix for S3 Quickstart bucket
+    Type: String
+  LambdaZipsBucket:
+    Description: Bucket location of the project zip files
+    Type: String
+  LambdaExecRole:
+    Description: IAM Role policy for project lambdas
+    Type: String
+  IoTTopicRuleRoleArn:
+    Description: ARN for the projects IoT Topic rule 
+    Type: String
+  KinesisDelRoleArn:
+    Description: ARN of the IAM role for Kinesis Delivery
     Type: String
 
 Resources:
@@ -221,7 +212,7 @@ Resources:
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource
-      - BucketNotificationRole
+
   EdgeInstanceGreengrassResource:
     Type: AWS::EC2::Instance
     Properties:
