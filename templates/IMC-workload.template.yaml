@@ -774,7 +774,6 @@ Resources:
   imcs3bucket:
     Type: AWS::S3::Bucket
     DependsOn: CopyZips
-    Properties:
 
   KinesisRole:
     Type: AWS::IAM::Role
