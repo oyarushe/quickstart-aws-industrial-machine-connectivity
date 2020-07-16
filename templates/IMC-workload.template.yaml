@@ -1614,10 +1614,7 @@ Resources:
             - !Ref 'QSS3BucketRegion'
       Parameters:
         EC2Subnet: !Ref EC2Subnet
-        QSS3BucketRegion: !Ref QSS3BucketRegion
-        QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        VpcID: !Ref VpcId
         EdgeDeviceID: !Ref EdgeDeviceID
         DeploymentType: !Ref DeploymentType
         DeploymentOption: !Ref DeploymentOption
@@ -1658,18 +1655,8 @@ Resources:
             - !Ref 'AWS::Region'
             - !Ref 'QSS3BucketRegion'
       Parameters:
-        EC2Subnet: !Ref EC2Subnet
-        QSS3BucketRegion: !Ref QSS3BucketRegion
-        QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        VpcID: !Ref VpcId
         EdgeDeviceID: !Ref EdgeDeviceID
-        DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
-        EC2KeyPairName: !Ref EC2KeyPairName
-        IgnitionInstanceType: !Ref IgnitionInstanceType
-        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
-        EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         DeviceBucketRes: !Ref DevicesBucketResource
         LambdaZipsBucket: !Ref LambdaZipsBucket
         LambdaExecRole: !GetAtt LambdaExecRole.Arn
@@ -1681,8 +1668,6 @@ Resources:
         AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
         RestAPIId: !Ref RestAPI
         IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
-        EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
-        GreengrassInstanceType: !Ref GreengrassInstanceType
 
 Outputs:
   IgnitionURL:

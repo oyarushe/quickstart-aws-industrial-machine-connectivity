@@ -57,6 +57,24 @@ Parameters:
   RestAPIId:
     Description: ID for the Rest API
     Type: String
+  IMCBucketArn:
+    Description: ARN of the projects IMC Bucket
+    Type: String
+  QSS3KeyPrefix: 
+    Description: Quickstart key prefix for S3 Quickstart bucket
+    Type: String
+  LambdaZipsBucket:
+    Description: Bucket location of the project zip files
+    Type: String
+  LambdaExecRole:
+    Description: IAM Role policy for project lambdas
+    Type: String
+  IoTTopicRuleRoleArn:
+    Description: ARN for the projects IoT Topic rule 
+    Type: String
+  KinesisDelRoleArn:
+    Description: ARN of the IAM role for Kinesis Delivery
+    Type: String
 
 Resources:
   AMCIncomingNotificationsResource:
