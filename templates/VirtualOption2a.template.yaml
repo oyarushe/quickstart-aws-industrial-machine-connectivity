@@ -6,7 +6,7 @@ Parameters:
     Description: The instance profile for the EC2 instance running Greengrass 
   GreengrassInstanceType:
     Type: String
-    Default: Instance type for for the EC2 instance running Greengrass 
+    Description: Instance type for for the EC2 instance running Greengrass 
   IoTEndpoint: 
     Type: String
     Description: IoT Endpoint, retrieved from custom resource lambda in workload template
@@ -45,17 +45,8 @@ Parameters:
   DeviceBucketRes:
     Description: Information for the device bucket 
     Type: String
-  QSS3BucketRegion: 
-    Description: Region for the Quickstart bucket
-    Type: String
-  QSS3BucketName:
-    Description: Name of the Quickstart Bucket
-    Type: String
   QSS3KeyPrefix: 
     Description: Quickstart key prefix for S3 Quickstart bucket
-    Type: String
-  VpcID:
-    Description: ID for the VpcID
     Type: String
   LambdaZipsBucket:
     Description: Bucket location of the project zip files
@@ -98,36 +89,6 @@ Resources:
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/MQTTDataProcess/mqttdataprocess.js.zip'
       Description: Invoke a function during stack creation.
 
-  KinesisDeliveryStreamMQTT:
-    Type: AWS::KinesisFirehose::DeliveryStream
-    Properties:
-      ExtendedS3DestinationConfiguration:
-        BucketARN: !Ref IMCBucketArn
-        BufferingHints:
-          IntervalInSeconds: '60'
-          SizeInMBs: '50'
-        CompressionFormat: UNCOMPRESSED
-        Prefix: mqtt/
-        ProcessingConfiguration:
-          Enabled: 'true'
-          Processors:
-            - Parameters:
-                - ParameterName: LambdaArn
-                  ParameterValue: !GetAtt mqttProcessLambda.Arn 
-              Type: Lambda
-        RoleARN: !Ref KinesisDelRoleArn
-
-  DeviceDataRuleMQTT:
-    Type: AWS::IoT::TopicRule
-    Properties:
-      TopicRulePayload:
-        RuleDisabled: false
-        Sql: SELECT * FROM 'spBv1.0/AWS Smart Factory/DDATA/#'
-        Actions:
-          - Firehose:
-              DeliveryStreamName: !Ref KinesisDeliveryStreamMQTT
-              RoleArn: !Ref IoTTopicRuleRoleArn
-            
   MQTTLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -271,41 +232,25 @@ Resources:
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource
-      - BucketNotificationRole
-  mqttProcessLambda:
-    Type: AWS::Lambda::Function
-    Properties:
-      Runtime: nodejs12.x
-      Role: !Ref LambdaExecRole
-      Handler: mqttdataprocess.handler
-      Timeout: 120
-      Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
-        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/MQTTDataProcess/mqttdataprocess.js.zip'
-      Description: Invoke a function during stack creation.
-
+  
   KinesisDeliveryStreamMQTT:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
       ExtendedS3DestinationConfiguration:
         BucketARN: !Ref IMCBucketArn
         BufferingHints:
-          IntervalInSeconds: "60"
-          SizeInMBs: "50"
+          IntervalInSeconds: 60
+          SizeInMBs: 50
         CompressionFormat: UNCOMPRESSED
         Prefix: mqtt/
         ProcessingConfiguration:
-          Enabled: "true"
+          Enabled: true
           Processors:
             - Parameters:
                 - ParameterName: LambdaArn
-                  ParameterValue:
-                    Fn::GetAtt:
-                      - mqttProcessLambda
-                      - Arn
+                  ParameterValue: !GetAtt mqttProcessLambda.Arn 
               Type: Lambda
         RoleARN: !Ref KinesisDelRoleArn
-
   DeviceDataRuleMQTT:
     Type: AWS::IoT::TopicRule
     Properties:
