@@ -1,58 +1,17 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'IMC Backend Quickstart -- Physical (Please do not remove). (qs-1qtb0iudi)'
 Parameters:
-  EdgeInstanceGreengrassInstanceProfile:
-    Type: String
-    Description: The instance profile for the EC2 instance running Greengrass 
-  GreengrassInstanceType:
-    Type: String
-    Default: Instance type for for the EC2 instance running Greengrass 
   IoTEndpoint: 
     Type: String
     Description: IoT Endpoint, retrieved from custom resource lambda in workload template
   EdgeDeviceID:
     Type: String
     Description: Name for the edge device. 
-  EC2AMI:
-    Description: The AMI that the EC2 instances will be using
-    Type: AWS::EC2::Image::Id
-  IgnitionInstanceType:
-    Description: Amazon EC2 instance type for the EC2 instances.
-    Type: String
-  EC2KeyPairName:
-    Description: Name of an existing EC2 key pair. All instances will launch with
-      this key pair.
-    Type: AWS::EC2::KeyPair::KeyName
-  EC2Subnet:
-    ConstraintDescription: Must be a valid subnet ID 
-    Description: This is the subnit ID where the EC2(s) will be deployed
-    Type: AWS::EC2::Subnet::Id
-  DeploymentType:
-    Description: Type of edge deployment
-    Type: String
-  DeploymentOption:
-    Description: They further defined deployment type
-      --- Option1 (or OPC-UA Path via SiteWise)
-      --- Option 2a (MQTT Ignition --> Iot Core)
-      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
-    Type: String
-  EIIgnitionInstanceProfile:
-    Description: Profile for the ignition instance that is running at the edge
-    Type: String
   DeviceBucketRes:
     Description: Information for the device bucket 
     Type: String
-  QSS3BucketRegion: 
-    Description: Region for the Quickstart bucket
-    Type: String
-  QSS3BucketName:
-    Description: Name of the Quickstart Bucket
-    Type: String
   QSS3KeyPrefix: 
     Description: Quickstart key prefix for S3 Quickstart bucket
-    Type: String
-  VpcID:
-    Description: ID for the VpcID
     Type: String
   LambdaZipsBucket:
     Description: Bucket location of the project zip files
@@ -268,7 +227,6 @@ Resources:
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource
-      - BucketNotificationRole
 
 Outputs: 
   DependenciesBucket: 
