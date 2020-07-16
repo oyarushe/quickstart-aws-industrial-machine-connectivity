@@ -165,7 +165,7 @@ Parameters:
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
-    - 'test-quickstart'
+    - 'aws-quickstart'
   IfPhysical: !Equals
     - !Ref DeploymentType
     - 'Physical'
@@ -758,12 +758,12 @@ Resources:
           - - 'arn:aws:s3:::'
             - !Ref imcs3bucket
         BufferingHints:
-          IntervalInSeconds: '60'
-          SizeInMBs: '50'
+          IntervalInSeconds: 60
+          SizeInMBs: 50
         CompressionFormat: UNCOMPRESSED
         Prefix: firehose/
         ProcessingConfiguration:
-          Enabled: 'true'
+          Enabled: true
           Processors:
             - Parameters:
                 - ParameterName: LambdaArn
@@ -978,8 +978,7 @@ Resources:
         Variables:
           DevicesBucket: !Ref DevicesBucketResource
       Timeout: 60
-    DependsOn:
-      - LambdaExecRoleResource
+
   ManageGreengrassDefault:
     Type: Custom::ManageGreengrass
     DependsOn: CopyZips
@@ -1264,8 +1263,7 @@ Resources:
           IncomingBucket:
             Ref: AMCIncomingResource
       Timeout: 60
-    DependsOn:
-      - AMCLambdaRole
+
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
     DependsOn: CopyZips
@@ -1347,8 +1345,6 @@ Resources:
           DriverName:
             Ref: AMCDriver
       Timeout: 900
-    DependsOn:
-      - AMCLambdaRole
 
   ApiHandlerRole:
     Type: AWS::IAM::Role
@@ -1610,8 +1606,15 @@ Resources:
       - IoTEndpoint
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.amazonaws.com/${QSS3KeyPrefix}templates/${DeploymentType}${DeploymentOption}.template.yaml
-        - S3Bucket: !Ref 'QSS3BucketName'
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/${DeploymentType}${DeploymentOption}.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
       Parameters:
         EC2Subnet: !Ref EC2Subnet
         QSS3BucketRegion: !Ref QSS3BucketRegion
@@ -1649,8 +1652,15 @@ Resources:
       - IoTEndpoint
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.amazonaws.com/${QSS3KeyPrefix}templates/Physical.template.yaml
-        - S3Bucket: !Ref 'QSS3BucketName'
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/Physical.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
       Parameters:
         EC2Subnet: !Ref EC2Subnet
         QSS3BucketRegion: !Ref QSS3BucketRegion
