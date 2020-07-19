@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Example Product Name on the AWS Cloud</title>
+<title>Industrial machine connectivity on the AWS Cloud</title>
 <style>
 
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -771,7 +771,7 @@ table p {
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_overview">Overview</a></li>
-<li><a href="#_example_product_name_on_aws">Example Product Name on AWS</a></li>
+<li><a href="#_industrial_machine_connectivity_on_aws">Industrial machine connectivity on AWS</a></li>
 <li><a href="#_cost">Cost</a></li>
 <li><a href="#_software_licenses">Software licenses</a></li>
 <li><a href="#_architecture">Architecture</a></li>
@@ -790,10 +790,7 @@ table p {
 <li><a href="#_launch_into_a_new_vpc">Launch into a new VPC</a></li>
 </ul>
 </li>
-<li><a href="#_test_the_deployment">Test the deployment</a></li>
 <li><a href="#_post_deployment_steps">Post deployment steps</a></li>
-<li><a href="#_best_practices_for_using_example_product_name_on_aws">Best practices for using Example Product Name on AWS</a></li>
-<li><a href="#_security">Security</a></li>
 <li><a href="#_other_useful_information">Other useful information</a></li>
 <li><a href="#_faq">FAQ</a></li>
 <li><a href="#_troubleshooting">Troubleshooting</a></li>
@@ -810,17 +807,17 @@ table p {
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
-<h2 id="_example_product_name_on_the_aws_cloud" class="discrete text-center">Example Product Name on the AWS Cloud</h2>
+<h2 id="_industrial_machine_connectivity_on_the_aws_cloud" class="discrete text-center">Industrial machine connectivity on the AWS Cloud</h2>
 <h2 id="_quick_start_reference_deployment" class="discrete text-left text-center">Quick Start Reference Deployment</h2>
 <div class="imageblock text-center">
 <div class="content">
-<img src="https://aws-quickstart.s3.amazonaws.com/quickstart-documentation-base/docs/boilerplate/.images/aws-quickstart-graphic.png" alt="QS" width="80" height="80">
+<img src="https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/docs/boilerplate/.images/aws-quickstart-graphic.png" alt="QS" width="80" height="80">
 </div>
 </div>
 <div class="paragraph text-center">
-<p><strong>May, 2020</strong><br>
-<em>John Doe and Jane Doe - Example Company Name, Ltd.</em><br>
-<em>Jim Smith - AWS Global Partner SA, AWS + Joe Jones - Technical Product Manager, AWS</em></p>
+<p><strong>July, 2020</strong><br>
+<em></em><br>
+<em>Thomas Cummins and Shivansh Singh, AWS</em></p>
 </div>
 <div class="admonitionblock tip text-left">
 <table>
@@ -829,14 +826,14 @@ table p {
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Visit our <a href="https://github.com/aws-quickstart/quickstart-documentation-base" target="_blank" rel="noopener">GitHub repository</a> for source files and to post feedback,
+Visit our <a href="https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity" target="_blank" rel="noopener">GitHub repository</a> for source files and to post feedback,
 report bugs, or submit feature ideas for this Quick Start.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph text-left">
-<p>This Quick Start was created by Example Company Name, Ltd. in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
+<p>This Quick Start was created by  in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
 </div>
 </div>
 </div>
@@ -844,10 +841,10 @@ report bugs, or submit feature ideas for this Quick Start.
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This Quick Start reference deployment guide provides step-by-step instructions for deploying Example Product Name on the AWS Cloud.</p>
+<p>This Quick Start reference deployment guide provides step-by-step instructions for deploying Industrial machine connectivity on the AWS Cloud.</p>
 </div>
 <div class="paragraph">
-<p>This Quick Start is for users who &lt;target audience and usage scenario&gt;</p>
+<p>This Quick Start is for organizations who wants to see real business value from Industrial IoT solutions, by bringing data from their industrial assets to AWS in a simple and structured way.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -866,10 +863,45 @@ collaborated with AWS on the content of the Quick Start.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_product_name_on_aws">Example Product Name on AWS</h2>
+<h2 id="_industrial_machine_connectivity_on_aws">Industrial machine connectivity on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>&lt;Describe how the software works on AWS.&gt;</p>
+<p>The IMC framework is designed to enable customers and partners to get data from their assets to AWS in a simple, structured process so they can rapidly realize the business value that is derived from that data. The IMC Quick Start has the capability to convert customers’ existing asset hierarchy definitions (i.e. factory, lines, machines, tags, etc.) defined in partner edge applications like Inductive Automation’s Ignition Server or PTC’s KEPServerEX to the equivalent asset hierarchy within AWS IoT SiteWise. This capability is enabled by the Asset Model Converter (AMC), a component of the IMC architecture. With asset hierarchies defined within IoT SiteWise, customer data can be ingested continuously to the AWS cloud and all the pertinent metadata is readily accessible for applications that will use that data to deliver business value, such as asset condition monitoring dashboards.</p>
+</div>
+<div class="paragraph">
+<p>With multiple ingestion patterns from edge to the cloud, customers and partners may choose the IMC Framework path that suits the needs of their specific use case. The first path is via the IoT SiteWise Connector running in an AWS IoT Greengrass core (via OPC-UA) to IoT SiteWise in the cloud. The second path is sending data directly from edge applications (i.e. Ignition Server with Cirrus Link MQTT Transmission module) to AWS IoT Core via MQTT. The third path is sending data from the edge application (i.e. Ignition Server or KEPServerEX) to IoT Greengrass where it can then be processed/filtered by customer-defined lambda functions, used for local machine learning model inference or consumed by a containerized Docker application processing. Raw and processed data can then be transmitted to the AWS cloud through a number of different paths including IoT Core, Kinesis Data Streams, or AWS IoT Analytics. These edge processing capabilities are not part of the IMC kit and partners/customers can add those components as needed.</p>
+</div>
+<div class="paragraph">
+<p>The IMC kit includes the software and a list of hardware required to connect a customer&#8217;s assets to the cloud and visualize their data. The primary objective of the framework is to enable partners to deliver a fast, inexpensive proof of value so that the customer can see real business value from the IIoT solution and will want to develop and deploy a complete production solution that addresses all of their critical use cases. One example of a proof of value deployment a partner could deliver would be helping enable a customer to visualize near real-time operational metrics and perform Root Cause Analysis (RCA) of their assets when a line goes down. There are two deployment modes of the framework: virtual (for evaluation and training) and physical (for real customer deployments). The CloudFormation templates provision the  cloud resources and generate the scripts required to bootstrap physical edge devices.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="images/imc_framework.png"><img src="images/imc_framework.png" alt="IMC Framework" width="648" height="439"></a>
+</div>
+<div class="title">Figure 1. IMC Framework</div>
+</div>
+<div class="paragraph">
+<p>The Industrial Machine Connectivity (IMC) kit enables connecting industrial assets into AWS cloud services along with visualizing data using AWS IoT SiteWise Monitor and QuickSight dashboards. This kit integrates with AWS IoT Partner edge software such as Inductive Automation’s Ignition Server and PTC’s KEPServerEX. These partner edge software applications handle the industrial protocol translation from the PLCs, other devices, historians and SCADA systems they connect to. The IMC architecture integrates both the data collected by the edge software applications and the asset model hierarchy that they maintain. The IMC architecture is shown below:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="images/imc_reference_architecture.png"><img src="images/imc_reference_architecture.png" alt="IMC Reference Architecture" width="648" height="439"></a>
+</div>
+<div class="title">Figure 2. IMC Reference Architecture</div>
+</div>
+<div class="paragraph">
+<p>A key component of this kit is the Asset Model Converter (AMC). The AMC is a serverless, module-based framework supporting mapping edge-based asset modeling software conventions into AWS IoT SiteWise models and assets.</p>
+</div>
+<div class="paragraph">
+<p>Currently as part of this kit, there are following modules (drivers) available:
+* Inductive Automation (Ignition Server)
+<strong> Cirrus Link Module MQTT driver
+</strong> Ignition Project File Export driver
+* PTC (KepServer)
+** KepServer Project File Export driver</p>
+</div>
+<div class="paragraph">
+<p>Based on the driver selected, the AMC will ingest the edge software’s (i.e. Ignition or KEPServerEX) native asset model definition(s) and automatically provision the matching asset hierarchy within AWS IoT SiteWise. This automatic mapping enables application builders, whether they be customer’s own developers, SIs, GSIs or AWS ProServe team, to have immediate access to the customer’s asset hierarchy within a managed service in the AWS Cloud (AWS IoT SiteWise).</p>
 </div>
 </div>
 </div>
@@ -905,19 +937,7 @@ After you deploy the Quick Start, enable the <a href="https://docs.aws.amazon.co
 <h2 id="_software_licenses">Software licenses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>These two paragraphs provide an example of the details you can provide. Provide links as appropriate.</p>
-</div>
-<div class="paragraph">
-<p>Example content below:</p>
-</div>
-<div class="paragraph">
-<p><em>&lt;license information&gt;This Quick Start requires a license for Example Product Name. To use the Quick Start in your production environment, sign up for a license at &lt;link&gt;. When you launch the Quick Start, place the license key in an S3 bucket and specify its location.</em></p>
-</div>
-<div class="paragraph">
-<p><em>If you don’t have a license, the Quick Start deploys with a trial license. The trial license gives you &lt;n&gt; days of free usage in a non-production environment. After this time, you can upgrade to a production license by following the instructions at &lt;link&gt;.</em></p>
-</div>
-<div class="paragraph">
-<p><em>&lt;AMI information&gt;The Quick Start requires a subscription to the Amazon Machine Image (AMI) for Example Product Name, which is available from <a href="https://aws.amazon.com/marketplace/" target="_blank" rel="noopener">AWS Marketplace</a>. Additional pricing, terms, and conditions may apply. For instructions, see <a href="#step-2.-subscribe-to-the-software-ami">step 2</a> in the deployment section.</em></p>
+<p>No licenses required to deploy this Quick Start.</p>
 </div>
 </div>
 </div>
@@ -926,14 +946,14 @@ After you deploy the Quick Start, enable the <a href="https://docs.aws.amazon.co
 <div class="sectionbody">
 <div class="paragraph">
 <p>Deploying this Quick Start for a new virtual private cloud (VPC) with
-<strong>default parameters</strong> builds the following <em>Example Product Name</em> environment in the
+<strong>default parameters</strong> builds the following <em>Industrial machine connectivity</em> environment in the
 AWS Cloud.</p>
 </div>
 <div id="architecture1" class="imageblock">
 <div class="content">
 <a class="image" href="images/architecture_diagram.png"><img src="images/architecture_diagram.png" alt="Architecture" width="648" height="439"></a>
 </div>
-<div class="title">Figure 1. Quick Start architecture for <em>Example Product Name</em> on AWS</div>
+<div class="title">Figure 3. Quick Start architecture for <em>Industrial machine connectivity</em> on AWS</div>
 </div>
 <div class="paragraph">
 <p>As shown in Figure 1, the Quick Start sets up the following:</p>
@@ -990,7 +1010,7 @@ deploy, and operate your infrastructure and applications on the AWS
 Cloud.</p>
 </div>
 <div class="paragraph">
-<p>This Quick Start assumes familiarity with &lt;knowledge expectations&gt;.</p>
+<p>This Quick Start assumes familiarity with AWS IoT Core, AWS IoT SiteWise, AWS IoT Greengrass and edge applications like Inductive Automation&#8217;s Ignition Server, and PTC&#8217;s KEPServerEX.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1026,35 +1046,39 @@ Cloud.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPCs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Elastic IP addresses</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AWS Identity and Access Management (IAM) security groups</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">IAM roles</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Auto Scaling groups</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DynamoDb Tables</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Application Load Balancers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS Lambda Functions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Network Load Balancers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS IoT Topic Rules</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;type&gt; instances</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS Kinesis Firehose streams</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS S3 Buckets</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 Instances</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 </tbody>
 </table>
@@ -1067,10 +1091,13 @@ Cloud.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><em>us-east-1 (N. Virginia)</em> (EXAMPLE)</p>
+<p>us-east-1 (N. Virginia)</p>
 </li>
 <li>
-<p><em>us-east-2 (Ohio)</em> (EXAMPLE)</p>
+<p>us-west-2 (Ohio)</p>
+</li>
+<li>
+<p>eu-west-1 (Ireland)</p>
 </li>
 </ul>
 </div>
@@ -1106,21 +1133,71 @@ Certain regions are available on an opt-in basis. Refer to the AWS Documentation
 </div>
 </div>
 <div class="sect3">
-<h4 id="_prepare_your_aws_account">Prepare your AWS account</h4>
-<div class="paragraph">
-<p><em>Describe any setup required in the AWS account prior to template launch</em></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_prepare_your_example_company_name_ltd_account">Prepare your Example Company Name, Ltd. account</h4>
-<div class="paragraph">
-<p><em>Describe any setup required in the partner portal/account prior to template launch</em></p>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_prepare_for_the_deployment">Prepare for the deployment</h4>
+<div class="sect4">
+<h5 id="_deployment_configurations">Deployment configurations</h5>
 <div class="paragraph">
-<p><em>Describe any preparation required to complete the product build, such as obtaining licenses or placing files in S3</em></p>
+<p>The IMC kit can be deployed in 3 configurations - virtual, physical greenfield and physical brownfield.</p>
+</div>
+<div class="sect5">
+<h6 id="_virtual">Virtual</h6>
+<div class="paragraph">
+<p>The virtual deployment is intended for demonstration, training and evaluation of the Kit’s capabilities. EC2 instances will be launched to simulate edge gateway hardware but in all other respects the experience will mirror that of the real physical deployment. This deployment mode relies on simulated tag values generated by the partner edge software. There are no physical PLCs or sensors that are being connected.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_physical">Physical</h6>
+<div class="paragraph">
+<p>Physical deployment of the IMC kit enables users to deploy edge software (i.e. AWS IoT Greengrass and partner edge software) on physical industrial PCs that are ready to connect to physical devices (I.e. PLCs)/historians/SCADA systems on the customers plant floor. The physical deployment has two flavors:</p>
+</div>
+<div class="paragraph">
+<p><strong>Physical - Greenfield</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>AWS IoT Greengrass and the partner edge software will be running on a single industrial PC.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Physical - Brownfield</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>AWS IoT Greengrass will run standalone on an industrial PC and will connect to partner edge software application that is already running on the customers premises (i.e. on a VM in the server room of a manufacturing plant). We assume our access to the hardware is limited or non-existent, and our ability to reconfigure the Edge Software Application Server is limited to additive changes only.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The type of deployment (Virtual or Physical) determines whether to use physical edge hardware (Physical industrial PCs) or virtual edge hardware (EC2) and how connectivity and security is configured. All other cloud-based resources are largely the same.</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_data_flow_options">Data flow options</h5>
+<div class="paragraph">
+<p>In addition to the Virtual/Physical edge hardware distinction, the IMC kit supports three types of data flow architectures. Each type outlines different methods of data ingestion from the edge environment into the AWS Cloud.</p>
+</div>
+<div class="sect5">
+<h6 id="_option_1_edge_software_application_opcua_server_aws_iot_sitewise">Option 1 - Edge Software Application OPCUA Server &#8594; AWS IoT SiteWise</h6>
+<div class="paragraph">
+<p>In this variant, we have the AWS Greengrass SiteWise Connector configured to connect to the Edge Software Application OPCUA Server. All telemetry data will flow directly into AWS IoT SiteWise.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_option_2a_edge_software_application_server_aws_iot_core">Option 2a - Edge Software Application Server &#8594; AWS IoT Core</h6>
+<div class="paragraph">
+<p>In this variant, the Edge Software Application Server has some kind functionality to connect to IoT Core via MQTT. All telemetry data is pushed from the Edge Software Application Server to AWS IoT Core, and from there usually pushed to S3 or a similar data lake for processing.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_option_2b_edge_software_application_server_aws_greengrass_core_iot_core_s3">Option 2b - Edge Software Application Server &#8594; AWS Greengrass Core &#8594; IoT Core &#8594; S3</h6>
+<div class="paragraph">
+<p>This variant is almost identical to previous one (option 2a), except we instead have the Edge Software Application Server pushing MQTT data messages to AWS Greengrass Core first, and then those messages are forwarded on to AWS IoT Core.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1131,15 +1208,15 @@ Certain regions are available on an opt-in basis. Refer to the AWS Documentation
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Deploy Example Product Name into a new VPC (end-to-end deployment)</strong>. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys Example Product Name into this new VPC.</p>
+<p><strong>Deploy Industrial machine connectivity into a new VPC (end-to-end deployment)</strong>. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys Industrial machine connectivity into this new VPC.</p>
 </li>
 <li>
-<p><strong>Deploy Example Product Name into an existing VPC</strong>. This option provisions Example Product Name in your existing AWS infrastructure.</p>
+<p><strong>Deploy Industrial machine connectivity into an existing VPC</strong>. This option provisions Industrial machine connectivity in your existing AWS infrastructure.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and Example Product Name settings, as discussed later in this guide.</p>
+<p>The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and Industrial machine connectivity settings, as discussed later in this guide.</p>
 </div>
 </div>
 </div>
@@ -1188,10 +1265,10 @@ You are responsible for the cost of the AWS services used while running this Qui
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://qs_launch_link" target="_blank" rel="noopener">Deploy Example Product Name into a new VPC on AWS</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://qs_launch_link" target="_blank" rel="noopener">Deploy Industrial machine connectivity into a new VPC on AWS</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://qs_launch_link" target="_blank" rel="noopener">Deploy Example Product Name into an existing VPC on AWS</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://qs_launch_link" target="_blank" rel="noopener">Deploy Industrial machine connectivity into an existing VPC on AWS</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -1202,7 +1279,7 @@ You are responsible for the cost of the AWS services used while running this Qui
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-If you’re deploying Example Product Name into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances, and that the subnets aren’t shared. This Quick Start doesn’t support <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html" target="_blank" rel="noopener">shared subnets</a>. These subnets require <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT gateways</a> in their route tables, to allow the instances to download packages and software without exposing them to the internet.
+If you’re deploying Industrial machine connectivity into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances, and that the subnets aren’t shared. This Quick Start doesn’t support <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html" target="_blank" rel="noopener">shared subnets</a>. These subnets require <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT gateways</a> in their route tables, to allow the instances to download packages and software without exposing them to the internet.
 </td>
 </tr>
 </table>
@@ -1211,12 +1288,12 @@ If you’re deploying Example Product Name into an existing VPC, make sure that 
 <p>Also, make sure that the domain name option in the DHCP options is configured as explained in the <a href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html" target="_blank" rel="noopener">Amazon VPC documentation</a>. You provide your VPC settings when you launch the Quick Start.</p>
 </div>
 <div class="paragraph">
-<p>Each deployment takes about 30 minutes / 1 hour to complete.</p>
+<p>Each deployment takes about 15 minutes to complete.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic" start="2">
 <li>
-<p>Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This is where the network infrastructure for Example Product Name will be built. The template is launched in the us-east-1 Region by default.</p>
+<p>Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This is where the network infrastructure for Industrial machine connectivity will be built. The template is launched in the us-east-1 Region by default.</p>
 </li>
 </ol>
 </div>
@@ -1335,6 +1412,24 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>0.0.0.0/0</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">We will narrow this down after the stack deploys.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AssetModelConverter driver
+(<code>AMCDriver</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IgnitionCirrusLink</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose the driver that the AssetModelConverter uses to translate hierarchy data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise Portal administrator
+(<code>SitewiseMonitorEmail</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NO_DESCRIPTION</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Your public IP address
+(<code>UserPublicIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)</p></td>
+</tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
@@ -1369,24 +1464,6 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 (<code>QSS3BucketRegion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>us-east-1</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AssetModelConverter driver
-(<code>AMCDriver</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IgnitionCirrusLink</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose the driver that the AssetModelConverter uses to translate hierarchy data.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Your public IP address
-(<code>UserPublicIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise Portal administrator
-(<code>SitewiseMonitorEmail</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NO_DESCRIPTION</p></td>
 </tr>
 </tbody>
 </table>
@@ -1429,48 +1506,7 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. AWS Quick Start configuration</caption>
-<colgroup>
-<col style="width: 16%;">
-<col style="width: 11%;">
-<col style="width: 73%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter label (name)</th>
-<th class="tableblock halign-left valign-top">Default Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
-(<code>QSS3BucketName</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
-(<code>QSS3KeyPrefix</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/) and it should end with a forward slash (/).</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket region
-(<code>QSS3BucketRegion</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>us-east-1</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise Portal administrator
-(<code>SitewiseMonitorEmail</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NO_DESCRIPTION</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. Edge Deployment Configuration</caption>
+<caption class="title">Table 5. Edge Deployment Configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1505,7 +1541,7 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. Amazon EC2 Configuration</caption>
+<caption class="title">Table 6. Amazon EC2 Configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1549,6 +1585,47 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise Portal administrator
+(<code>SitewiseMonitorEmail</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NO_DESCRIPTION</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. AWS Quick Start configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
+(<code>QSS3BucketName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
+(<code>QSS3KeyPrefix</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires Input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/) and it should end with a forward slash (/).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket region
+(<code>QSS3BucketRegion</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>us-east-1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="olist arabic">
@@ -1563,7 +1640,7 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 <p>Choose <strong>Create stack</strong> to deploy the stack.</p>
 </li>
 <li>
-<p>Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the Example Product Name deployment is ready.</p>
+<p>Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the Industrial machine connectivity deployment is ready.</p>
 </li>
 <li>
 <p>Use the values displayed in the <strong>Outputs</strong> tab for the stack, as shown in Figure 2, to view the resources that were created.</p>
@@ -1574,44 +1651,50 @@ Region', and 'Quick Start S3 key prefix', unless you are customizing the Quick S
 <div class="content">
 <img src="images/cfn_outputs.png" alt="cfn_outputs" width="648" height="439">
 </div>
-<div class="title">Figure 2. Example Product Name outputs after successful deployment</div>
+<div class="title">Figure 4. Industrial machine connectivity outputs after successful deployment</div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_test_the_deployment">Test the deployment</h2>
-<div class="sectionbody">
-
 </div>
 </div>
 <div class="sect1">
 <h2 id="_post_deployment_steps">Post deployment steps</h2>
 <div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="_best_practices_for_using_example_product_name_on_aws">Best practices for using Example Product Name on AWS</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p><em>Add any best practices for using the software.</em></p>
+<p>Depending upon which deployment configuration you chose, there are different post deployment configuration steps.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_security">Security</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>Add any security-related information.</em></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Link to Virtual deployment guide</p>
+</li>
+<li>
+<p>Link to Physical greenfield deployment guide</p>
+</li>
+<li>
+<p>Link to Physical brownfield deployment guide</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_other_useful_information">Other useful information</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><em>Add any other details that will help the customer use the software on AWS.</em></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Guide for Creating AMC drivers (link to external document)</p>
+</li>
+<li>
+<p>AMC approved DyanamoDB table format (link to external document)</p>
+</li>
+<li>
+<p>Adding a line and device to an Ignition project (link to external document)</p>
+</li>
+<li>
+<p>Extending/modifying the IMC kit with new features and capabilities (link to external document)</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1659,7 +1742,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <h2 id="_send_us_feedback">Send us feedback</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To post feedback, submit feature ideas, or report bugs, use the <strong>Issues</strong> section of the <a href="https://github.com/aws-quickstart/quickstart-documentation-base" target="_blank" rel="noopener">GitHub repository</a> for this Quick Start. If you’d like to submit code, please review the <a href="https://aws-quickstart.github.io/" target="_blank" rel="noopener">Quick Start Contributor’s Guide</a>.</p>
+<p>To post feedback, submit feature ideas, or report bugs, use the <strong>Issues</strong> section of the <a href="https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity" target="_blank" rel="noopener">GitHub repository</a> for this Quick Start. If you’d like to submit code, please review the <a href="https://aws-quickstart.github.io/" target="_blank" rel="noopener">Quick Start Contributor’s Guide</a>.</p>
 </div>
 </div>
 </div>
@@ -1675,13 +1758,13 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <h2 id="_github_repository">GitHub repository</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can visit our <a href="https://github.com/aws-quickstart/quickstart-documentation-base" target="_blank" rel="noopener">GitHub repository</a> to download
+<p>You can visit our <a href="https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity" target="_blank" rel="noopener">GitHub repository</a> to download
 the templates and scripts for this Quick Start, to post your comments,
 and to share your customizations with others.</p>
 </div>
 <hr>
 <div class="paragraph">
-<p>© 2020, Amazon Web Services, Inc. or its affiliates, and Example Company Name, Ltd.. All rights reserved.</p>
+<p>© 2020, Amazon Web Services, Inc. or its affiliates, and . All rights reserved.</p>
 </div>
 <div class="sect3">
 <h4 id="_notices">Notices</h4>
@@ -1697,7 +1780,7 @@ and to share your customizations with others.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-07-16 19:00:58 UTC
+Last updated 2020-07-19 07:11:25 UTC
 </div>
 </div>
 </body>

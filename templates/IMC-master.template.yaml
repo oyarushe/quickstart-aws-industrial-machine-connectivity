@@ -12,13 +12,6 @@ Metadata:
           - PublicSubnet1CIDR
           - VPCTenancy
       - Label:
-          default: AWS Quick Start configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
-          - QSS3BucketRegion
-          - SitewiseMonitorEmail
-      - Label:
           default: Edge Deployment Configuration
         Parameters:
           - EdgeDeviceID
@@ -32,6 +25,13 @@ Metadata:
           - IgnitionInstanceType
           - AMCDriver
           - UserPublicIP
+          - SitewiseMonitorEmail
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
     ParameterLabels:
       QSS3BucketRegion:
         default: Quick Start S3 bucket region

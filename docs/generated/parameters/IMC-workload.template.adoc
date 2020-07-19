@@ -16,7 +16,10 @@
 (`GreengrassInstanceType`)|`t3.small`|Amazon EC2 instance type for the Greengrass EC2 instances.|Ignition EC2 instance type
 (`IgnitionInstanceType`)|`t3.large`|Amazon EC2 instance type for the Ignition EC2 instances.|VPC Subnet (Select {region}a)
 (`EC2Subnet`)|`**__Requires Input__**`|This is the subnet ID where the EC2(s) will be deployed|CIDR range for Ignition/Greengrass access
-(`PublicSubnet1CIDR`)|`0.0.0.0/0`|We will narrow this down after the stack deploys.
+(`PublicSubnet1CIDR`)|`0.0.0.0/0`|We will narrow this down after the stack deploys.|AssetModelConverter driver
+(`AMCDriver`)|`IgnitionCirrusLink`|Choose the driver that the AssetModelConverter uses to translate hierarchy data.|Email address for the SiteWise Portal administrator
+(`SitewiseMonitorEmail`)|`**__Requires Input__**`|NO_DESCRIPTION|Your public IP address
+(`UserPublicIP`)|`**__Requires Input__**`|Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
 |===
 .AWS Quick Start Configuration
 [width="100%",cols="16%,11%,73%",options="header",]
@@ -24,8 +27,5 @@
 |Parameter label (name) |Default Value|Description|Quick Start S3 Bucket Name
 (`QSS3BucketName`)|`**__Requires Input__**`|S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Quick Start S3 Key Prefix
 (`QSS3KeyPrefix`)|`**__Requires Input__**`|S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).|Quick Start S3 bucket region
-(`QSS3BucketRegion`)|`us-east-1`|The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.|AssetModelConverter driver
-(`AMCDriver`)|`IgnitionCirrusLink`|Choose the driver that the AssetModelConverter uses to translate hierarchy data.|Your public IP address
-(`UserPublicIP`)|`**__Requires Input__**`|Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)|Email address for the SiteWise Portal administrator
-(`SitewiseMonitorEmail`)|`**__Requires Input__**`|NO_DESCRIPTION
+(`QSS3BucketRegion`)|`us-east-1`|The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
 |===
