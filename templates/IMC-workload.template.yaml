@@ -21,15 +21,16 @@ Metadata:
           - IgnitionInstanceType
           - EC2Subnet
           - PublicSubnet1CIDR
+          - AMCDriver
+          - SitewiseMonitorEmail
+          - UserPublicIP
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
           - QSS3BucketRegion
-          - AMCDriver
-          - UserPublicIP
-          - SitewiseMonitorEmail
+          
     ParameterLabels:
       QSS3BucketName:
         default: Quick Start S3 Bucket Name

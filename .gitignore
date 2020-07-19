@@ -2,8 +2,10 @@
 __pycache__/
 *.pyc
 
+.taskcat
 taskcat_outputs/
 env/
+index.html
 
 .DS_Store
 imcCdk/config.yaml
