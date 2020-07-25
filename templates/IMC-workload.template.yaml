@@ -172,13 +172,13 @@ Conditions:
     - 'Virtual'
 
 Mappings: 
-    EC2AMI: 
-      us-east-1: 
-        ami: ami-0ac80df6eff0e70b5
-      us-west-2: 
-        ami: ami-003634241a8fcdec0
-      eu-west-1: 
-        ami: ami-089cc16f7f08c4457
+  EC2AMI: 
+    us-east-1: 
+      ami: ami-0ac80df6eff0e70b5
+    us-west-2: 
+      ami: ami-003634241a8fcdec0
+    eu-west-1: 
+      ami: ami-089cc16f7f08c4457
 
 Resources:
   AMCAssetTable:
@@ -772,7 +772,6 @@ Resources:
   imcs3bucket:
     Type: AWS::S3::Bucket
     DependsOn: CopyZips
-    Properties:
 
   KinesisRole:
     Type: AWS::IAM::Role
