@@ -1043,6 +1043,20 @@ Resources:
               Fn::GetAtt:
                 - EdgeGroupThingDeviceDefault
                 - thingArn
+  EdgeGroupLoggerDef:
+    Type: 'AWS::Greengrass::LoggerDefinition'
+    Properties:
+      Name: EdgeGroupLoggerDef
+  EdgeGroupLoggerDefVersion:
+    Type: 'AWS::Greengrass::LoggerDefinitionVersion'
+    Properties:
+      LoggerDefinitionId: !Ref EdgeGroupLoggerDef
+      Loggers:
+        - Id: EdgeGroupLoggerDefVersion
+          Type: FileSystem
+          Component: GreengrassSystem
+          Level: DEBUG
+          Space: '128'
   EdgeGroup:
     Type: AWS::Greengrass::Group
     DependsOn: CopyZips
@@ -1073,6 +1087,8 @@ Resources:
         Ref: EdgeGroupFuncDefVersion
       SubscriptionDefinitionVersionArn:
         Ref: EdgeGroupSubDefVersion
+      LoggerDefinitionVersionArn: 
+        Ref: EdgeGroupLoggerDefVersion
 
   AMCIncomingResource:
     Type: AWS::S3::Bucket
