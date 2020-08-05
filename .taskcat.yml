@@ -26,6 +26,7 @@ project:
       QSS3BucketRegion: $[taskcat_current_region]
       UserPublicIP: '205.251.233.48' # change
       EC2KeyPairName: sshvans # change
+      SitewiseMonitorEmail: quickstart@amazon.com #change
   template: templates/IMC-master.template.yaml
 
 tests:
@@ -35,6 +36,9 @@ tests:
       DeploymentOption: Option1
     regions:
       - us-east-1
+      - us-west-2
+      - eu-west-1
+      - eu-central-1
     
   # VOption2a:
   #   parameters:
