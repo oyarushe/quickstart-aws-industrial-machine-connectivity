@@ -30,6 +30,7 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
           - QSS3BucketRegion
+
     ParameterLabels:
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
@@ -392,9 +393,11 @@ Resources:
         greengrass = boto3.client("greengrass")
         
         def clear_s3_buckets(buckets):
+
             for bucket in buckets:
                 bucket_resource = s3.Bucket(bucket)
                 bucket_resource.objects.all().delete()
+
         def reset_greengrass_deployment(group_name):
             groups = greengrass.list_groups()
             if 'Groups' in groups:
@@ -422,6 +425,7 @@ Resources:
             timer = threading.Timer((context.get_remaining_time_in_millis()
                       / 1000.00) - 0.5, timeout, args=[event, context])
             timer.start()
+
             print('Received event: %s' % json.dumps(event))
             status = cfnresponse.SUCCESS
             try:
