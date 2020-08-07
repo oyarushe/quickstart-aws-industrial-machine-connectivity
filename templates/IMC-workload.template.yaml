@@ -183,6 +183,8 @@ Mappings:
       ami: ami-003634241a8fcdec0
     eu-west-1: 
       ami: ami-089cc16f7f08c4457
+    eu-central-1:
+        ami: ami-0d359437d1756caa8
 
 Resources:
   AMCAssetTable:
@@ -1137,6 +1139,20 @@ Resources:
               Fn::GetAtt:
                 - EdgeGroupThingDeviceDefault
                 - thingArn
+  EdgeGroupLoggerDef:
+    Type: 'AWS::Greengrass::LoggerDefinition'
+    Properties:
+      Name: EdgeGroupLoggerDef
+  EdgeGroupLoggerDefVersion:
+    Type: 'AWS::Greengrass::LoggerDefinitionVersion'
+    Properties:
+      LoggerDefinitionId: !Ref EdgeGroupLoggerDef
+      Loggers:
+        - Id: EdgeGroupLoggerDefVersion
+          Type: FileSystem
+          Component: GreengrassSystem
+          Level: DEBUG
+          Space: '128'
   EdgeGroup:
     Type: AWS::Greengrass::Group
     DependsOn: CopyZips
@@ -1167,6 +1183,8 @@ Resources:
         Ref: EdgeGroupFuncDefVersion
       SubscriptionDefinitionVersionArn:
         Ref: EdgeGroupSubDefVersion
+      LoggerDefinitionVersionArn:
+        Ref: EdgeGroupLoggerDefVersion
 
   AMCIncomingResource:
     Type: AWS::S3::Bucket
