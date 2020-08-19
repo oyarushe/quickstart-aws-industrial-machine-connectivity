@@ -12,6 +12,8 @@
 :template_aws_greengrass_functiondefinitionversion:
 :template_aws_greengrass_group:
 :template_aws_greengrass_groupversion:
+:template_aws_greengrass_loggerdefinition:
+:template_aws_greengrass_loggerdefinitionversion:
 :template_aws_greengrass_subscriptiondefinition:
 :template_aws_greengrass_subscriptiondefinitionversion:
 :template_aws_iam_instanceprofile:
