@@ -91,9 +91,9 @@ Resources:
               - s3:ObjectCreated:*
             LambdaFunctionArn: !Ref AMCConvertLambdaResArn
     DependsOn:
-      - AssetModelConverterLambdaAllowBucketNotificationsFromVirtualOption1AMCIncoming
+      - AMCAllowBucketNotifications
   
-  AssetModelConverterLambdaAllowBucketNotificationsFromVirtualOption1AMCIncoming:
+  AMCAllowBucketNotifications:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
