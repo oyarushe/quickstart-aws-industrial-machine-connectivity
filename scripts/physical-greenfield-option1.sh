@@ -63,7 +63,7 @@ wget -O /home/ubuntu/opcclient.der https://$RESTAPIID.execute-api.$REGION.amazon
 
 # Get Ignition automation files
 # TODO: Replace imc-user-data-public-bucket with aws-quickstart? 
-wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip http://files.inductiveautomation.com/aws-imc-kit/Ignition-AWS-Kit-MQTT-v4-Physical.zip
+wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip http://files.inductiveautomation.com/aws-imc-kit/Ignition-AWS-Kit-MQTT-v5-Physical.zip
 unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
 mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4-Physical /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
 cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
@@ -81,7 +81,7 @@ mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs/* /home/ubuntu/Ignition
 rmdir /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs
 
 sed -i "s/defaultclient/$EDGEDEVICEID\Device/g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
-sed -i "s%a1zs31l2dkuqc-ats.iot.us-east-1.amazonaws.com%$IOTENDPOINT%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+sed -i "s%abcdefexample-ats.iot.us-east-1.amazonaws.com%$IOTENDPOINT%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
 
 python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
 
