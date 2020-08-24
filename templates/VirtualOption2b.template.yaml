@@ -354,7 +354,7 @@ Resources:
                                     apt install -y awscli unzip fail2ban
 
                                     # Get Ignition automation files 
-                                    wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip http://files.inductiveautomation.com/aws-imc-kit/Ignition-AWS-Kit-MQTT-4.zip
+                                    wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip http://files.inductiveautomation.com/aws-imc-kit/Ignition-AWS-Kit-MQTT-v5.zip
                                     unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
                                     cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
                                     chmod +x install.sh
