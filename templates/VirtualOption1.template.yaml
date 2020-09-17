@@ -75,6 +75,9 @@ Parameters:
   KinesisDelRoleArn:
     Description: ARN of the IAM role for Kinesis Delivery
     Type: String
+  AZ:
+    Description: AZ to launch EC2 instances into
+    Type: String
 
 Resources:
   AMCIncomingNotificationsResource:
@@ -216,7 +219,7 @@ Resources:
   EdgeInstanceGreengrassResource:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Sub '${AWS::Region}a'
+      AvailabilityZone: !Sub '${AWS::Region}${AZ}'
       IamInstanceProfile:
         Ref: EdgeInstanceGreengrassInstanceProfile
       ImageId: !Ref 'EC2AMI'
@@ -276,7 +279,7 @@ Resources:
   EdgeInstanceIgnitionResource:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Sub '${AWS::Region}a'
+      AvailabilityZone: !Sub '${AWS::Region}${AZ}'
       IamInstanceProfile: !Ref EIIgnitionInstanceProfile
       ImageId: !Ref EC2AMI
       InstanceType: !Ref IgnitionInstanceType
