@@ -214,7 +214,7 @@ Resources:
             - !Ref 'AWS::Region'
             - !Ref 'QSS3BucketRegion'
       Parameters:
-        AZ: a
+        AZ: !Sub ${AWS::Region}a
         EC2Subnet:
           Fn::GetAtt: [VPC, Outputs.PublicSubnet1ID]        
         QSS3BucketRegion: !Ref QSS3BucketRegion
