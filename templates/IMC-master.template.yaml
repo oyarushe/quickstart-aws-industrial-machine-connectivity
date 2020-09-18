@@ -194,11 +194,11 @@ Resources:
             - !Ref 'AWS::Region'
             - !Ref 'QSS3BucketRegion'
       Parameters:
-        AvailabilityZones: !Sub "${AWS::Region}a,${AWS::Region}b"
+        AvailabilityZones: !Sub "${AWS::Region}a,${AWS::Region}b,${AWS::Region}c"
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         VPCCIDR: !Ref VPCCIDR
         VPCTenancy: !Ref VPCTenancy
-        NumberOfAZs: 2
+        NumberOfAZs: 3
 
   Workload:
     Type: 'AWS::CloudFormation::Stack'
@@ -214,6 +214,7 @@ Resources:
             - !Ref 'AWS::Region'
             - !Ref 'QSS3BucketRegion'
       Parameters:
+        AZ: !Sub ${AWS::Region}a
         EC2Subnet:
           Fn::GetAtt: [VPC, Outputs.PublicSubnet1ID]        
         QSS3BucketRegion: !Ref QSS3BucketRegion

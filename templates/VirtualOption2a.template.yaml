@@ -75,6 +75,9 @@ Parameters:
   RestAPIId:
     Description: ID for the Rest API
     Type: String
+  AZ:
+    Description: AZ to launch EC2 instances into
+    Type: String
 
 Resources:
   mqttProcessLambda:
@@ -266,7 +269,7 @@ Resources:
   EdgeInstanceGreengrassResource:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Sub '${AWS::Region}a'
+      AvailabilityZone: !Sub '${AZ}'
       IamInstanceProfile:
         Ref: EdgeInstanceGreengrassInstanceProfile
       ImageId: !Ref 'EC2AMI'
@@ -327,7 +330,7 @@ Resources:
   EdgeInstanceIgnitionResource:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Sub '${AWS::Region}a'
+      AvailabilityZone: !Sub '${AZ}'
       IamInstanceProfile: !Ref EIIgnitionInstanceProfile
       ImageId: !Ref EC2AMI
       InstanceType: !Ref IgnitionInstanceType
