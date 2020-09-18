@@ -269,7 +269,7 @@ Resources:
   EdgeInstanceGreengrassResource:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Sub '${AWS::Region}${AZ}'
+      AvailabilityZone: !Sub '${AZ}'
       IamInstanceProfile:
         Ref: EdgeInstanceGreengrassInstanceProfile
       ImageId: !Ref 'EC2AMI'
@@ -330,7 +330,7 @@ Resources:
   EdgeInstanceIgnitionResource:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Sub '${AWS::Region}${AZ}'
+      AvailabilityZone: !Sub '${AZ}'
       IamInstanceProfile: !Ref EIIgnitionInstanceProfile
       ImageId: !Ref EC2AMI
       InstanceType: !Ref IgnitionInstanceType

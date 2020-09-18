@@ -167,13 +167,8 @@ Parameters:
     Description: This is the subnet ID where the EC2(s) will be deployed
     Type: String
   AZ:
-    ConstraintDescription: Must be either a, b, or c
     Description: The availability zone which EC2 instances will be launched into
-    Type: String
-    AllowedValues: 
-      - a
-      - b
-      - c
+    Type: AWS::EC2::AvailabilityZone::Name
 
 Conditions:
   UsingDefaultBucket: !Equals
