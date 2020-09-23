@@ -14,11 +14,13 @@ import sys
 import tempfile
 import time
 
+import boto3
+
 from s3Utils import S3Utils
 from drivers.ignitionCirrusLinkDriver import CirrusLinkDriver
 from drivers.kepserver_file_driver import KepserverFileDriver
 from drivers.ignitionFileDriver import IgnitionFileDriver
-from createSitewiseResources import CreateSitewiseResources
+# from createSitewiseResources import CreateSitewiseResources
 
 log = logging.getLogger('assetModelConverter')
 log.setLevel(logging.DEBUG)
@@ -26,6 +28,7 @@ log.setLevel(logging.DEBUG)
 
 class AssetModelConverter:
     def __init__(self):
+        self.iotData = boto3.client('iot-data')
         self.s3Utils = S3Utils(os.environ['IncomingBucket'])
         # Time to wait for no change in birth object count in seconds
         self.birthObjectScanTime = int(os.environ.get('OverrideScanTime', 10))
@@ -43,7 +46,9 @@ class AssetModelConverter:
 
         self.driverClass = self.driverTable[self.driverName]
 
-        self.createSitewiseResources = CreateSitewiseResources()
+        self.assetModelUpdaterTopic = 'imc/control/amcupdate'
+
+        # self.createSitewiseResources = CreateSitewiseResources()
 
     def checkForBirthObjects(self):
         """
@@ -136,6 +141,20 @@ class AssetModelConverter:
         for objectKey in self.birthObjects:
             self.s3Utils.deleteObject(objectKey)
 
+    def triggerUpdate(self):
+        payload = {
+            'AssetModelConverter': {
+                'CompletionTime': datetime.utcnow().isoformat(),
+            }
+        }
+
+        log.info('Publishing completion {}'.format(self.assetModelUpdaterTopic))
+        self.iotData.publish(
+            topic=self.assetModelUpdaterTopic,
+            qos=1,
+            payload=json.dumps(payload, indent=4, sort_keys=True)
+        )
+
     def processEvent(self, event):
         if self.checkForBirthObjects():
             birthData = self.getBirthData()
@@ -150,7 +169,8 @@ class AssetModelConverter:
             if not self.keepBirthObjects:
                 self.deleteBirthObjects()
 
-            self.createSitewiseResources.processEvent(event={})
+            self.triggerUpdate()
+            # self.createSitewiseResources.processEvent(event={})
 
 
 def handler(event, context):
@@ -160,8 +180,10 @@ def handler(event, context):
     :param context:
     :return:
     """
+    log.info('Processing Event {}'.format(event))
     assetModelClass = AssetModelConverter()
     assetModelClass.processEvent(event)
+
 
 # For testing purposes
 if __name__ == '__main__':
