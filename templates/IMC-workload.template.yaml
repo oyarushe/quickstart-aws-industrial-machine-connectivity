@@ -377,11 +377,24 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
+                  - iotsitewise:ListPortals
+                  - iotsitewise:ListProjects
+                  - iotsitewise:ListDashboards
+                  - iotsitewise:DeleteDashboard
+                  - iotsitewise:DeleteProject
+                  - iotsitewise:ListAccessPolicies
+                  - iotsitewise:DeleteAccessPolicies
+                  - iotsitewise:DeletePortal
+                  - sso:DeleteManagedApplicationInstance
                 Resource: "*"
   StackCleanupFunction:
     Type: AWS::Serverless::Function
     Properties:
       Description: Cleans up the required resource to delete the stack
+      Environment:
+        Variables:
+          stackName:
+            Ref: AWS::StackName
       Handler: index.handler
       Runtime: python3.7
       Role: !GetAtt 'StackCleanupRole.Arn'
@@ -393,9 +406,52 @@ Resources:
         import threading
         import boto3
         import cfnresponse
+        import time
         
         s3 = boto3.resource("s3")
         greengrass = boto3.client("greengrass")
+        sitewise = boto3.client("iotsitewise")
+
+        portalName = os.environ['stackName']
+
+        def delete_sitewise_portal():
+          portalsList = sitewise.list_portals()
+          try: 
+            for portal in portalsList['portalSummaries']:
+              print(portal)
+              if portalName in portal['name']:
+                projectList = sitewise.list_projects(
+                  portalId=portal['id'],
+                )
+                for project in projectList['projectSummaries']:
+                  dashboardList = sitewise.list_dashboards(
+                    projectId = project['id']
+                  )
+                  for dashboard in dashboardList['dashboardSummaries']:
+                    deleteDashboard = sitewise.delete_dashboard(
+                      dashboardId = dashboard['id']
+                    )
+                    time.sleep(2)
+                  deleteProject = sitewise.delete_project(
+                    projectId = project['id']
+                  )
+                  time.sleep(2)
+                accessList = sitewise.list_access_policies(
+                  resourceType='PORTAL',
+                  resourceId=portal['id'],
+                )
+                for accessPolicy in accessList['accessPolicySummaries']:
+                  deleteAccessPolity = sitewise.delete_access_policy(
+                    accessPolicyId=accessPolicy['id'],
+                  )
+                  time.sleep(2)
+                deleteProtal = sitewise.delete_portal(
+                  portalId = portal['id']
+                )
+                print(deleteProtal)
+                time.sleep(2)
+          except Exception as e: 
+            print("Error:", e)
         
         def clear_s3_buckets(buckets):
 
@@ -439,6 +495,7 @@ Resources:
                     reset_greengrass_deployment(group_name)
                     buckets = event['ResourceProperties']['buckets']
                     clear_s3_buckets(buckets)
+                    delete_sitewise_portal()
             except Exception as e:
                 logging.error('Exception: %s' % e, exc_info=True)
                 status = cfnresponse.FAILED
@@ -707,6 +764,9 @@ Resources:
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
+          stackName:
+            Ref: AWS::StackName
+          
   sitewisemonitoriotruletrigger:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZips
