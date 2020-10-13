@@ -1,7 +1,7 @@
 :quickstart-project-name: quickstart-aws-industrial-machine-connectivity
 :partner-product-name: Industrial machine connectivity
 :partner-company-name:
-:doc-month: July
+:doc-month: August
 :doc-year: 2020
 :partner-contributors:
 :quickstart-contributors: Thomas Cummins and Shivansh Singh, AWS
