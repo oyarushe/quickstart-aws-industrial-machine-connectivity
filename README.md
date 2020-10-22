@@ -1,5 +1,7 @@
 # Industrial Machine Connectivity (IMC) AWS Quick Start
 
+#NEW TEXT
+
 ## Introduction
 The IMC framework is designed to enable customers and partners to get data from their assets to AWS in a simple, structured process so they can rapidly realize the business value that is derived from that data. The IMC Quick Start has the capability to convert customers’ existing asset hierarchy definitions (i.e. factory, lines, machines, tags, etc.) defined in partner edge applications like Inductive Automation’s Ignition Server or PTC’s KEPServerEX to the equivalent asset hierarchy within AWS IoT SiteWise. This capability is enabled by the Asset Model Converter (AMC), a component of the IMC architecture. With asset hierarchies defined within IoT SiteWise, customer data can be ingested continuously to the AWS cloud and all the pertinent metadata is readily accessible for applications that can be built on top of the IMC kit architecture which will use that data to deliver business value, such as asset condition monitoring or root cause analysis (RCA) dashboards applications.
 

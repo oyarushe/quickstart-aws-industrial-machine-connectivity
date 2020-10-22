@@ -21,11 +21,12 @@ image::../images/imc_reference_architecture.png[IMC Reference Architecture,width
 A key component of this kit is the Asset Model Converter (AMC). The AMC is a serverless, module-based framework supporting mapping edge-based asset modeling software conventions into AWS IoT SiteWise models and assets. 
 
 Currently as part of this kit, there are following modules (drivers) available:
+
 * Inductive Automation (Ignition Server)
 ** Cirrus Link Module MQTT driver
 ** Ignition Project File Export driver 
-* PTC (KepServer)
-** KepServer Project File Export driver 
+* PTC (KEPServerEX)
+** KEPServerEX Project File Export driver 
 
 Based on the driver selected, the AMC will ingest the edge software’s (i.e. Ignition or KEPServerEX) native asset model definition(s) and automatically provision the matching asset hierarchy within AWS IoT SiteWise. This automatic mapping enables application builders, whether they be customer’s own developers, SIs, GSIs or AWS ProServe team, to have immediate access to the customer’s asset hierarchy within a managed service in the AWS Cloud (AWS IoT SiteWise).
 
