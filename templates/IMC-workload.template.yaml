@@ -377,74 +377,53 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
+                  - iotsitewise:ListPortals
+                  - iotsitewise:ListProjects
+                  - iotsitewise:ListDashboards
+                  - iotsitewise:DeleteDashboard
+                  - iotsitewise:DeleteProject
+                  - iotsitewise:ListAccessPolicies
+                  - iotsitewise:DeleteAccessPolicies
+                  - iotsitewise:DeletePortal
+                  - iotsitewise:DescribeAssetModel
+                  - iotsitewise:UpdateAssetModel
+                  - iotsitewise:DeleteAssetModel
+                  - iotsitewise:DescribeAsset
+                  - iotsitewise:UpdateAssetProperty
+                  - iotsitewise:ListAssets
+                  - iotsitewise:ListAssociatedAssets
+                  - iotsitewise:DeleteAsset
+                  - iotsitewise:DisassociateAssets
+                  - sso:DeleteManagedApplicationInstance
+                  - quicksight:ListDataSets
+                  - quicksight:ListDataSources
+                  - quicksight:DeleteDataSet
+                  - quicksight:DeleteDataSource
+                  - dynamodb:Scan
                 Resource: "*"
   StackCleanupFunction:
-    Type: AWS::Serverless::Function
+    DependsOn: 
+      - CopyZips
+      - AMCAssetTable
+      - AMCModelTable
+    Type: AWS::Lambda::Function
     Properties:
-      Description: Cleans up the required resource to delete the stack
-      Handler: index.handler
+      Description: Cleans up the required resources to delete the stack
+      Environment:
+        Variables:
+          stackName:
+            Ref: AWS::StackName
+          DynamoDB_Asset_Table:
+            Ref: AMCAssetTable
+          DynamoDB_Model_Table: 
+            Ref: AMCModelTable
+      Handler: lambda_function.lambda_handler
       Runtime: python3.7
       Role: !GetAtt 'StackCleanupRole.Arn'
-      Timeout: 240
-      InlineCode: |
-        import os
-        import json
-        import logging
-        import threading
-        import boto3
-        import cfnresponse
-        
-        s3 = boto3.resource("s3")
-        greengrass = boto3.client("greengrass")
-        
-        def clear_s3_buckets(buckets):
-
-            for bucket in buckets:
-                bucket_resource = s3.Bucket(bucket)
-                bucket_resource.objects.all().delete()
-
-        def reset_greengrass_deployment(group_name):
-            groups = greengrass.list_groups()
-            if 'Groups' in groups:
-                payload = groups['Groups']
-                while 'NextToken' in groups:
-                    groups = greenrass.list_groups(
-                        NextToken = groups['NextToken'])
-                    payload.extend(groups['Groups'])
-            for group in payload:
-                if group['Name'] == group_name:
-                    group_id = group['Id']
-                    break
-            response = greengrass.reset_deployments(
-                Force = True,
-                GroupId = group_id)
-        
-        def timeout(event, context):
-            logging.error('Execution is about to time out, sending failure response to CloudFormation')
-            cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
-        
-        
-        def handler(event, context):
-            # make sure we send a failure to CloudFormation if the function
-            # is going to timeout
-            timer = threading.Timer((context.get_remaining_time_in_millis()
-                      / 1000.00) - 0.5, timeout, args=[event, context])
-            timer.start()
-
-            print('Received event: %s' % json.dumps(event))
-            status = cfnresponse.SUCCESS
-            try:
-                if event['RequestType'] == 'Delete':
-                    group_name = event['ResourceProperties']['group_name']
-                    reset_greengrass_deployment(group_name)
-                    buckets = event['ResourceProperties']['buckets']
-                    clear_s3_buckets(buckets)
-            except Exception as e:
-                logging.error('Exception: %s' % e, exc_info=True)
-                status = cfnresponse.FAILED
-            finally:
-                timer.cancel()
-                cfnresponse.send(event, context, status, {}, None)
+      Timeout: 900
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/StackCleanup/stackcleanupfunction.zip'
   IoTEndpointRole:
     Type: AWS::IAM::Role
     Properties:
@@ -479,12 +458,14 @@ Resources:
       Objects:
         - functions/packages/AssetModelConverter/AssetModelConverter.zip
         - functions/packages/AssetModelIngestion/AssetModelIngestion.zip
+        - functions/packages/AssetModelUpdater/AssetModelUpdater.zip
         - functions/packages/GreengrassLambda/GreengrassLambda.zip
         - functions/packages/KinesisProcessor/kinesisprocessor.zip
         - functions/packages/Quicksight/quicksightfunction.zip
         - functions/packages/SitewiseMonitor/sitewisemonitorfunction.zip
         - functions/packages/MQTTDataProcess/mqttdataprocess.js.zip
         - functions/packages/GGDeployer/ggdeployer.zip
+        - functions/packages/StackCleanup/stackcleanupfunction.zip
         - scripts/physical-brownfield-all-options.sh
         - scripts/physical-greenfield-option1.sh
         - scripts/physical-greenfield-option2a.sh
@@ -622,6 +603,7 @@ Resources:
     DependsOn: CopyZips
     Type: AWS::Lambda::Function
     Properties:
+      ReservedConcurrentExecutions: 1
       Runtime: python3.8
       Role:
         Fn::GetAtt:
@@ -643,6 +625,9 @@ Resources:
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
+          stackName: 
+            Ref: AWS::StackName
+  
   quicksightiotruletrigger:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZips
@@ -705,6 +690,9 @@ Resources:
               - Arn
           imcawsaccount:
             Ref: AWS::AccountId
+          stackName:
+            Ref: AWS::StackName
+          
   sitewisemonitoriotruletrigger:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZips
@@ -1235,6 +1223,10 @@ Resources:
                   - iotsitewise:DeleteAsset
                   - iotsitewise:DisassociateAssets
                   - iotsitewise:AssociateAssets
+                  - iotsitewise:ListGateways
+                  - iotsitewise:DescribeGateway
+                  - iotsitewise:DescribeGatewayCapabilityConfiguration
+                  - iotsitewise:UpdateGatewayCapabilityConfiguration
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                   - dynamodb:Query
@@ -1268,6 +1260,8 @@ Resources:
                         - "*"
             Version: "2012-10-17"
           PolicyName: AMCLambdaPolicy
+
+  # Asset Model Ingestion
   AssetModelIngestionLambdaResource:
     Type: AWS::Lambda::Function
     DependsOn: CopyZips
@@ -1285,7 +1279,7 @@ Resources:
         Variables:
           IncomingBucket:
             Ref: AMCIncomingResource
-      Timeout: 60
+      Timeout: 900
 
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
@@ -1301,6 +1295,7 @@ Resources:
         Fn::GetAtt:
           - IngestionDBirthRule
           - Arn
+
   AssetModelIngestionLambdaIngestionNBirthRulePermission:
     Type: AWS::Lambda::Permission
     DependsOn: CopyZips
@@ -1315,6 +1310,7 @@ Resources:
         Fn::GetAtt:
           - IngestionNBirthRule
           - Arn
+
   IngestionDBirthRule:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZips
@@ -1329,6 +1325,7 @@ Resources:
         AwsIotSqlVersion: "2016-03-23"
         RuleDisabled: false
         Sql: SELECT *, topic() as topic FROM 'spBv1.0/+/DBIRTH/#'
+
   IngestionNBirthRule:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZips
@@ -1343,6 +1340,8 @@ Resources:
         AwsIotSqlVersion: "2016-03-23"
         RuleDisabled: false
         Sql: SELECT *, topic() as topic FROM 'spBv1.0/+/NBIRTH/#'
+
+  # Asset Model Converter
   AssetModelConverterLambdaResource:
     Type: AWS::Lambda::Function
     DependsOn: CopyZips
@@ -1368,6 +1367,64 @@ Resources:
           DriverName:
             Ref: AMCDriver
       Timeout: 900
+
+  # Asset Model Updater
+  AssetModelUpdaterLambdaResource:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      ReservedConcurrentExecutions: 1
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/AssetModelUpdater/AssetModelUpdater.zip'
+      Handler: assetModelUpdater.handler
+      Role:
+        Fn::GetAtt:
+          - AMCLambdaRole
+          - Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          DynamoDB_Model_Table:
+            Ref: AMCModelTable
+          DynamoDB_Asset_Table:
+            Ref: AMCAssetTable
+          greengrassGroupID: 
+            !GetAtt EdgeGroup.Id
+          gatewayName:
+            Ref: EdgeDeviceID
+      Timeout: 900
+
+  AssetModelUpdaterRule:
+    Type: AWS::IoT::TopicRule
+    DependsOn: CopyZips
+    Properties:
+      TopicRulePayload:
+        Actions:
+          - Lambda:
+              FunctionArn:
+                Fn::GetAtt:
+                  - AssetModelUpdaterLambdaResource
+                  - Arn
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: false
+        Sql: SELECT * FROM 'imc/control/amcupdate'
+
+  AssetModelUpdaterRulePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: CopyZips
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - AssetModelUpdaterLambdaResource
+          - Arn
+      Principal: iot.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - AssetModelUpdaterRule
+          - Arn
+
 
   ApiHandlerRole:
     Type: AWS::IAM::Role
