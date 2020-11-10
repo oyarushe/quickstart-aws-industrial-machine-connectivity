@@ -8,6 +8,7 @@ import json
 import logging
 import pprint
 import time
+import os
 
 import boto3
 from botocore.exceptions import ClientError
@@ -19,6 +20,7 @@ log.setLevel(logging.DEBUG)
 class SitewiseUtils:
     """
     This encapsulates our interactions with sitewise. Asset/Model creation, updating, and deletion.
+    Sitewise Gateway re-deployment.
     """
     def __init__(self):
         self.sitewise = boto3.client('iotsitewise')
@@ -26,6 +28,12 @@ class SitewiseUtils:
         self.unsupportedDataTypes = ['Template']
 
         self.pollWaitTime = 0.5
+
+        self.greengrassGroupID = os.environ.get('greengrassGroupID')
+        self.gatewayName = os.environ.get('gatewayName')
+
+        if self.gatewayName:
+            self.gatewayName = self.gatewayName + '_Automated_Gateway'
 
     @staticmethod
     def jsonSerial(obj):
@@ -285,3 +293,75 @@ class SitewiseUtils:
             self.updateAssetModel(assetModelId=model['id'], assetModelName=model['name'], hierarchies=[])
         for model in assetModelsList:
             self.deleteAssetModel(model['id'])
+
+    def getGatewayIDByName(self): 
+        """
+        Returns the gatewayID of a SiteWise Gateway given its name.
+        :return:
+        """
+        gateways = self.sitewise.list_gateways()
+
+        if 'gatewaySummaries' in gateways:
+            payload = gateways['gatewaySummaries']
+            while 'NextToken' in gateways:
+                gateways = self.sitewise.list_gateways(NextToken = gateways['NextToken'])
+                payload.extend(gateways['gatewaySummaries'])
+
+        for gateway in payload:
+            if gateway['gatewayName'] == self.gatewayName:
+                print('Gateway found: {}'.format(gateway))
+                print('Gateway ID: {}'.format(gateway['gatewayId']))
+                return gateway['gatewayId']
+
+        return None
+
+    def checkGatewayMatch(self, gatewayID, greengrassGroupID):
+        """
+        Determines whether or not the provided gatewayID 
+        is associated with the provided greengrassGroupID
+        """
+
+        gatewayDescription = self.sitewise.describe_gateway(
+            gatewayId=gatewayID
+        )
+        gatewayGroupID = gatewayDescription['gatewayPlatform']['greengrass']['groupArn'].split('/')[-1]
+
+        if greengrassGroupID == gatewayGroupID:
+            return True
+        else:
+            return False
+    
+    def listServersByGateway(self):
+        """
+        Lists the data sources for a given Sitewise Gateway
+        :return:
+        """
+        gatewayID = self.getGatewayIDByName()
+
+        if not gatewayID:
+            raise GroupDoesNotExist('Gateway with ID {} does not exist'.format(self.gatewayName))
+
+        return self.sitewise.describe_gateway_capability_configuration(
+            gatewayId=gatewayID,
+            capabilityNamespace='iotsitewise:opcuacollector:1'
+        )
+    
+    def updateGateway(self, gatewayID):
+        """
+        Updates a given sitewise Gateway with the
+        identical gateway capability configuration
+        """
+
+        gatewayCapabilityConfiguration = self.sitewise.describe_gateway_capability_configuration(
+            gatewayId=gatewayID,
+            capabilityNamespace='iotsitewise:opcuacollector:1'
+        )
+
+        configuration = json.loads(gatewayCapabilityConfiguration['capabilityConfiguration'])['sources'][0]
+        payload = {"sources": [configuration]}
+
+        self.sitewise.update_gateway_capability_configuration(
+            gatewayId=gatewayID,
+            capabilityNamespace='iotsitewise:opcuacollector:1',
+            capabilityConfiguration=json.dumps(payload)
+        )

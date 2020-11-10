@@ -1223,6 +1223,10 @@ Resources:
                   - iotsitewise:DeleteAsset
                   - iotsitewise:DisassociateAssets
                   - iotsitewise:AssociateAssets
+                  - iotsitewise:ListGateways
+                  - iotsitewise:DescribeGateway
+                  - iotsitewise:DescribeGatewayCapabilityConfiguration
+                  - iotsitewise:UpdateGatewayCapabilityConfiguration
                   - dynamodb:PutItem
                   - dynamodb:UpdateItem
                   - dynamodb:Query
@@ -1385,6 +1389,10 @@ Resources:
             Ref: AMCModelTable
           DynamoDB_Asset_Table:
             Ref: AMCAssetTable
+          greengrassGroupID: 
+            !GetAtt EdgeGroup.Id
+          gatewayName:
+            Ref: EdgeDeviceID
       Timeout: 900
 
   AssetModelUpdaterRule:
