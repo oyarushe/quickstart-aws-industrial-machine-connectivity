@@ -4,16 +4,16 @@
 
 
 === Post-Deployment Steps
-Stack deployment will take approximately 5-10 minutes. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the steps to configure the IMC Kit to make it operational. The Post-Deployment steps include the following sections:
+Stack deployment will take approximately 10 minutes. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the steps to configure the IMC Quick Start to make it operational. The Post-Deployment steps include the following sections:
 
 . <<Edge Devices (Physical Deployments Only)>>
 . <<Edge Software Deployment (Physical Deployments Only)>>
-. <<Asset Model Converter (AMC) Initiation>>
+. <<Asset Model Convertner (AMC) Initiation>>
 . <<SiteWise Connector Activation>>
 . <<Validate Incoming Data>>
 
 ==== Edge Devices (Physical Deployments Only)
-The physical brownfield deployment is intended to demonstrate the capabilities of the IMC kit in an environment where the end user has an existing edge-based asset modeling software (such as Ignition or KepServer). It is deployed onto physical hardware. After deployment, the physical hardware will run Greengrass software and connect into the edge-based asset modeling software. The IMC kit supports the following OEM devices: 
+The physical brownfield deployment is intended to demonstrate the capabilities of the IMC Quick Start in an environment where the end user has an existing edge-based asset modeling software (such as Ignition or KepServer). It is deployed onto physical hardware. After deployment, the physical hardware will run Greengrass software and connect into the edge-based asset modeling software. The IMC Quick Start supports the following OEM devices: 
 
 * Lenovo
 ** Model: ThinkCentre M90n IoT
@@ -40,7 +40,7 @@ The physical brownfield deployment is intended to demonstrate the capabilities o
 ==== Edge Software Deployment (Physical Deployments Only)
 NOTE: This step is only necessary if deploying one of the physical deployment options (Physical-Greenfield/Physical-Brownfield)
 
-NOTE: You must have the AWS CLI configured to point to the AWS account you’re using for the IMC kit.
+NOTE: You must have the AWS CLI configured to point to the AWS account you’re using for the IMC Quick Start.
 
 NOTE: The Physical-Brownfield deployment mode does not come with a configured set of project tags similar to the virtual deployment but does come with a set of device simulations that can be configured to represent a project tag structure similar to the virtual deployment tag structure (or your own structure entirely). This deployment can be configured to work with a physical PLC test harness. 
 
@@ -54,7 +54,7 @@ NOTE: The Physical-Greenfield deployment mode is compatible with either Inductiv
  sudo su
 
 .. Ensure you are in the `home/ubuntu` directory
-.. Use the command line to retrieve the deployment script from your stack’s S3 bucket. Before running this commmand, ensure you have the AWS CLI configured in the region where you are launching the IMC-Kit CloudFormation stack.
+.. Use the command line to retrieve the deployment script from your stack’s S3 bucket. Before running this commmand, ensure you have the AWS CLI configured in the region where you are launching the IMC Quick Start CloudFormation stack.
 .. In your home directory run this command to get the physical deployment bootup script from an S3 bucket:
 
  aws s3api get-object --bucket [DependenciesBucket] --key [BootupScript]
@@ -64,7 +64,7 @@ To get the values of the 2 options:
 - [DependenciesBucket]
 - [BootupScript]
 
-Open the CloudFormation service console, open the *NESTED* IMC-Kit CloudFormation stack, select the *Outputs* tab and follow the instructions below:
+Open the CloudFormation service console, open the *NESTED* IMC Quick Start CloudFormation stack, select the *Outputs* tab and follow the instructions below:
 
 [cols="2,2a"]
 .Options
@@ -99,7 +99,7 @@ image::../images/DependenciesBucket.png[Architecture,width=648,height=439]
 
 .. `[bootupScript]` was fetched in the previous step using `aws s3api get-object` CLI command described above.
 
-. Open the CloudFormation service console, open the *NESTED* IMC-Kit CloudFormation stack, select the *Outputs* tab and copy the bootup CLI command from the *Value* of the Key:Value pairs below:
+. Open the CloudFormation service console, open the *NESTED* IMC Quick Start CloudFormation stack, select the *Outputs* tab and copy the bootup CLI command from the *Value* of the Key:Value pairs below:
 
 [cols="2,2a"]
 .Options
@@ -158,7 +158,7 @@ Represent your data in Ignition by creating a project tag hierarchy. The source 
 .. Username: admin
 .. Password: password
 ... If you haven’t already, it is recommended that you change your password once you’ve successfully logged into the Ignition web UI.
-. With the help of an OT professional or IMC Kit contact, represent your PLC data (simulated or real) in a hierarchy
+. With the help of an OT professional or IMC Quick Start contact, represent your PLC data (simulated or real) in a hierarchy
 
 ==== Trigger an Sparkplug node “birth” message in Ignition
 
@@ -169,7 +169,7 @@ Represent your data in Ignition by creating a project tag hierarchy. The source 
 //image::../images/architecture_diagram.png[Architecture,width=648,height=439]
 image::../images/RefreshBirthCertificates.png[Architecture,width=648,height=439]
 
-This action triggers the IMC kit’s asset model converter (AMC), which creates the models and assets that represent the Ignition hierarchy in SiteWise. 
+This action triggers the IMC Quick Start’s asset model converter (AMC), which creates the models and assets that represent the Ignition hierarchy in SiteWise. 
 
 ==== Accept the OPC UA Client Certificate
 To enable the SiteWise to ingest data over OPC UA from Ignition’s OPC UA server, you must accept the certificate presented by the SiteWise connector within Ignition.
@@ -190,7 +190,7 @@ Select the Asset Model Connverter (AMC) Driver you configured in the CloudFormat
 * <<AMCDriver - IgnitionFileExport>>
 
 ===== AMCDriver - IgnitionCirrusLink
-This AMCDriver optionn runs automatically with the launch of the IMC kit (Virtual Option). Proceed to the next section: <<SiteWise Connector Activation>>
+This AMCDriver option runs automatically with the launch of the IMC Quick Start (Virtual Option). Proceed to the next section: <<SiteWise Connector Activation>>
 
 ===== AMCDriver - IgnitionFileExport
 In this section you will export the JSON file from Ignition Server that describes your project's tag hierarchy and upload it into an S3 bucket (created during CF stack formation) to initiate the AMC workflow.
