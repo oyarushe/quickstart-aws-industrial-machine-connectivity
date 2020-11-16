@@ -58,7 +58,7 @@ For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/la
 *A.* Yes. Follow these steps:
 
 . If any of the models/assets you want to create share a name with the models/assets created in the first pass of the AMC execution, you’ll need to delete the models and assets in SiteWise.
-. The second action you’ll need to take is clearing out the following DynamoDB tables associated with the initial IMC kit deployment:
+. The second action you’ll need to take is clearing out the following DynamoDB tables associated with the initial IMC Quick Start deployment:
 .. Table 1: `[stack-name]-asset-model-table`
 .. Table 2: `[stack-name]-asset-table`
 
@@ -75,7 +75,7 @@ Depending on the AMC driver you used, you’ll need to take the follow actions t
 //image::../images/architecture_diagram.png[Architecture,width=648,height=439]
 image::../images/RefreshBirthCertificates.png[Architecture,width=648,height=439]
 
-.. This action triggers the IMC kit’s AMC, which creates the models and assets that represent the Ignition hierarchy in SiteWise. 
+.. This action triggers the IMC Quick Start’s AMC, which creates the models and assets that represent the Ignition hierarchy in SiteWise. 
 
 *AMC Driver: IgnitionFileExport*
 
