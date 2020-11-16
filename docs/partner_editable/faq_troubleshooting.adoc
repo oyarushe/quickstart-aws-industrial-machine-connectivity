@@ -1,5 +1,10 @@
 // Add any tips or answers to anticipated questions. This could include the following troubleshooting information. If you don’t have any other Q&A to add, change “FAQ” to “Troubleshooting.”
 
+//
+//faq_troubleshooting_virtual.adoc
+//faq_troubleshooting_physical_greenfield.adoc
+//faq_troubleshooting_physical_greenfield.adoc
+
 == FAQ
 
 *Q.* I encountered a *CREATE_FAILED* error when I launched the Quick Start.
@@ -15,7 +20,182 @@ For additional information, see https://docs.aws.amazon.com/AWSCloudFormation/la
 
 *A.* We recommend that you launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template size limitations. For more information about AWS CloudFormation quotas, see the http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS documentation^].
 
+*Q.* Can I update a stack to a different deployment type (Physical, Virtual) or dataflow option (Option1, 2a, 2b)? 
+
+*A.* Updates are currently not supported. To achieve a different deployment type or dataflow type, you'll need to deploy a new stack. See the details on having more than one stack deployed in an account below, and then decide whether or not you’ll want to delete your original stack before re-creating another.
+
+*Q.* Can I deploy multiple times in the same AWS account? 
+
+*A.* Yes, you may deploy multiple stacks in the same account – but be wary of the following: 
+
+* For Option 1 deployments, SiteWise may receive data from multiple sources if there are, for example, two instances of Ignition that are publishing data onto the topic “/Tag Providers/default/Line1/CNC/Temperature”.  
+
+* If SiteWise models and assets exist in the Cloud from a previous deployment, a new deployment will not re-create the model/asset hierarchy. Instead, the Asset Model Converter operates by recognizing any “deltas” in the existing models/assets and the new deployment hierarchy. For example: 
+** If the previously deployed hierarchy is identical to the newly deployed, nothing in SiteWise is changed.
+** If the newly deployed hierarchy has an identical structure to the previously deployed hierarchy with additional nodes that follow the hierarchy pattern, the new models/assets will be created in SiteWise:
+*** Previous:
+ 
+ Line 1/CNC1/Temperature
+
+*** New:
+
+ Line 1/CNC1/Temperature
+ Line 1/CNC2/Temperature
+
+* If the newly deployed hierarchy has a different hierarchy than the previously deployed hierarchy altogether, the Asset Model Converter will not succeed in creating the new models and assets.
+* Refer to the instructions in the appendix showing how to add a line and device with tags to a project in Ignition using the Ignition Designer.
+
+*Q.* Does any hardening of the OS occur during deployment? 
+
+*A.* Yes. Fail2ban is installed and enabled on the device, which bans IPs that show the following malicious signs: 
+
+* Too many password failures
+* Seeking for exploits
+* Additionally, shared memory on the device is secured via /etc/fstab.
+
+*Q.* Can I re-run the AMC to create new models and assets? 
+
+*A.* Yes. Follow these steps:
+
+. If any of the models/assets you want to create share a name with the models/assets created in the first pass of the AMC execution, you’ll need to delete the models and assets in SiteWise.
+. The second action you’ll need to take is clearing out the following DynamoDB tables associated with the initial IMC Quick Start deployment:
+.. Table 1: `[stack-name]-asset-model-table`
+.. Table 2: `[stack-name]-asset-table`
+
+Depending on the AMC driver you used, you’ll need to take the follow actions to re-run the AMC: 
+
+*AMC Driver: IgnitionCirrusLink*
+
+. Initiate a re-birth (NBIRTH,DBIRTH) MQTT message that represents the your project hierarchy.
+.. Connect to your Ignition server in the Ignition Designer
+.. A birth message is triggered by launching the Ignition Designer, navigating to the tag browser, select `tag providers`, select `MQTT Transmission`, select `Transmission Control` and click the “Refresh” button.
+
+.Refresh Sparkplug Birth Certificates
+//[link=images/architecture_diagram.png]
+//image::../images/architecture_diagram.png[Architecture,width=648,height=439]
+image::../images/RefreshBirthCertificates.png[Architecture,width=648,height=439]
+
+.. This action triggers the IMC Quick Start’s AMC, which creates the models and assets that represent the Ignition hierarchy in SiteWise. 
+
+*AMC Driver: IgnitionFileExport*
+
+. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket:
+
+.. `[name_of_stack]-[amcincomingresource]-[hash]`
+
+*AMC Driver: KepServerFileExport*
+
+. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket:
+.. `[name_of_stack]-[amcincomingresource]-[hash]`
+
+*Q.* How do I add a QuickSight visual?
+
+*A.* Users may create Amazon QuickSight visuals for the data that is put in the S3 bucket via the Kinesis Data Firehose. Prior to creating these visuals, complete the following pre-requisite steps:
+
+Pre-Requisites:
+
+* Open the AWS console and navigate to the QuickSight service console
+** If you have not previously used QuickSight, you will be asked to grant access to QuickSight. Refer to the https://docs.aws.amazon.com/quicksight/latest/user/getting-started.html[Amazon QuickSight documentation] for additional details.
+* Create a QuickSight visual
+** The data source will be the S3 bucket that receives data via the AWS IoT Core rule. The S3 bucket is named: `[stack_name_here]-imcs3bucket-[hash]`
+** Navigate to the Amazon QuickSight console home page and click `New analysis`, select `New dataset`, then select the Amazon S3 service icon. 
+** Add details for the dataset:
+** Data source name: Provide a name for the IMC data set such as “IMC-QS-Dataset”
+*** Manifest file: Leave the “URL” radio button selected for the “Upload a manifest file” text entry option and paste the S3 URL of the S3 bucket manifest file. The manifest file is located in the same S3 bucket where the data is stored (S3 bucket name: [stack_name_here]-imcs3bucket-[hash]). The manifest file is named “imcquicksightdata.json”. The S3 URL will follow this naming convention: `https:// [stack_name_here]-imcs3bucket-[hash].s3.amazonaws.com/imcquicksightdata.json`
+
+*Q.*
+How do I add a QuickSight visual?
+
+*A.*
+Users may create Amazon QuickSight visuals for the data that is put in the S3 bucket via the Kinesis Data Firehose. Prior to creating these visuals, complete the following pre-requisite steps:
+
+Pre-Requisites:
+
+. Open the AWS console and navigate to the QuickSight service console
+.. If you have not previously used QuickSight, you will be asked to grant access to QuickSight. Refer to the Amazon QuickSight documentation for additional details:
+... https://docs.aws.amazon.com/quicksight/latest/user/getting-started.html
+. Create a QuickSight visual
+.. The data source will be the S3 bucket that receives data via the AWS IoT Core rule. The S3 bucket is named: [stack_name_here]-imcs3bucket-[hash]
+.. Navigate to the Amazon QuickSight console home page and click “New analysis”, select “New dataset”, then select the Amazon S3 service icon. 
+.. Add details for the dataset:
+... Data source name: Provide a name for the IMC data set such as “IMC-QS-Dataset”
+... Manifest file: Leave the “URL” radio button selected for the “Upload a manifest file” text entry option and paste the S3 URL of the S3 bucket manifest file. The manifest file is located in the same S3 bucket where the data is stored (S3 bucket name:
+.... `[stack_name_here]-imcs3bucket-[hash]`. 
+... The manifest file is named “imcquicksightdata.json”. The S3 URL will follow this naming convention:
+.... `https://[stack_name_here]-imcs3bucket-[hash].s3.amazonaws.com/imcquicksightdata.json`
+
 
 == Troubleshooting
 
-<Steps for troubleshooting the deployment go here.>
+==== Quarantined certificate in Ignition doesn't show up (or data doesn’t show up for Data Flow Option 1 deployments)
+
+First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the SiteWise Gateway:
+
+. Navigate to the AWS IoT SiteWise console and select Ingest  Gateways 
+. Select the gateway created during the stack launch:
+.. Naming convention: `[name_of_stack]_Automated_Gateway`
+. Click “Edit” in the Source Configuration for Automated Gateway Config section
+. Click “Save” at the bottom. No changes are necessary. This action simply activates the SiteWise gateway to ensure data flows from the OPC UA server. 
+. If it hasn’t already been done, look for and accept the quarantined certificate in Ignition.
+
+* If using KepServer for Windows, make sure that your default firewalls have been turned off (they prevent the SiteWise Gateway certificates from showing up).
+
+
+
+==== Can’t access Ignition Web UI
+
+Ensure that you’re attempting to make the connection from the same network you defined as “Your Public IP” while setting up the stack. If you’re attempting from a different network, you’ll need to edit the security group associated with the two EC2 instances (it is the same security group). 
+
+. Navigate to the EC2 console
+. Highlight one of the two EC2 instances that has been created for your deployment
+. Scroll to the right and click on the Security Group associated with the EC2 instance 
+. Edit the “inbound” rules for the rule associated with port 8088 to match the IP address you’re attempting the connection from. 
+
+==== Narrowing Ignition/Greengrass Permissions (for workload template deployments only)
+
+. Navigate to the EC2 console
+. Take note of the private IP addresses of the following
+.. The Greengrass EC2 instance for the current deployment
+.. The Ignition EC2 instance for the current deployment
+. Highlight one of the two EC2 instances that has been created for your deployment
+. Scroll to the right and click on the Security Group associated with the EC2 instance 
+. Edit the rule associated with port 8883 and replace “0.0.0.0/0” with the private IP address for the Ignition EC2 instance
+. Edit the rule associated with port 62541 and replace “0.0.0.0/0” with the private IP address for the Greengrass EC2 instance
+
+==== Models and assets weren’t created in SiteWise
+
+If models and assets were not created in SiteWise and the Cirrus Link AMC Driver was used, follow these steps to troubleshoot. Post Deployment Cirrus Link Module Configuration
+. Navigate to MQTT Transmission settings in the Ignition console
+
+.Ignition - Settings
+//[link=images/architecture_diagram.png]
+//image::../images/architecture_diagram.png[Architecture,width=200,height=100]
+image::../images/IgnitionSettings.png[Architecture,width=200,height=439]
+
+. Select Servers -> Settings -> Edit 
+. Navigate to the bottom of the screen and click the “show advanced properties” check box.
+. Under Data Format Type, select Sparkplug_B_v1_0_JSON. 
+. Click Save Changes
+
+.Ignition - MQTT Transmission Module Settings
+//[link=images/architecture_diagram.png]
+//image::../images/architecture_diagram.png[Architecture,width=200,height=100]
+image::../images/Ignition-MQTT-Settings.png[Architecture,width=648,height=439]
+
+Ensure the tagPathConfiguration is not being filtered out:
+. In the MQTT Transmission Module Settings, select Transmitters -> Edit 
+. Navigate to the bottom of the screen and click the “show advanced properties” check box. 
+. Ensure that tagPathConfiguration is not being filtered out. 
+
+.Ignition - MQTT Transmission Module Filtered Properties
+//[link=images/architecture_diagram.png]
+//image::../images/architecture_diagram.png[Architecture,width=200,height=100]
+image::../images/Ignition-MQTT-Filtered-Properties.png[Architecture,width=648,height=439]
+
+If these settings are as described above and you’re still receiving errors:
+
+. Check the Lambda function responsible for creating the models and assets in SiteWise for errors:
+.. In the AWS lambda console, navigate to the function named: `[name_of_stack]-AssetModelIngestionLambdaResource-[hash]`
+.. Select the “Monitoring” tab
+.. Click “View logs in CloudWatch”
+.. Click into the most recent Log Stream and find the error message to troubleshoot.

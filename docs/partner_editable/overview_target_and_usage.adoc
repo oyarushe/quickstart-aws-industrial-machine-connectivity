@@ -2,6 +2,6 @@
 // Identify your target audience and explain how/why they would use this Quick Start.
 //Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
 
-This Quick Start reference deployment guide provides step-by-step instructions for deploying {partner-product-name} on the AWS Cloud.
+This Quick Start reference deployment guide provides step-by-step instructions for deploying the {partner-product-name} (IMC) Quick Start on the AWS Cloud.
 
-This Quick Start is for organizations who wants to see real business value from Industrial IoT solutions, by bringing data from their industrial assets to AWS in a simple and structured way.
+This IMC Quick Start (QS) is for developers and AWS Partners (Regional and Global Solution Integrators (SI/GSIs), Independent Software Vendors (ISVs), Original Equipment Manufacturer (OEMs)) who wants to see real business value from Industrial IoT (IIoT) solutions, by bringing data from their industrial assets to AWS in a simple and structured way.
