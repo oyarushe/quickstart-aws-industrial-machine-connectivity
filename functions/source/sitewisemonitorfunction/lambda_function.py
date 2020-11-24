@@ -6,10 +6,10 @@ import time
 import argparse
 import os
 
-
 def createSitewiseMonitorDashboard(boto3Session, sitewiseMonitorRole):
     client = boto3Session.client('iotsitewise')
     supportEmail= os.environ.get('supportEmail')
+    portalName = os.environ['stackName']
 
     sitewiseMonitorAssets = []
 
@@ -87,7 +87,7 @@ def createSitewiseMonitorDashboard(boto3Session, sitewiseMonitorRole):
     # Going to create Portal
 
     response = client.create_portal(
-        portalName='imc_sitewise_portal',
+        portalName=portalName,
         portalContactEmail=supportEmail,
         roleArn=sitewiseMonitorRole
     )

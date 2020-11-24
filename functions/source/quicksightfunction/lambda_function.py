@@ -6,7 +6,7 @@ import time
 import argparse
 import os
 
-def createQuickSight(boto3Session, awsAccount, s3BucketName):
+def createQuickSight(boto3Session, awsAccount, s3BucketName, stackName):
     quickSightClient = boto3Session.client('quicksight')
     s3Client = boto3Session.resource('s3')
     imcUUID = str(uuid.uuid4())
@@ -51,7 +51,7 @@ def createQuickSight(boto3Session, awsAccount, s3BucketName):
     response = quickSightClient.create_data_source(
         AwsAccountId=awsAccount,
         DataSourceId=imcUUID,
-        Name='imcDataSource',
+        Name=stackName,
         Type='S3',
         DataSourceParameters={
             'S3Parameters': {
@@ -79,7 +79,7 @@ def createQuickSight(boto3Session, awsAccount, s3BucketName):
     response3 = quickSightClient.create_data_set(
         AwsAccountId=awsAccount,
         DataSetId=imcUUID,
-        Name='imcDataSet',
+        Name=stackName,
         PhysicalTableMap={
             'table1': {
                 'S3Source': {
@@ -115,8 +115,9 @@ def lambda_handler(event, context):
     boto3Session = boto3
     awsAccount = os.environ['imcawsaccount']
     s3BucketName = os.environ['imcdatabucket']
+    stackName = os.environ['stackName']
 
-    createQuickSight(boto3Session, awsAccount, s3BucketName)
+    createQuickSight(boto3Session, awsAccount, s3BucketName, stackName)
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
