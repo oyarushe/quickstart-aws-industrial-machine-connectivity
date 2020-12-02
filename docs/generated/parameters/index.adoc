@@ -1,6 +1,6 @@
 
-=== Launch into a new VPC
+=== Parameters to launch into a new VPC
 include::IMC-master.template.adoc[]
 
-=== Launch into an existing VPC
+=== Parameters to launch into an existing VPC
 include::IMC-workload.template.adoc[]

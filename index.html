@@ -811,25 +811,19 @@ p.footer-text a{color:#d7d8d8}
 <ul class="sectlevel2">
 <li><a href="#_sign_in_to_your_aws_account_2">Sign in to your AWS account</a></li>
 <li><a href="#_launch_the_quick_start">Launch the Quick Start</a></li>
-<li><a href="#_launch_into_a_new_vpc">Launch into a new VPC</a></li>
-<li><a href="#_launch_into_an_existing_vpc">Launch into an existing VPC</a></li>
+<li><a href="#_parameters_to_launch_into_a_new_vpc">Parameters to launch into a new VPC</a></li>
+<li><a href="#_parameters_to_launch_into_an_existing_vpc">Parameters to launch into an existing VPC</a></li>
 </ul>
 </li>
-<li><a href="#_post_deployment_steps">Post deployment steps</a>
-<ul class="sectlevel2">
-<li><a href="#_post_deployment_steps_2">Post-Deployment Steps</a></li>
-<li><a href="#_cloudformation_stack_cleanup">CloudFormation Stack Cleanup</a></li>
-</ul>
-</li>
-<li><a href="#_other_useful_information">Other useful information</a>
-<ul class="sectlevel2">
-<li><a href="#_asset_model_converter">Asset Model Converter</a></li>
-<li><a href="#_creating_amc_drivers">Creating AMC Drivers</a></li>
-<li><a href="#_appendix">Appendix</a></li>
+<li><a href="#_post_deployment_steps">Post deployment steps</a></li>
+<li><a href="#_cloudformation_stack_cleanup">CloudFormation Stack Cleanup</a>
+<ul class="sectlevel3">
+<li><a href="#_cloud_resources_cleanup">Cloud resources Cleanup</a></li>
+<li><a href="#_edge_hardware_cleanup">Edge Hardware Cleanup</a></li>
 </ul>
 </li>
 <li><a href="#_faq">FAQ</a></li>
-<li><a href="#_troubleshooting_2">Troubleshooting</a>
+<li><a href="#_troubleshooting">Troubleshooting</a>
 <ul class="sectlevel3">
 <li><a href="#_quarantined_certificate_in_ignition_doesnt_show_up_or_data_doesnt_show_up_for_data_flow_option_1_deployments">Quarantined certificate in Ignition doesn&#8217;t show up (or data doesn’t show up for Data Flow Option 1 deployments)</a></li>
 <li><a href="#_cant_access_ignition_web_ui">Can’t access Ignition Web UI</a></li>
@@ -856,7 +850,6 @@ p.footer-text a{color:#d7d8d8}
 </div>
 <div class="paragraph text-center">
 <p><strong>August 2020</strong><br>
-<em></em><br>
 <em>Thomas Cummins and Shivansh Singh, AWS</em></p>
 </div>
 <div class="admonitionblock tip text-left">
@@ -873,7 +866,7 @@ report bugs, or submit feature ideas for this Quick Start.
 </table>
 </div>
 <div class="paragraph text-left">
-<p>This Quick Start was created by  in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
+<p>This Quick Start was created by Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
 </div>
 </div>
 </div>
@@ -886,31 +879,19 @@ report bugs, or submit feature ideas for this Quick Start.
 <div class="paragraph">
 <p>This IMC Quick Start (QS) is for developers and AWS Partners (Regional and Global Solution Integrators (SI/GSIs), Independent Software Vendors (ISVs), Original Equipment Manufacturer (OEMs)) who wants to see real business value from Industrial IoT (IIoT) solutions, by bringing data from their industrial assets to AWS in a simple and structured way.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Amazon may share user-deployment information with the AWS Partner that collaborated with AWS on the Quick Start.
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_industrial_machine_connectivity_on_aws">Industrial machine connectivity on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The IMC framework is designed to enable customers and partners to get data from their assets to AWS in a simple, structured process so they can rapidly realize the business value that is derived from that data. The IMC Quick Start has the capability to convert customers’ existing asset hierarchy definitions (i.e. factory, lines, machines, tags, etc.) defined in partner edge applications like Inductive Automation’s Ignition Server or PTC’s KEPServerEX to the equivalent asset hierarchy within AWS IoT SiteWise. This capability is enabled by the Asset Model Converter (AMC), a component of the IMC architecture. With asset hierarchies defined within IoT SiteWise, customer data can be ingested continuously to the AWS cloud and all the pertinent metadata is readily accessible for applications that will use that data to deliver business value, such as asset condition monitoring dashboards.</p>
+<p>The IMC framework is designed to enable customers and partners to get data from their assets to AWS in a simple, structured process so that they can rapidly realize the business value that is derived from the data. The IMC Quick Start has the capability to convert customers’ existing asset hierarchy definitions (i.e. factory, lines, machines, tags, etc.) defined in partner edge applications like Inductive Automation’s Ignition Server or PTC’s KEPServerEX to the equivalent asset hierarchy within AWS IoT SiteWise. This capability is enabled by the Asset Model Converter (AMC), a component of the IMC Quick Start architecture. With asset hierarchies defined within IoT SiteWise, customer data can be ingested continuously to the AWS cloud and all the pertinent metadata is readily accessible for applications that will use that data to deliver business value, such as asset condition monitoring dashboards.</p>
 </div>
 <div class="paragraph">
 <p>With multiple ingestion patterns from edge to the cloud, customers and partners may choose the IMC Framework path that suits the needs of their specific use case. The first path is via the IoT SiteWise Connector running in an AWS IoT Greengrass core (via OPC-UA) to IoT SiteWise in the cloud. The second path is sending data directly from edge applications (i.e. Ignition Server with Cirrus Link MQTT Transmission module) to AWS IoT Core via MQTT. The third path is sending data from the edge application (i.e. Ignition Server or KEPServerEX) to IoT Greengrass where it can then be processed/filtered by customer-defined lambda functions, used for local machine learning model inference or consumed by a containerized Docker application processing. Raw and processed data can then be transmitted to the AWS cloud through a number of different paths including IoT Core, Kinesis Data Streams, or AWS IoT Analytics. These edge processing capabilities are not part of the IMC Quick Start and partners/customers can add those components as needed.</p>
 </div>
 <div class="paragraph">
-<p>The IMC Quick Start includes the software and a list of hardware required to connect a customer&#8217;s assets to the cloud and visualize their data. The primary objective of the framework is to enable partners to deliver a fast, inexpensive proof of value so that the customer can see real business value from the IIoT solution and will want to develop and deploy a complete production solution that addresses all of their critical use cases. One example of a proof of value deployment a partner could deliver would be helping enable a customer to visualize near real-time operational metrics and perform Root Cause Analysis (RCA) of their assets when a line goes down. There are two deployment modes of the framework: virtual (for evaluation and training) and physical (for real customer deployments). The CloudFormation templates provision the  cloud resources and generate the scripts required to bootstrap physical edge devices.</p>
+<p>The IMC Quick Start includes the software and a list of hardware required to connect a customer&#8217;s assets to the cloud and visualize their data. The primary objective of the framework is to enable partners to deliver a fast, inexpensive proof of value so that the customer can see real business value from the IIoT solution and will want to develop and deploy a complete production solution that addresses all of their critical use cases. An example of a proof of value deployment a partner could deliver would be helping enable a customer to visualize near real-time operational metrics and perform Root Cause Analysis (RCA) of their assets when a line goes down. There are two deployment modes of the IMC Quick Start: virtual (for evaluation and training) and physical (for real customer deployments). The CloudFormation templates provision the  cloud resources and generate the scripts required to bootstrap physical edge devices.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -919,13 +900,7 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 <div class="title">Figure 1. IMC Quick Start Architecture</div>
 </div>
 <div class="paragraph">
-<p>The Industrial Machine Connectivity (IMC) Quick Start enables connecting industrial assets into AWS cloud services along with visualizing data using AWS IoT SiteWise Monitor and QuickSight dashboards. This Quick Start integrates with AWS IoT Partner edge software such as Inductive Automation’s Ignition Server and PTC’s KEPServerEX. These partner edge software applications handle the industrial protocol translation from the PLCs, other devices, historians and SCADA systems they connect to. The IMC architecture integrates both the data collected by the edge software applications and the asset model hierarchy that they maintain. The IMC architecture is shown below:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="images/imc_reference_architecture.png"><img src="images/IMCQuickStartArchitecture.png" alt="IMC Reference Architecture" width="648" height="439"></a>
-</div>
-<div class="title">Figure 2. IMC Quick Start Architecture</div>
+<p>The Industrial Machine Connectivity (IMC) Quick Start enables connecting industrial assets into AWS cloud services along with visualizing data using AWS IoT SiteWise Monitor and QuickSight dashboards. This Quick Start integrates with AWS IoT Partner edge software such as Inductive Automation’s Ignition Server and PTC’s KEPServerEX. These partner edge software applications handle the industrial protocol translation from the PLCs, other devices, historians and SCADA systems they connect to. The IMC architecture integrates both the data collected by the edge software applications and the asset model hierarchy that they maintain.</p>
 </div>
 <div class="paragraph">
 <p>A key component of this Quick Start is the Asset Model Converter (AMC). The AMC is a serverless, module-based framework supporting mapping edge-based asset modeling software conventions into AWS IoT SiteWise models and assets.</p>
@@ -997,9 +972,6 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <h2 id="_software_licenses">Software licenses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are no licenses required to deploy this Quick Start. All AWS service resources consumed during the launch of the Quick Start will be incurr AWS service usage costs.</p>
-</div>
-<div class="paragraph">
 <p>Some configurations of the IMC Quick Start will involve the use of 3rd party software and the user is responsible for obtaining a license directly from the software vendor. The 2 software vendors that have products that integrate with the IMC Quick Start are:</p>
 </div>
 <div class="olist arabic">
@@ -1009,7 +981,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="ulist">
 <ul>
 <li>
-<p>Cirrus Link Solutions' MQTT Transmission Module supported</p>
+<p>Cirrus Link Solutions' MQTT Transmission Module</p>
 </li>
 </ul>
 </div>
@@ -1018,6 +990,9 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <p>PTC (KEPServerEX)</p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>All AWS service resources consumed during the launch of the Quick Start will incurr AWS service usage costs.</p>
 </div>
 </div>
 </div>
@@ -1034,7 +1009,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="content">
 <img src="images/IMCQuickStartArchitecture-Virtual.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 3. Quick Start architecture (Virtual Deployment) for <em>Industrial machine connectivity</em> on AWS</div>
+<div class="title">Figure 2. Quick Start architecture (Virtual Deployment) for <em>Industrial machine connectivity</em> on AWS</div>
 </div>
 <div class="paragraph">
 <p>As shown in the figure above, the virtual deployment of the Quick Start sets up the following resources:</p>
@@ -1065,13 +1040,13 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 </ol>
 </div>
 <div class="paragraph">
-<p>For deployments in real customer environments, users will deploy the <strong>PHYSICAL</strong> deployment type of the IMC Quick Start. The key difference from the <strong>VIRTUAL</strong> deployment type (shown above) is that the AWS IoT Greengrass Core is running on a physical industrial PC device at the customer&#8217;s facility.</p>
+<p>For deployments in customers' physical environment (plant floor), users will deploy the <strong>PHYSICAL</strong> deployment type of the IMC Quick Start. The key difference from the <strong>VIRTUAL</strong> deployment type (shown above) is that the AWS IoT Greengrass Core is running on a physical industrial PC device at the customer&#8217;s facility.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="images/IMCQuickStartArchitecture-Physical.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 4. Quick Start architecture (Physical Deployment) for <em>Industrial machine connectivity</em> on AWS</div>
+<div class="title">Figure 3. Quick Start architecture (Physical Deployment) for <em>Industrial machine connectivity</em> on AWS</div>
 </div>
 <div class="paragraph">
 <p>As shown in the figure above, the physical deployment of the Quick Start deploys the same resources as the virtual deployment but with the following differences:</p>
@@ -1099,7 +1074,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="content">
 <img src="images/AMCArchitecture.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 5. Asset Model Converter (AMC) architecture diagram</div>
+<div class="title">Figure 4. Asset Model Converter (AMC) architecture diagram</div>
 </div>
 <div class="paragraph">
 <p>The table below details the AMC sequence flow:</p>
@@ -1382,7 +1357,7 @@ Certain Regions are available on an opt-in basis. See <a href="https://docs.aws.
 <div class="sect3">
 <h4 id="_virtual">Virtual</h4>
 <div class="paragraph">
-<p>The virtual deployment is intended for demonstration, training and evaluation of the IMC Quick Start’s capabilities. EC2 instances will be launched to simulate edge gateway hardware but in all other respects the experience will mirror that of the real physical deployment. This deployment mode relies on simulated tag values generated by the partner edge software. There are no physical PLCs or sensors that are being connected.</p>
+<p>The virtual deployment is intended for demonstration, training and evaluation of the IMC Quick Start’s capabilities. EC2 instances will be launched to simulate edge gateway hardware but in all other aspects the experience will mirror that of the real physical deployment. This deployment mode relies on simulated tag values generated by the partner edge software. There are no physical PLCs or sensors that are being connected.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1615,7 +1590,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/SSO_signup.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 6. SSO activation page in the AWS console</div>
+<div class="title">Figure 5. SSO activation page in the AWS console</div>
 </div>
 <div class="paragraph">
 <p>If you don’t have an AWS organization set up for your account (required for AWS SSO usage), you’ll be prompted to set one up.</p>
@@ -1631,7 +1606,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/Enable_SSO.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 7. SSO activation page in the AWS console</div>
+<div class="title">Figure 6. SSO activation page in the AWS console</div>
 </div>
 <div class="paragraph">
 <p>For extra documentation, visit the <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/getting-started.html">AWS SSO documentation</a>.</p>
@@ -1660,7 +1635,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/SSO_create_group.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 8. Create SSO group name</div>
+<div class="title">Figure 7. Create SSO group name</div>
 </div>
 <div class="ulist">
 <ul>
@@ -1673,7 +1648,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/SSO_group_name.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 9. Specify SSO group name</div>
+<div class="title">Figure 8. Specify SSO group name</div>
 </div>
 <div class="ulist">
 <ul>
@@ -1699,7 +1674,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/SSO_add_user.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 10. Add SSO user</div>
+<div class="title">Figure 9. Add SSO user</div>
 </div>
 <div class="ulist">
 <ul>
@@ -1712,7 +1687,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/SSO_user_details.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 11. Provide SSO user details</div>
+<div class="title">Figure 10. Provide SSO user details</div>
 </div>
 <div class="ulist">
 <ul>
@@ -1737,7 +1712,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/QS-Signup.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 12. QuickSight Signup</div>
+<div class="title">Figure 11. QuickSight Signup</div>
 </div>
 <div class="paragraph">
 <p>Choose between your desired selection: Standard vs. Enterprise.</p>
@@ -1756,7 +1731,7 @@ In Option 2a, data is not forwarded to AWS IoT SiteWise. Custom development is r
 <div class="content">
 <img src="images/QS-CreateAccount.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 13. QuickSight - Create Account</div>
+<div class="title">Figure 12. QuickSight - Create Account</div>
 </div>
 <div class="paragraph">
 <p>QuickSight is now enabled and is ready for use.</p>
@@ -1977,7 +1952,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </div>
 </div>
 <div class="sect2">
-<h3 id="_launch_into_a_new_vpc">Launch into a new VPC</h3>
+<h3 id="_parameters_to_launch_into_a_new_vpc">Parameters to launch into a new VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. Network configuration</caption>
 <colgroup>
@@ -2138,7 +2113,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </table>
 </div>
 <div class="sect2">
-<h3 id="_launch_into_an_existing_vpc">Launch into an existing VPC</h3>
+<h3 id="_parameters_to_launch_into_an_existing_vpc">Parameters to launch into an existing VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 6. Edge Deployment Configuration</caption>
 <colgroup>
@@ -2309,7 +2284,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <div class="content">
 <a class="image" href="images/cfn_outputs.png"><img src="images/cfn_outputs.png" alt="cfn_outputs" width="100%" height="100%"></a>
 </div>
-<div class="title">Figure 14. Industrial machine connectivity outputs after successful deployment</div>
+<div class="title">Figure 13. Industrial machine connectivity outputs after successful deployment</div>
 </div>
 </div>
 </div>
@@ -2317,133 +2292,8 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <div class="sect1">
 <h2 id="_post_deployment_steps">Post deployment steps</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_post_deployment_steps_2">Post-Deployment Steps</h3>
 <div class="paragraph">
-<p>Stack deployment will take approximately 10 minutes. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the steps to configure the IMC Quick Start to make it operational. The Post-Deployment steps include the following sections:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><a href="#_edge_devices_physical_deployments_only">Edge Devices (Physical Deployments Only)</a></p>
-</li>
-<li>
-<p><a href="#_edge_software_deployment_physical_deployments_only">Edge Software Deployment (Physical Deployments Only)</a></p>
-</li>
-<li>
-<p><a href="#_asset_model_convertner_amc_initiation">Asset Model Convertner (AMC) Initiation</a></p>
-</li>
-<li>
-<p><a href="#_sitewise_connector_activation">SiteWise Connector Activation</a></p>
-</li>
-<li>
-<p><a href="#_validate_incoming_data">Validate Incoming Data</a></p>
-</li>
-</ol>
-</div>
-<div class="sect3">
-<h4 id="_edge_devices_physical_deployments_only">Edge Devices (Physical Deployments Only)</h4>
-<div class="paragraph">
-<p>The physical brownfield deployment is intended to demonstrate the capabilities of the IMC Quick Start in an environment where the end user has an existing edge-based asset modeling software (such as Ignition or KepServer). It is deployed onto physical hardware. After deployment, the physical hardware will run Greengrass software and connect into the edge-based asset modeling software. The IMC Quick Start supports the following OEM devices:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Lenovo</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Model: ThinkCentre M90n IoT</p>
-</li>
-<li>
-<p>Architecture: Intel® Celeron® 4205U (x86)</p>
-</li>
-<li>
-<p>URL: <a href="https://www.lenovo.com/us/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/ThinkCentre-M90n-IoT/p/thinkcentre-m90n-iot" class="bare">https://www.lenovo.com/us/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/ThinkCentre-M90n-IoT/p/thinkcentre-m90n-iot</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>ADLINK</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Model: MXE-211</p>
-</li>
-<li>
-<p>Architecture: Intel Atom® Processor E3900 (x86)</p>
-</li>
-<li>
-<p><a href="https://www.adlinktech.com/Products/Industrial_IoT_and_Cloud_solutions/IoTGateway/MXE-210_Series?lang=en" class="bare">https://www.adlinktech.com/Products/Industrial_IoT_and_Cloud_solutions/IoTGateway/MXE-210_Series?lang=en</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>OnLogic</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Model: Karbon 300 Compact Rugged Computer</p>
-</li>
-<li>
-<p>Architecture: Intel Atom® E3930 or E3950 processors</p>
-</li>
-<li>
-<p>URL: <a href="https://onlogic.com/k300/" class="bare">https://onlogic.com/k300/</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Advantech</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Model: UNO-2372G</p>
-</li>
-<li>
-<p>Architecture: Intel Atom E3845/Celeron® J1900 Quad-Core Processors</p>
-</li>
-<li>
-<p>URL: <a href="https://www.advantech.com/products/1-2mlj9a/uno-2372g/mod_f4ff5680-f016-44bd-bff0-e5eddfd82237" class="bare">https://www.advantech.com/products/1-2mlj9a/uno-2372g/mod_f4ff5680-f016-44bd-bff0-e5eddfd82237</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>MOXA</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Model: MC-1112-E4-T</p>
-</li>
-<li>
-<p>Architecture: Intel Atom® Processor E3845 processor</p>
-</li>
-<li>
-<p>URL: <a href="https://www.moxa.com/en/products/industrial-computing/x86-computers/mc-1100-series/mc-1121-e4-t" class="bare">https://www.moxa.com/en/products/industrial-computing/x86-computers/mc-1100-series/mc-1121-e4-t</a></p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_edge_software_deployment_physical_deployments_only">Edge Software Deployment (Physical Deployments Only)</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This step is only necessary if deploying one of the physical deployment options (Physical-Greenfield/Physical-Brownfield)
-</td>
-</tr>
-</table>
+<p>Stack deployment will take approximately 10 minutes. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the <a href="https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/post-deployment.md" target="_blank" rel="noopener">post-deployment steps</a> to configure the IMC Quick Start to make it operational.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2452,914 +2302,21 @@ This step is only necessary if deploying one of the physical deployment options 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-You must have the AWS CLI configured to point to the AWS account you’re using for the IMC Quick Start.
+After post-deployment steps, return back to finish the deployment.
 </td>
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The Physical-Brownfield deployment mode does not come with a configured set of project tags similar to the virtual deployment but does come with a set of device simulations that can be configured to represent a project tag structure similar to the virtual deployment tag structure (or your own structure entirely). This deployment can be configured to work with a physical PLC test harness.
-</td>
-</tr>
-</table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The Physical-Greenfield deployment mode is compatible with either Inductive Automation’s Ignition Server (<a href="https://inductiveautomation.com/ignition/" class="bare">https://inductiveautomation.com/ignition/</a>) or PTCs KEPServerEX (<a href="https://www.kepware.com/en-us/products/kepserverex/" class="bare">https://www.kepware.com/en-us/products/kepserverex/</a>). This deployment option does not bootstrap any partner edge software. The only edge software application that is bootstrapped on the physical hardware as part of the deployment is AWS IoT Greengrass.
-</td>
-</tr>
-</table>
 </div>
-<div class="sect4">
-<h5 id="_retrive_the_imc_edge_device_bootup_script">Retrive the IMC Edge Device Bootup Script</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Retrieve and run the bootup script for the physical hardware device</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Open a terminal on the physical hardware</p>
-</li>
-<li>
-<p>Use the command line to become the root user in your terminal session:</p>
-<div class="literalblock">
-<div class="content">
-<pre>sudo su</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Ensure you are in the <code>home/ubuntu</code> directory</p>
-</li>
-<li>
-<p>Use the command line to retrieve the deployment script from your stack’s S3 bucket. Before running this commmand, ensure you have the AWS CLI configured in the region where you are launching the IMC Quick Start CloudFormation stack.</p>
-</li>
-<li>
-<p>In your home directory run this command to get the physical deployment bootup script from an S3 bucket:</p>
-<div class="literalblock">
-<div class="content">
-<pre>aws s3api get-object --bucket [DependenciesBucket] --key [BootupScript]</pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>To get the values of the 2 options:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>[DependenciesBucket]</p>
-</li>
-<li>
-<p>[BootupScript]</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Open the CloudFormation service console, open the <strong>NESTED</strong> IMC Quick Start CloudFormation stack, select the <strong>Outputs</strong> tab and follow the instructions below:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Options</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Key</strong></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><strong>Value</strong></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[DependenciesBucket]</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Dependecies Bucket Name <strong><em>(see green text below for reference)</em></strong></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[BootupScript]</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Find key corresponding to your configuration:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="pre-reqs.html#BootupScriptGreenfieldOption1">BootupScriptGreenfieldOption1</a></p>
-</li>
-<li>
-<p><a href="pre-reqs.html#BootupScriptGreenfieldOption2a">BootupScriptGreenfieldOption2a</a></p>
-</li>
-<li>
-<p><a href="pre-reqs.html#BootupScriptGreenfieldOption2b">BootupScriptGreenfieldOption2b</a></p>
-</li>
-<li>
-<p><a href="pre-reqs.html#BootupScriptBrownfieldAllOptions">BootupScriptBrownfieldAllOptions</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>and select its value <strong><em>(see blue text below for reference)</em></strong></p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="imageblock">
-<div class="content">
-<img src="images/DependenciesBucket.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 15. [DependenciesBucket] and [BootupScript]</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_execute_the_imc_edge_device_bootup_script">Execute the IMC Edge Device Bootup Script</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Use the command line to make the file executable:</p>
-<div class="literalblock">
-<div class="content">
-<pre>chmod +x [bootupSctipt].sh</pre>
-</div>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p><code>[bootupScript]</code> was fetched in the previous step using <code>aws s3api get-object</code> CLI command described above.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Open the CloudFormation service console, open the <strong>NESTED</strong> IMC Quick Start CloudFormation stack, select the <strong>Outputs</strong> tab and copy the bootup CLI command from the <strong>Value</strong> of the Key:Value pairs below:</p>
-</li>
-</ol>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Options</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Key</strong></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><strong>Value</strong></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FullScriptParamsGreenfield1and2a</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Copy the command from the CloudFormation <strong>Value</strong> column</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>This option is for: deployment type = <a href="pre-reqs.html#Physical-Greenfield">Physical-Greenfield</a>, data flow option = <a href="pre-reqs.html#Option 1 (OPC-UA to SiteWise)">Option 1 (OPC-UA to SiteWise)</a> or <a href="pre-reqs.html#Option 2a (MQTT to IoT Core)">Option 2a (MQTT to IoT Core)</a></p>
-</li>
-</ul>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FullScriptParamsGreenfield2b</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Copy the command from the CloudFormation <strong>Value</strong> column</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>This option is for: deployment type = <a href="pre-reqs.html#Physical-Greenfield">Physical-Greenfield</a>, data flow option = <a href="pre-reqs.html#Option 2b (MQTT to Greengrass to IoT Core)">Option 2b (MQTT to Greengrass to IoT Core)</a></p>
-</li>
-</ul>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FullScriptParamsBrownField</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Copy the command from the CloudFormation <strong>Value</strong> column</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>This option is for: deployment type = <a href="pre-reqs.html#Physical-Brownfield">Physical-Brownfield</a>, data flow option = <a href="pre-reqs.html#Option 1 (OPC-UA to SiteWise)">Option 1 (OPC-UA to SiteWise)</a> or <a href="pre-reqs.html#Option 2a (MQTT to IoT Core)">Option 2a (MQTT to IoT Core)</a> or <a href="pre-reqs.html#Option 2b (MQTT to Greengrass to IoT Core)">Option 2b (MQTT to Greengrass to IoT Core)</a></p>
-</li>
-</ul>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="imageblock">
-<div class="content">
-<img src="images/BootupCommand.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 16. Physical Deployment Bootup Scripts</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>In the command string, replace <code>[HardwareIP]</code> with the physical device’s private IP address</p>
-</li>
-<li>
-<p>Use the command line to run the deployment script, which should resemble something like the following (but filled in with your stack-specific values):</p>
-<div class="literalblock">
-<div class="content">
-<pre>./physical-greenfield-option1.sh imc-snow-devicesbucketresource-4wjvs58vbhwj SnowCone/SnowConeCore.tar.gz 6tppoqlka4 us-east-1 SnowCone [Hardware-IP] SnowCone/SnowConeDevice.tar.gz [IoT Core ATS Endpoint]</pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_create_tag_hierarchy_in_ignition_physical_greenfield_only">Create Tag Hierarchy in Ignition (Physical Greenfield Only)</h4>
-<div class="paragraph">
-<p>Represent your data in Ignition by creating a project tag hierarchy. The source of this data can be physical PLCs, or simulated devices in Ignition.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Download the Ignition Designer software</p>
-</li>
-<li>
-<p>In your browser of choice, visit the following URL:</p>
-<div class="literalblock">
-<div class="content">
-<pre>http://[hardwarePrivateIP]:8088</pre>
-</div>
-</div>
-</li>
-<li>
-<p>On the top right corner of the screen, click “Get Designer”</p>
-</li>
-<li>
-<p>Install the Ignition Designer for your operating system</p>
-</li>
-<li>
-<p>Open the Ignition Designer and connect to your Ignition server</p>
-</li>
-<li>
-<p>Launch the Designer</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Click “Add Designer”</p>
-</li>
-<li>
-<p>Click “Manually Add Gateway”</p>
-</li>
-<li>
-<p>Add a Gateway URL in the following format:</p>
-<div class="literalblock">
-<div class="content">
-<pre>http://[reachableIgnitionIP]:8088</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Under the Gateway tile you just added, click “Launch”</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Supply the username and password and click “Login”</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Username: admin</p>
-</li>
-<li>
-<p>Password: password</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>If you haven’t already, it is recommended that you change your password once you’ve successfully logged into the Ignition web UI.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>With the help of an OT professional or IMC Quick Start contact, represent your PLC data (simulated or real) in a hierarchy</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_trigger_an_sparkplug_node_birth_message_in_ignition">Trigger an Sparkplug node “birth” message in Ignition</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Once you are logged in to the Ignition Designer, a birth message is triggered by navigating to the tag browser, opening <code>tag providers</code>, selecting <code>MQTT Transmission</code>, then selecting <code>Transmission Control</code> and clicking the “Refresh” button.</p>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/RefreshBirthCertificates.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 17. Refresh Sparkplug Birth Certificates</div>
-</div>
-<div class="paragraph">
-<p>This action triggers the IMC Quick Start’s asset model converter (AMC), which creates the models and assets that represent the Ignition hierarchy in SiteWise.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_accept_the_opc_ua_client_certificate">Accept the OPC UA Client Certificate</h4>
-<div class="paragraph">
-<p>To enable the SiteWise to ingest data over OPC UA from Ignition’s OPC UA server, you must accept the certificate presented by the SiteWise connector within Ignition.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Get the private IP address of the physical hardware, and load a URL like this into your browser of choice: http://[hardwarePrivateIP]:8088</p>
-</li>
-<li>
-<p>Once the Ignition Web UI is open, you should see a gear like icon on the left labeled <code>Config</code>.</p>
-</li>
-<li>
-<p>Click that, and it may ask you to log in. The default credentials are:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Username: admin</p>
-</li>
-<li>
-<p>Password: password</p>
-</li>
-<li>
-<p>If you haven’t already, it is recommended that you change your password once you’ve successfully logged into the Ignition web UI.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Navigate to "OPC UA &#8594; Security &#8594; Server" and wait for the quarantined certificate to appear (from AWS IoT SiteWise Gateway). You should see a single entry under 'Quarantined Certificates' named something like 'AWS IoT SiteWise Gateway Client'.</p>
-</li>
-<li>
-<p>Click “Trust” to accept the certificate. At this point, the SiteWise connector will start consuming data over OPC UA from Ignition and this data will be sent up to the AWS IoT SiteWise in the cloud.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_asset_model_convertner_amc_initiation">Asset Model Convertner (AMC) Initiation</h4>
-<div class="paragraph">
-<p>Select the Asset Model Connverter (AMC) Driver you configured in the CloudFormation stack configuration (CF stack parameter label: <code>AMCDriver</code>) to follow the appropriate post-deployment steps:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#_amcdriver_ignitioncirruslink">AMCDriver - IgnitionCirrusLink</a></p>
-</li>
-<li>
-<p><a href="#_amcdriver_ignitionfileexport">AMCDriver - IgnitionFileExport</a></p>
-</li>
-</ul>
-</div>
-<div class="sect4">
-<h5 id="_amcdriver_ignitioncirruslink">AMCDriver - IgnitionCirrusLink</h5>
-<div class="paragraph">
-<p>This AMCDriver option runs automatically with the launch of the IMC Quick Start (Virtual Option). Proceed to the next section: <a href="#_sitewise_connector_activation">SiteWise Connector Activation</a></p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_amcdriver_ignitionfileexport">AMCDriver - IgnitionFileExport</h5>
-<div class="paragraph">
-<p>In this section you will export the JSON file from Ignition Server that describes your project&#8217;s tag hierarchy and upload it into an S3 bucket (created during CF stack formation) to initiate the AMC workflow.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Access the Ignition Server Web App</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Open the Ignition Server UI by clicking the URL available in the output of the CloudFormation stack. The format of the URL is:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><a href="http://&lt;IginitionServerPublicIP&gt;:8088" class="bare">http://&lt;IginitionServerPublicIP&gt;:8088</a></p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>The IgnitionServerPublicIP address is the same as the public IP address of the EC2 instance on which Ignition Server is running. The name of the EC2 instance should end with ‘/Ignition’</p>
-</li>
-<li>
-<p>Reminder: The security group of this EC2 instance is opening up the 8088 port to IP addresses in a specific CIDR block based on the “public IP address” parameter you entered during the CloudFormation stack launch.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Get the Ignition Designer Launcher Software</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Once the Ignition Web UI is open, click “sign in” in the top right corner and login with the default credentials:</p>
-</li>
-<li>
-<p>Username: admin</p>
-</li>
-<li>
-<p>Password: password</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>It is recommended that you update the username and password from the default values immediately after login.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>On the top right corner of the screen, click “Get Designer”</p>
-</li>
-<li>
-<p>Follow the instructions to install the Ignition Designer software application for your local machine’s operating system</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Add Ignition Gateway</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Open the Ignition Designer Launcher application</p>
-</li>
-<li>
-<p>Click “Add Designer”</p>
-</li>
-<li>
-<p>Click “Manually Add Gateway”</p>
-</li>
-<li>
-<p>Add a Gateway URL in the following format:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>http://[ignition_ec2_public_ip]:8088</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Export tag definition JSON file</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>In the Ignition Designer Launcher app, under the gateway tile you just added, click “Launch”</p>
-</li>
-<li>
-<p>Supply the username and password (defined previously) and click “Login”</p>
-</li>
-<li>
-<p>In the Tag Browser, under “Tag Providers” select “default” and click export. Save this tag definition JSON file in local location you can access.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/IgnitionExportTags.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 18. Export Tags from Ignition</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Initiate the Asset Model Converter (AMC)</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Upload the JSON file you just downloaded into the S3 bucket created during deployment to trigger the AMC and creation of models and assets in SiteWise. The S3 bucket will be named according to this convention:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>[name_of_stack]-[amcincomingresource]-[hash]</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Upon uploading the JSON file into this S3 bucket, an S3 event trigger will automatically invoke the AMC Lambda function to begin the automated AMC workflow.</p>
-</li>
-<li>
-<p>After approximately a minute (This may be longer (i.e. &gt;5 minutes) for large, complex tag hiearchy definitions) models and assets will be provisioned within AWS IoT SiteWise.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>The AMC workflow is now complete. Proceed to the next section: <a href="#_sitewise_connector_activation">SiteWise Connector Activation</a></p>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_sitewise_connector_activation">SiteWise Connector Activation</h4>
-<div class="paragraph">
-<p>To enable the SiteWise connector running in AWS IoT Greengrass to ingest data over OPC UA from Ignition’s OPC UA server, you must accept the certificate presented by the SiteWise connector within Ignition.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Accept SiteWise Certificate in Ignition</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Open the Ignition Server UI using the URL available in the output of the CloudFormation stack. The format of the URL is:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>http://[IginitionServer-EC2-Instance-PublicIP]:8088</p>
-</li>
-<li>
-<p>The IgnitionServerPublicIP address is the same as the public IP address of the EC2 instance on which Ignition Server is running. The name of the EC2 instance should end with ‘/Ignition’</p>
-</li>
-<li>
-<p>Reminder: The security group of this EC2 instance is opening up the 8088 port to IP addresses in a specific CIDR block based on the “public IP address” parameter you entered during the CloudFormation stack launch.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>With the Ignition Web UI open, click “sign in” in the top right corner and login with the default credentials:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>Username: admin</p>
-</li>
-<li>
-<p>Password: password</p>
-<div class="olist upperalpha">
-<ol class="upperalpha" type="A">
-<li>
-<p>It is recommended that you update the username and password from the default values immediately after login.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>On the left side of the Ignition Web app UI, navigate to "OPC UA" &#8594; "Security" &#8594; "Server". The certificate from the SiteWise connector in Greengrass should appear int he "Quarantined Certificates" section. The certificate will have the name similar to: "AWS IoT SiteWise Gateway Client".</p>
-</li>
-<li>
-<p>Click “Trust” to accept the certificate. At this point, the SiteWise connector will start consuming data over OPC UA from Ignition and this data will be sent up to the AWS IoT SiteWise service in the AWS cloud.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Update the SiteWise Gateway</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Navigate to AWS IoT SiteWise console and in the left-hand menu select "Ingest" &#8594; "Gateways"</p>
-</li>
-<li>
-<p>Select the gateway created during the stack launch. The gatweway name will follow the naming convention:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>[name_of_stack]_Automated_Gateway</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Click “Edit” in the Source Configuration for Automated Gateway Config” section</p>
-</li>
-<li>
-<p>Click “Save” at the bottom. You do not need to make any changes. The action of editing and saving the configuration refreshes the SiteWise gateway and ensures data flows from the OPC UA server through the SiteWise gateway connector and into the AWS IoT SiteWise service in the AWS cloud.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_validate_incoming_data">Validate Incoming Data</h4>
-<div class="sect4">
-<h5 id="_data_flow_option_1">Data Flow Option 1</h5>
-<div class="paragraph">
-<p>When using Data Flow Option 1, verify data flowing into AWS IoT SiteWise
-. Now that you&#8217;ve trusted the SiteWise gateway connector certificate, return to the AWS IoT SiteWise console.
-. In the SiteWise console, click the menu icon on the left-hand side of the page and select "build" &#8594; "assets"
-. In the asset tree on the left, drill down to an asset (i.e. Hauloff or Conveyor), select it and then select the “Measurements” tab for that asset.
-. Verify that the values in the “Latest value” column are updating. This indicates that the Ignition simulation of those virtual devices and sensors is properly sending data through to the SiteWise connector (via OPC UA) in Greengrass and up to AWS IoT SiteWise in the AWS cloud.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_data_flow_option_2a_or_2b">Data Flow Option 2a or 2b</h5>
-<div class="paragraph">
-<p>When using Data Flow Option 2a or 2b, validate data flow:</p>
-</div>
-<div class="paragraph">
-<p>Validate data flow into AWS IoT Core:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Navigate to the AWS IoT Core console.</p>
-</li>
-<li>
-<p>Select “Test” from the navbar on the left.</p>
-</li>
-<li>
-<p>Subscribe to the MQTT topic:</p>
-<div class="literalblock">
-<div class="content">
-<pre>spBv1.0/AWS Smart Factory/DDATA/#</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Verify that messages are coming in on this topic.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Validate data flow into S3:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Navigate to the S3 console.</p>
-</li>
-<li>
-<p>Search for the bucket: “[stack_name_here]-imcs3bucket-[hash]</p>
-</li>
-<li>
-<p>Click into the bucket and confirm that an S3 prefix inside the bucket named <code>mqtt</code> exists.</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_view_sitewise_portal_data">View SiteWise Portal Data</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-SSO must be enabled in the region your launched in the CloudFormation stack in and you must have a user created in that region in order to access the SiteWise Monitor dashboards in the following sections.
-</td>
-</tr>
-</table>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Log in to SiteWise Monitor Portal</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Navigate to the SiteWise console, select the icon on the left and select "Monitor" &#8594; "Portals".</p>
-</li>
-<li>
-<p>Select the hyperlinked "name" of the Portal most recently added (the topmost on the list).</p>
-</li>
-<li>
-<p>Add yourself as an administrator of the Portal by clicking “Assign Users” in the Portal Administrators section</p>
-</li>
-<li>
-<p>Once you are listed as a Portal Administrator, click the hyperlinked URL in the Portal details section under the “URL” column. This URL should have the format:</p>
-<div class="literalblock">
-<div class="content">
-<pre>https://[XXXXX....XXXXXX].app.iotsitewise.aws.</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Log in with the credentials (username and password) you just created for your administrator account.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>View Data in SiteWise Monitor Portal</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Select “Dashboards” tab on the left-hand side, then select the newly created dashboard hyperlink under the “Name” column of the Dashboards page.</p>
-</li>
-<li>
-<p>Data should be flowing into the line charts for the asset measurement properties</p>
-</li>
-<li>
-<p>You can also see data for individual assets by navigating to the “Asset Library” tab on the left and selecting an asset from the asset tree. Once an asset is selected, you can view its properties.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_troubleshooting">Troubleshooting</h4>
-<div class="sect4">
-<h5 id="_issue_1_quarantined_certificate_in_ignition_or_kepware_doesnt_show_up_or_data_doesnt_show_up_for_option_1_deployments">Issue 1: Quarantined certificate in Ignition (or Kepware) doesn&#8217;t show up, or data doesn’t show up for Option 1 deployments</h5>
-<div class="paragraph">
-<p>Solution:</p>
-</div>
-<div class="paragraph">
-<p>First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the SiteWise Gateway:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Navigate to the AWS IoT SiteWise console and select Ingest &#8594; Gateways</p>
-</li>
-<li>
-<p>Select the gateway created during the stack launch:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Naming convention: [name_of_stack]_Automated_Gateway</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Click “Edit” in the Source Configuration for Automated Gateway Config section</p>
-</li>
-<li>
-<p>Click “Save” at the bottom. No changes are necessary. This action simply activates the SiteWise gateway to ensure data flows from the OPC UA server.</p>
-</li>
-<li>
-<p>If it hasn’t already been done, look for and accept the quarantined certificate in Ignition.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_issue_2_models_and_assets_werent_created_in_sitewise">Issue 2: Models and assets weren’t created in SiteWise</h5>
-<div class="paragraph">
-<p>Check the Lambda function responsible for creating the models and assets in SiteWise for errors:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>In the AWS lambda console, navigate to the function named:</p>
-<div class="literalblock">
-<div class="content">
-<pre>[name_of_stack]-AssetModelIngestionLambdaResource-[hash]</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Hit the “Monitoring” tab</p>
-</li>
-<li>
-<p>Click “View logs in CloudWatch”</p>
-</li>
-<li>
-<p>Click into the most recent Log Stream and find the error message</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_issue_3_models_and_assets_werent_created_in_sitewise">Issue 3: Models and assets weren’t created in SiteWise</h5>
-<div class="paragraph">
-<p>Check the Lambda function responsible for creating the models and assets in SiteWise for errors:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>In the AWS lambda console, navigate to the function named</p>
-<div class="literalblock">
-<div class="content">
-<pre>[name_of_stack]-AssetModelIngestionLambdaResource-[hash]</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Hit the “Monitoring” tab</p>
-</li>
-<li>
-<p>Click “View logs in CloudWatch”</p>
-</li>
-<li>
-<p>Click into the most recent Log Stream and find the error message</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_issue_4_data_via_the_mqtt_transmission_module_doesnt_show_up_in_iot_cloud">Issue 4: Data via the MQTT Transmission module doesn’t show up in IoT Cloud</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Get the public IP address of that instance, and load a URL like this into your browser of choice:</p>
-<div class="literalblock">
-<div class="content">
-<pre>http://[hardwarePrivateIP]:8088</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Open the Ignition Web UI is open, you should see a gear like icon on the left labeled ‘Config’. Click that, and it will ask you to log in. The default credentials are:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Username: admin</p>
-</li>
-<li>
-<p>Password: password</p>
-</li>
-<li>
-<p>If you haven’t already, it is recommended that you change your password once you’ve successfully logged into the Ignition web UI.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Navigate to “MQTT Transmission &#8594; Settings &#8594; Server” and confirm that the connectivity shows 1 of 1. If it doesn’t, click edit and:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Make sure the URL is in the format: <code>ssl://[your_aws_account_iot_endpoint]:8883</code></p>
-</li>
-<li>
-<p>Download the .tar.gz file that represents the non-GreenGrass IoT thing from the following S3 bucket location:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>Bucket Name: <code>[stack_name]-devicesbucketresource-hash</code></p>
-</li>
-<li>
-<p>Key Name: <code>[name_for_edge_device_parameter]/[name_for_edge_device_parameter]Device.tar.gz</code></p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Expand the tarball</p>
-</li>
-<li>
-<p>Replace the CA Certificate File with “root.ca.pem” from the tarball package</p>
-</li>
-<li>
-<p>Replace the Client Certificate File with the “.pem” file from the tarball package</p>
-</li>
-<li>
-<p>Replace the Client Private Key File with the “.private” file from the tarball package</p>
-</li>
-<li>
-<p>Hit “Save Changes”, and make sure that the connectivity says “1 of 1”.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_cloudformation_stack_cleanup">CloudFormation Stack Cleanup</h3>
+<div class="sect1">
+<h2 id="_cloudformation_stack_cleanup">CloudFormation Stack Cleanup</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Follow these steps to clean up the IMC CloudFormation stack deployment:</p>
 </div>
 <div class="sect3">
-<h4 id="_cloud_asset_cleanup">Cloud Asset Cleanup</h4>
+<h4 id="_cloud_resources_cleanup">Cloud resources Cleanup</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3476,726 +2433,6 @@ rm -rf /var/sitewise</pre>
 </div>
 </li>
 </ol>
-</div>
-<div class="paragraph">
-<p>Depending upon which deployment configuration you chose, there are different post deployment configuration steps.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Link to Virtual deployment guide</p>
-</li>
-<li>
-<p>Link to Physical greenfield deployment guide</p>
-</li>
-<li>
-<p>Link to Physical brownfield deployment guide</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_other_useful_information">Other useful information</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Guide for Creating AMC drivers (link to external document)</p>
-</li>
-<li>
-<p>AMC approved DyanamoDB table format (link to external document)</p>
-</li>
-<li>
-<p>Adding a line and device to an Ignition project (link to external document)</p>
-</li>
-<li>
-<p>Extending/modifying the IMC Quick Start with new features and capabilities (link to external document)</p>
-</li>
-</ul>
-</div>
-<div class="sect2">
-<h3 id="_asset_model_converter">Asset Model Converter</h3>
-<div class="paragraph">
-<p>The asset model converter (AMC) code is in two separate lambda functions located in the functions/source directory of the repository</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>AssetModelIngestion</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This is the ingestion lambda. It’s purpose is to listen to MQTT messages coming from the CirusLink Ignition module and put them into the incoing S3 bucket as objects. The relevant handler file is “assetModelIngestion.py”.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>AssetModelConverter</p>
-<div class="ulist">
-<ul>
-<li>
-<p>The AMC really covers two functions – AMC1, and AMC2.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>AMC1</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This code is triggered via an S3 Object Creation trigger from the incoming bucket. It has it’s reserved concurrent executions set to 1, to ensure that only a single instance of the lambda can ever fire at once. This has been done because the Ignition CirrusLink module can birth the asset structure as multiple discrete MQTT messages, each of which become file objects in S3.</p>
-</li>
-<li>
-<p>The core logic of the AMC1 comes in the form of the main handler file, ‘assetModelConverter.py’. It contains the base lambda handler function, which in turn calls into the AssetModelConverter class to execute the handling of a given S3 object creation event. This code in turn calls the relevant Driver code to handle the asset structure files</p>
-</li>
-<li>
-<p>AMC Drivers</p>
-<div class="ulist">
-<ul>
-<li>
-<p>AMC Drivers in AMC1 are responsible for parsing the incoming asset structure file(s), and converting it into a normalized format that is then stored into DynamoDB. Please see the ‘Creating AMC Drivers’ section of the Getting Started guide for more details on creating drivers, and the DynamoDB normalized format.</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>AMC2</p>
-<div class="ulist">
-<ul>
-<li>
-<p>This relevant code file here is ‘createSitewiseResources.py’ This contains code to take the normalized DynamoDB format, and create relevant AWS IoT Sitewise assets and models from that format. Changes are marked in the DynamoDB table to various assets/models that require updates/creation.</p>
-</li>
-<li>
-<p>Additionally, all AWS IoT Sitewise interactions take place in the ‘sitewiseUtils.py’ code.</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Please note that only additive changes are supported at this time.
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The AMC2 process comes in the form of the following steps:</p>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Model Creation</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>The DynamoDB models table is queried to look for models that require creation. Those are created in AWS IoT Sitewise.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Asset Creation</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>The DynamoDB assets table is also queries, looking for records that are marked as needing creation. Those assets, instances of the models created during ‘Model Creation’ are then created in AWS IoT Sitewise.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Model Hierarchies</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>In this step Models are associated with each other in a hierarchy that are tagged as having such a parent/child relationship.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Asset Associations</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Similarly in this final step, assets that are tagged as having a parent/child relationship are associated with each.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_creating_amc_drivers">Creating AMC Drivers</h3>
-<div class="paragraph">
-<p>Instructions:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Write the driver that interprets the incoming hierarchy data from your edge-based asset modeling software and converts it into the AMC-approved format (see the format here) and puts it into DynamoDB</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Refer to the template file for guidance while writing your driver:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><code>/functions/source/AssetModelConverter/drivers/example_driver_template.py</code></p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>** Highly recommended – also refer to the existing drivers:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><code>/functions/source/AssetModelConverter/drivers/igniitonCirrusLinkDriver.py</code></p>
-</li>
-<li>
-<p><code>/functions/source/AssetModelConverter/drivers/ignitionFileDriver.py</code></p>
-</li>
-<li>
-<p><code>/functions/source/AssetModelConverter/drivers/kepserver_file_driver.py</code></p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Edit the entry point file for the AMC (<code>/functions/source/AssetModelConverter/assetModelConverter.py</code>) to use your new driver:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Import your driver with import statement:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><code>From drivers.[name_of_file] import [name_of_driver_class]</code></p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Add your driver to the ‘driverTable’ list</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><code>[name_of_driver]:[name_of_driver_class]</code></p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Replace the AssetModelConverter zip file with its new contents:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Zip up the contents of <code>/functions/source/AssetModelConverter/</code></p>
-</li>
-<li>
-<p>Name the zip file above <code>AssetModelConverter.zip</code></p>
-</li>
-<li>
-<p>Replace the old <code>AssetModelConverter.zip</code> file (<code>/functions/packages/AssetModelConverter/AssetModelConverter.zip</code>) with the new <code>AssetModelConverter.zip</code> file you created above.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Edit the CloudFormation template to include your driver’s name:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p><code>/templates/IMC-workload.template.yaml</code></p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>Add an item to the list of AMCDrivers (parameter section):</p>
-<div class="olist upperalpha">
-<ol class="upperalpha" type="A">
-<li>
-<p><code>- [name_of_driver_here]</code></p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_appendix">Appendix</h3>
-<div class="sect3">
-<h4 id="_artifacts">Artifacts</h4>
-<div class="paragraph">
-<p>The following directories and files are necessary for running an IMC Quick Start deployment:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>functions/
-scripts/
-templates/
-LICENSE.txt
-NOTICE.txt
-README.md</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>quickstart-IMC/</strong>: The root directory in the S3 bucket, where the rest of the folders live.</p>
-</li>
-<li>
-<p><strong>functions/</strong>: Contains zipped lambda code that is used for various pieces of the IMC Quick Start.</p>
-</li>
-<li>
-<p><strong>scripts/</strong>: Contains the scripts that are run on physical hardware if running a physical deployment.</p>
-</li>
-<li>
-<p><strong>templates/</strong>: Contains the various CloudFormation templates that will be deployed depending on the deployment options selected during stack creation.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_amc_approved_dynamodb_format">AMC-Approved DynamoDB Format</h4>
-<div class="paragraph">
-<p>Asset Model Table Name:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>[name-of-stack]-asset-model-table</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Example of asset model entry:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>assetModelEntry = {
-    “assetModelName”: type&lt;string&gt;, # Name of the asset model
-    “parent”: type&lt;string&gt;, # name of the parent asset model, if any
-    “assetModelProperties”: type&lt;list&lt;modelProperty&gt;&gt;, # list of sitewise assetModelProperties as ‘modelProperty’ listed below.
-    “assetModelHierarchies”: type&lt;list&gt;, # sitewise assetModelHierarchies, leave blank []
-    “change”: type&lt;string&gt;, # Should be ‘YES’, indicates in DynamoDB that the record is new or updated.
-}
-    modelProperty = {
-        ‘name’: type&lt;string&gt;, # Name of the property
-        ‘dataType’: type&lt;string&gt;, # Sitewise data type of the property
-        ‘type’: {
-            ‘measurement’: {} # Don’t change this or populate it with anything, used to identify property type in sitewise
-        }
-    }</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Asset Table Name:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>[name-of-stack]-asset-table</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Example of asset entry:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>assetEntry = {
-    ‘assetName’: type&lt;string&gt;, # name of the asset
-    ‘modelName’: type&lt;string&gt;, # model name this asset is an instance of
-    ‘change’: type&lt;string&gt;, # Should be ‘YES’, indicates in DynamoDB that the record is new or updated.
-    ‘tags’: type&lt;list&lt;tagEntry&gt;&gt;, # List of tagEntry struct, as specified below
-}    tagEntry = {
-        ‘tagName’: type&lt;string&gt;, # name of the tag
-        ‘tagPath’: type&lt;string&gt;, # Full property alias path for the tag
-    }</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_add_a_line_and_device_to_an_ignition_project">Add a line and device to an Ignition project</h4>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Navigate to the Ignition Designer and connect to your Ignition server.</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Launch the Designer</p>
-</li>
-<li>
-<p>Click “Add Designer”</p>
-</li>
-<li>
-<p>Click “Manually Add Gateway”</p>
-</li>
-<li>
-<p>Add a Gateway URL in the following format: <code>http://[ignition_ec2_public_ip]:8088</code></p>
-</li>
-<li>
-<p>Under the Gateway tile you just added, click “Launch”</p>
-</li>
-<li>
-<p>Supply the username and password and click “Login”</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p>Username: admin</p>
-</li>
-<li>
-<p>Password: password</p>
-</li>
-<li>
-<p>If you haven’t already, it is recommended that you change your password once you’ve successfully logged into the Ignition web UI.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Create a Data Type</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Nagivate to the Tag Browser, expand “Tags”, right click “Data Types” &#8594; New Tag &#8594; New Data Type</p>
-</li>
-<li>
-<p>Under Properties, name the Data Type “Pump”, and click “Apply”</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Configure the Tags for the Data Type</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Tag 1: Temperature</p>
-</li>
-<li>
-<p>To the left of the “Properties” section, click the “Add Tag” button, and select OPC Tag:</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/IgnitionAddTag.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 19. Ignition Designer - Add Tag</div>
-</div>
-<div class="paragraph">
-<p>Next, edit the “Basic Properties” of the tag:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Name the tag “Temperature”</p>
-</li>
-<li>
-<p>Change its Data Type to float</p>
-</li>
-<li>
-<p>Click the Link icon to the right of “OPC Server”, click “Browse OPC”, right click on Ignition OPC UA Server, and click “Copy Item Path”, then “Commit”. Right click in the space to the right of OPC Server and paste what’s copied in your clipboard.</p>
-</li>
-<li>
-<p>Click the Link icon to the right of OPC Item Path, click “Browse OPC”, expand Ignition OPC UA Server, expand Devices, expand, [Simulation], Line 1, Conveyor. Highlight “Temperature” and press “Commit”.</p>
-</li>
-<li>
-<p>Ensure your tag configuration looks similar to the UI screenshot below:</p>
-</li>
-<li>
-<p>Click “Apply” and “OK” to accept the tag configuration.</p>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/IgnitionTagConfiguration.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 20. Ignition Designer - Tag Configuration</div>
-</div>
-<div class="paragraph">
-<p>Create a second tag to represent "Pressure"</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>To the left of the “Properties” section, click the “Add Tag” button, and select OPC Tag:</p>
-</li>
-<li>
-<p>Edit the “Basic Properties”</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Name the tag “Pressure”</p>
-</li>
-<li>
-<p>Change its Data Type to float</p>
-</li>
-<li>
-<p>Click the Link icon to the right of “OPC Server”, click “Browse OPC”, right click on Ignition OPC UA Server, and click “Copy Item Path”, then “Commit”. Right click in the space to the right of OPC Server and paste what’s copied in your clipboard.</p>
-</li>
-<li>
-<p>Click the Link icon to the right of OPC Item Path, click “Browse OPC”, expand Ignition OPC UA Server, expand Devices, expand, [Simulation], expand Line 1, expand Stamping Machine. Highlight “Pressure” and press “Commit”.</p>
-</li>
-<li>
-<p>Click “Apply” and “OK” to accept the tag configuration.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Create a third tag to represent "Vibration"</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>To the left of the “Properties” section, click the “Add Tag” button, and select OPC Tag:</p>
-</li>
-<li>
-<p>Edit the “Basic Properties”</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Name the tag “Vibration”</p>
-</li>
-<li>
-<p>Change its Data Type to float</p>
-</li>
-<li>
-<p>Click the Link icon to the right of “OPC Server”, click “Browse OPC”, right click on Ignition OPC UA Server, and click “Copy Item Path”, then “Commit”. Right click in the space to the right of OPC Server and paste what’s copied in your clipboard.</p>
-</li>
-<li>
-<p>Click the Link icon to the right of OPC Item Path, click “Browse OPC”, expand Ignition OPC UA Server, expand Devices, expand, [Simulation], expand Line 1, expand Conveyor. Highlight “Vibration” and press “Commit”.</p>
-</li>
-<li>
-<p>Click “Apply” and “OK” to accept the tag configuration.</p>
-</li>
-<li>
-<p>Click “Apply” and “OK” to accept the Pump configuration.</p>
-</li>
-<li>
-<p>By the time you’re finished adding all your tags, the Pump should look like this:</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/PumpTagStructure.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 21. Ignition Designer - Pump Tag Structure</div>
-</div>
-<div class="paragraph">
-<p>Add the line to the project:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Under the Tag Browser, expand All Providers, right click on “default” &#8594; New Tag &#8594; New Folder &#8594; Line 4 &#8594; OK.</p>
-</li>
-<li>
-<p>Right click “Line 4” &#8594; New Tag &#8594; New Data Type Instance &#8594; Pump</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Give the instance the name “Pump”, press “Apply” and “OK”.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Trigger a birth message:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Under the Tag Browser, expand Tag Providers, expand default, expand Sim Controls. To the right of “New Birth”, check the checkbox and “Write Once”.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>This triggers an MQTT message that defines your new hierarchy, with Line 4 and the Pump included. You should see your new models and assets in SiteWise.</strong></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_setting_up_a_quicksight_dashboard_along_with_the_imc_quick_start_deployment">Setting up a QuickSight dashboard along with the IMC Quick Start deployment</h4>
-<div class="paragraph">
-<p>After the IMC Quick Start deployment succeeds (models and assets have finished creation in AWS IoT SiteWise), the following manual steps are required to create a QuickSight dataset.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Allow QuickSight access to the S3 bucket that houses the data from the IMC Quick Start.</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Navigate to the Manage QuickSight from the top right corner navbar.</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QSManageQS.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 22. QuickSight - Manage QuickSight</div>
-</div>
-<div class="paragraph">
-<p>Navigate to “Security &amp; permissions”, then click “Add or remove” under “QuickSight access to AWS services.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QSSecurityAndPermissions.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 23. QuickSight - Security and Permissions</div>
-</div>
-<div class="paragraph">
-<p>Click on the checkbox to the right of “Amazon S3” under “QuickSight access to AWS services”.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QSAccessToServices.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 24. QuickSight - Access to AWS Services</div>
-</div>
-<div class="paragraph">
-<p>Find the S3 bucket labeled <code>[IMCQSDeploymentName]&#8230;&#8203;-imcs3bucket-….</code>, click the checkbox on the left side, and click “Finish”.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QSSelectS3Bucket.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 25. QuickSight - Select S3 Bucket</div>
-</div>
-<div class="paragraph">
-<p>Navigate to the IoT Console, click “Test” on the navbar on the left-hand side of the screen to arrive at the MQTT client.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QS-MQTT-Client.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 26. AWS IoT Core - Test Client</div>
-</div>
-<div class="paragraph">
-<p>Trigger the creation of your QuickSight dataset by publishing an MQTT message to the MQTT topic: <code>imc/control/quicksight</code>. The content of the message is inconsequential.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QS-MQTT-Publish.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 27. AWS IoT Core - MQTT Publish Message</div>
-</div>
-<div class="paragraph">
-<p>After the message is published, a Dataset called “imcDataSet” will populate in the QuickSight Dataset dashboard. Click into the Dataset to create a visualization analysis.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="images/QS-Datasets.png" alt="Architecture" width="648" height="439">
-</div>
-<div class="title">Figure 28. QuickSight Datasets</div>
-</div>
-<div class="paragraph">
-<p>Now that there is a dataset created in QuickSight, you are able to create visualizations with the data. Refer to the <a href="https://docs.aws.amazon.com/quicksight/latest/user/welcome.html">QuickSight documentation</a> for more details.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_launching_cloudformation_stack_from_your_own_s3_bucket">Launching CloudFormation stack from your own S3 bucket</h4>
-<div class="paragraph">
-<p>This section details how developers who wish to extend/modify the IMC Quick Start with new features/capabilities. They should clone the public Quick Start repo (<a href="https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity" class="bare">https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity</a>), create a new S3 bucket and add the repo assets to that bucket. The following instructions detail the process:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Create a new S3 bucket and give it a unique name such as “imc-dev-123”</p>
-</li>
-<li>
-<p>In that S3 bucket, create a folder called “quickstart-IMC”</p>
-</li>
-<li>
-<p>Download the public IMC Quick Start Github repo (<a href="https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity" class="bare">https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity</a>) as a zip file.</p>
-</li>
-<li>
-<p>Unzip the downloaded file and copy all the contents of the unzipped folder (Github repo contents) into the “quickstart-IMC” folder in your S3 bucket. The structure will then resemble the structure below:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>S3 bucket name: <code>imc-dev-123</code></p>
-</li>
-<li>
-<p>S3 bucket content:</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>quickstart-IMC/
-    	documentation/
-functions/
-    	scripts/
-	submodules/
-    	templates/
-    	.gitignore
-	.gitmodules
-	.taskcat.yml
-LICENSE.txt
-    	NOTICE.txt
-    	README.md</pre>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -4361,7 +2598,7 @@ Line 1/CNC2/Temperature</pre>
 <div class="content">
 <img src="images/RefreshBirthCertificates.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 29. Refresh Sparkplug Birth Certificates</div>
+<div class="title">Figure 14. Refresh Sparkplug Birth Certificates</div>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
@@ -4531,7 +2768,7 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 </div>
 </div>
 <div class="sect1">
-<h2 id="_troubleshooting_2">Troubleshooting</h2>
+<h2 id="_troubleshooting">Troubleshooting</h2>
 <div class="sectionbody">
 <div class="sect3">
 <h4 id="_quarantined_certificate_in_ignition_doesnt_show_up_or_data_doesnt_show_up_for_data_flow_option_1_deployments">Quarantined certificate in Ignition doesn&#8217;t show up (or data doesn’t show up for Data Flow Option 1 deployments)</h4>
@@ -4639,7 +2876,7 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 <div class="content">
 <img src="images/IgnitionSettings.png" alt="Architecture" width="200" height="439">
 </div>
-<div class="title">Figure 30. Ignition - Settings</div>
+<div class="title">Figure 15. Ignition - Settings</div>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -4661,7 +2898,7 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 <div class="content">
 <img src="images/Ignition-MQTT-Settings.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 31. Ignition - MQTT Transmission Module Settings</div>
+<div class="title">Figure 16. Ignition - MQTT Transmission Module Settings</div>
 </div>
 <div class="paragraph">
 <p>Ensure the tagPathConfiguration is not being filtered out:
@@ -4673,7 +2910,7 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 <div class="content">
 <img src="images/Ignition-MQTT-Filtered-Properties.png" alt="Architecture" width="648" height="439">
 </div>
-<div class="title">Figure 32. Ignition - MQTT Transmission Module Filtered Properties</div>
+<div class="title">Figure 17. Ignition - MQTT Transmission Module Filtered Properties</div>
 </div>
 <div class="paragraph">
 <p>If these settings are as described above and you’re still receiving errors:</p>
@@ -4746,7 +2983,7 @@ and to share your customizations with others.</p>
 <p class="footer-text">
 <!-- We can use document attributes: -->
 <!-- Generated with Asciidoctor v2.0.10. -->
-<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2020, Amazon Web Services, Inc. or its affiliates and . All rights reserved.
+<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2020, Amazon Web Services, Inc. or its affiliates. All rights reserved.
 </p>
 </body>
 </html>

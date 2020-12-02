@@ -1,9 +1,9 @@
 :quickstart-project-name: quickstart-aws-industrial-machine-connectivity
 :partner-product-name: Industrial machine connectivity
-:partner-company-name:
+// :partner-company-name:
 :doc-month: August
 :doc-year: 2020
-:partner-contributors:
+// :partner-contributors:
 :quickstart-contributors: Thomas Cummins and Shivansh Singh, AWS
 :deployment_time: 10 minutes
 :default_deployment_region: us-east-1
