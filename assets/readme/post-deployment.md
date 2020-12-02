@@ -98,7 +98,7 @@ Retrieve and run the bootup script for the physical hardware device
 
 ### Driver specific configuration
 
-If you are using Ignition software, click the following link to see the [Ignition specific configuration steps](ignition.md), and return back for the next steps.
+If you are using Ignition software, click the following link to see the [Ignition specific configuration steps](./ignition.md).
 
 
 ### Update SiteWise Gateway
@@ -124,13 +124,7 @@ When using Data Flow Option 1, verify data flowing into AWS IoT SiteWise
 
 Validate data flow into AWS IoT Core:
 
-1. Navigate to the AWS IoT Core console.
-2. Select “Test” from the navbar on the left.
-3. Subscribe to the MQTT topic: 
-
-    `spBv1.0/AWS Smart Factory/DDATA/#`
-
-4. Verify that messages are coming in on this topic.
+* Validate the data is flowing into the IoT Core on the topic configured within the edge application.
 
 Validate data flow into S3:
 
