@@ -6,6 +6,7 @@ __pycache__/
 taskcat_outputs/
 env/
 index.html
+docs/generated
 
 .DS_Store
 imcCdk/config.yaml

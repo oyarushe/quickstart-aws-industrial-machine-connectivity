@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: Workload template to deploy AWS Quick Start for Industrial machine connectivity. (qs-1qtb0iud5)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Launch into an existing VPC"
+    EntrypointName: "Parameters to launch into an existing VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
