@@ -127,7 +127,7 @@ Pre-Requisites:
 
 == Troubleshooting
 
-==== Quarantined certificate in Ignition doesn't show up (or data doesn’t show up for Data Flow Option 1 deployments)
+*Quarantined certificate in Ignition doesn't show up (or data doesn’t show up for Data Flow Option 1 deployments)*
 
 First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the SiteWise Gateway:
 
@@ -142,7 +142,7 @@ First, verify that the Ignition trial period (2 hours) has not expired. If that 
 
 
 
-==== Can’t access Ignition Web UI
+*Can’t access Ignition Web UI*
 
 Ensure that you’re attempting to make the connection from the same network you defined as “Your Public IP” while setting up the stack. If you’re attempting from a different network, you’ll need to edit the security group associated with the two EC2 instances (it is the same security group). 
 
@@ -151,7 +151,7 @@ Ensure that you’re attempting to make the connection from the same network you
 . Scroll to the right and click on the Security Group associated with the EC2 instance 
 . Edit the “inbound” rules for the rule associated with port 8088 to match the IP address you’re attempting the connection from. 
 
-==== Narrowing Ignition/Greengrass Permissions (for workload template deployments only)
+*Narrowing Ignition/Greengrass Permissions (for workload template deployments only)*
 
 . Navigate to the EC2 console
 . Take note of the private IP addresses of the following
@@ -162,7 +162,7 @@ Ensure that you’re attempting to make the connection from the same network you
 . Edit the rule associated with port 8883 and replace “0.0.0.0/0” with the private IP address for the Ignition EC2 instance
 . Edit the rule associated with port 62541 and replace “0.0.0.0/0” with the private IP address for the Greengrass EC2 instance
 
-==== Models and assets weren’t created in SiteWise
+*Models and assets weren’t created in SiteWise*
 
 If models and assets were not created in SiteWise and the Cirrus Link AMC Driver was used, follow these steps to troubleshoot. Post Deployment Cirrus Link Module Configuration
 . Navigate to MQTT Transmission settings in the Ignition console

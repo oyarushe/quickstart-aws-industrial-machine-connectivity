@@ -823,14 +823,7 @@ p.footer-text a{color:#d7d8d8}
 </ul>
 </li>
 <li><a href="#_faq">FAQ</a></li>
-<li><a href="#_troubleshooting">Troubleshooting</a>
-<ul class="sectlevel3">
-<li><a href="#_quarantined_certificate_in_ignition_doesnt_show_up_or_data_doesnt_show_up_for_data_flow_option_1_deployments">Quarantined certificate in Ignition doesn&#8217;t show up (or data doesn’t show up for Data Flow Option 1 deployments)</a></li>
-<li><a href="#_cant_access_ignition_web_ui">Can’t access Ignition Web UI</a></li>
-<li><a href="#_narrowing_ignitiongreengrass_permissions_for_workload_template_deployments_only">Narrowing Ignition/Greengrass Permissions (for workload template deployments only)</a></li>
-<li><a href="#_models_and_assets_werent_created_in_sitewise">Models and assets weren’t created in SiteWise</a></li>
-</ul>
-</li>
+<li><a href="#_troubleshooting">Troubleshooting</a></li>
 <li><a href="#_send_us_feedback">Send us feedback</a></li>
 <li><a href="#_quick_start_reference_deployments">Quick Start reference deployments</a></li>
 <li><a href="#_github_repository">GitHub repository</a></li>
@@ -2770,8 +2763,9 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 <div class="sect1">
 <h2 id="_troubleshooting">Troubleshooting</h2>
 <div class="sectionbody">
-<div class="sect3">
-<h4 id="_quarantined_certificate_in_ignition_doesnt_show_up_or_data_doesnt_show_up_for_data_flow_option_1_deployments">Quarantined certificate in Ignition doesn&#8217;t show up (or data doesn’t show up for Data Flow Option 1 deployments)</h4>
+<div class="paragraph">
+<p><strong>Quarantined certificate in Ignition doesn&#8217;t show up (or data doesn’t show up for Data Flow Option 1 deployments)</strong></p>
+</div>
 <div class="paragraph">
 <p>First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the SiteWise Gateway:</p>
 </div>
@@ -2808,9 +2802,9 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 </li>
 </ol>
 </div>
+<div class="paragraph">
+<p><strong>Can’t access Ignition Web UI</strong></p>
 </div>
-<div class="sect3">
-<h4 id="_cant_access_ignition_web_ui">Can’t access Ignition Web UI</h4>
 <div class="paragraph">
 <p>Ensure that you’re attempting to make the connection from the same network you defined as “Your Public IP” while setting up the stack. If you’re attempting from a different network, you’ll need to edit the security group associated with the two EC2 instances (it is the same security group).</p>
 </div>
@@ -2830,9 +2824,9 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 </li>
 </ol>
 </div>
+<div class="paragraph">
+<p><strong>Narrowing Ignition/Greengrass Permissions (for workload template deployments only)</strong></p>
 </div>
-<div class="sect3">
-<h4 id="_narrowing_ignitiongreengrass_permissions_for_workload_template_deployments_only">Narrowing Ignition/Greengrass Permissions (for workload template deployments only)</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -2865,9 +2859,9 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 </li>
 </ol>
 </div>
+<div class="paragraph">
+<p><strong>Models and assets weren’t created in SiteWise</strong></p>
 </div>
-<div class="sect3">
-<h4 id="_models_and_assets_werent_created_in_sitewise">Models and assets weren’t created in SiteWise</h4>
 <div class="paragraph">
 <p>If models and assets were not created in SiteWise and the Cirrus Link AMC Driver was used, follow these steps to troubleshoot. Post Deployment Cirrus Link Module Configuration
 . Navigate to MQTT Transmission settings in the Ignition console</p>
@@ -2937,7 +2931,6 @@ Users may create Amazon QuickSight visuals for the data that is put in the S3 bu
 </div>
 </li>
 </ol>
-</div>
 </div>
 </div>
 </div>
