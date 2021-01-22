@@ -3,4 +3,4 @@
 include::IMC-workload.template.adoc[]
 
 === Parameters to launch into a new VPC
-include::IMC-master.template.adoc[]
+include::IMC-main.template.adoc[]
