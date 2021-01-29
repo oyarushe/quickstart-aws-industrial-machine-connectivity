@@ -34,6 +34,7 @@
 :template_custom_managegreengrass:
 :template_custom_s3bucketnotifications:
 :template_custom_stackcleanup:
+:template_deterministic_ec2_instances:
 :template_dynamodb:
 :template_ec2:
 :template_greengrass:
