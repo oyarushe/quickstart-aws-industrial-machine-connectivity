@@ -11,7 +11,7 @@ Metadata:
         Parameters:
           - EdgeDeviceID
           - DeploymentType
-          - DeploymentOption
+          - IoTEndpointURL
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -45,8 +45,6 @@ Metadata:
         default: Name for the edge device 
       DeploymentType:
         default: Type of deployment (virtual or physical)
-      DeploymentOption:
-        default: Deployment flows
       VpcId:
         default: Default VPC ID
       GreengrassInstanceType:
@@ -65,6 +63,8 @@ Metadata:
         default: Email address for the SiteWise Portal administrator
       AZ: 
         default: Availibility Zone launch selection
+      IoTEndpointURL:
+        default: IoT Connectivity Endpoint
 
 Parameters:
   SitewiseMonitorEmail:
@@ -132,18 +132,6 @@ Parameters:
     Description: Type of edge deployment
     Type: String
     Default: Virtual
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid deployment option selection 
-    Description: They further defined deployment type
-      --- Option1 (or OPC-UA Path via SiteWise)
-      --- Option 2a (MQTT Ignition --> Iot Core)
-      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
-    Type: String
-    Default: Option1 
   VpcId:
     ConstraintDescription: Must be a valid VPC ID
     Description: The ID of the VPC that the solution will be hosted in
@@ -169,6 +157,9 @@ Parameters:
   AZ:
     Description: The availability zone which EC2 instances will be launched into
     Type: AWS::EC2::AvailabilityZone::Name
+  IoTEndpointURL:
+    Description: This is your custom endpoint that allows you to connect to AWS IoT
+    Type: String
 
 Conditions:
   UsingDefaultBucket: !Equals
@@ -1092,7 +1083,7 @@ Resources:
           - EdgeGroupConDef
           - Id
       Connectors:
-        - ConnectorArn: arn:aws:greengrass:us-east-1::/connectors/IoTSiteWise/versions/5
+        - ConnectorArn: arn:aws:greengrass:us-east-1::/connectors/IoTSiteWise/versions/10
           Id: SiteWiseConnector
   EdgeGroupCoreDef:
     Type: AWS::Greengrass::CoreDefinition
@@ -1366,6 +1357,8 @@ Resources:
             Ref: AMCAssetTable
           DriverName:
             Ref: AMCDriver
+          IoTEndpointURL:
+            Ref: IoTEndpointURL
       Timeout: 900
 
   # Asset Model Updater
@@ -1393,6 +1386,8 @@ Resources:
             !GetAtt EdgeGroup.Id
           gatewayName:
             Ref: EdgeDeviceID
+          IoTEndpointURL:
+            Ref: IoTEndpointURL
       Timeout: 900
 
   AssetModelUpdaterRule:
@@ -1685,7 +1680,7 @@ Resources:
       - KinesisDeliveryPolicy
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/${DeploymentType}${DeploymentOption}.template.yaml
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/VirtualOption1.template.yaml
         - S3Bucket: !If
             - UsingDefaultBucket
             - !Sub 'aws-quickstart-${AWS::Region}'
@@ -1700,7 +1695,6 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Ref EdgeDeviceID
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
         EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]

@@ -16,7 +16,7 @@ Metadata:
         Parameters:
           - EdgeDeviceID
           - DeploymentType
-          - DeploymentOption
+          - IoTEndpointURL
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -51,8 +51,6 @@ Metadata:
         default: Name for the edge device 
       DeploymentType:
         default: Type of deployment (virtual or physical)
-      DeploymentOption:
-        default: Deployment flows
       GreengrassInstanceType:
         default: Greengrass EC2 instance type
       IgnitionInstanceType:
@@ -63,6 +61,8 @@ Metadata:
         default: Your public IP address  
       SitewiseMonitorEmail:
         default: Email address for the SiteWise Portal administrator
+      IoTEndpointURL:
+        default: IoT Connectivity Endpoint
 
   cfn-lint: { config: { ignore_checks: [E9007] } }
 Parameters:
@@ -130,18 +130,6 @@ Parameters:
     Description: Type of edge deployment
     Type: String
     Default: Virtual
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid deployment option selection 
-    Description: They further defined deployment type
-      --- Option1 (or OPC-UA Path via SiteWise)
-      --- Option 2a (MQTT Ignition --> Iot Core)
-      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
-    Type: String
-    Default: Option1 
   GreengrassInstanceType:
     Description: Amazon EC2 instance type for the Greengrass EC2 instances.
     Type: String
@@ -168,6 +156,10 @@ Parameters:
       - IgnitionFileExport
       - KepwareFileExport
     Description: Choose the driver that the AssetModelConverter uses to translate hierarchy data.   
+  IoTEndpointURL:
+    Type: String
+    Description: This is your custom endpoint that allows you to connect to AWS IoT
+
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
@@ -224,7 +216,6 @@ Resources:
           Fn::GetAtt: [VPC, Outputs.VPCID]        
         EdgeDeviceID: !Ref EdgeDeviceID
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         GreengrassInstanceType: !Ref GreengrassInstanceType
         IgnitionInstanceType: !Ref IgnitionInstanceType
@@ -232,6 +223,7 @@ Resources:
         UserPublicIP: !Ref UserPublicIP
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         SitewiseMonitorEmail: !Ref SitewiseMonitorEmail
+        IoTEndpointURL: !Ref IoTEndpointURL
 
 Outputs:
   IgnitionURL:
