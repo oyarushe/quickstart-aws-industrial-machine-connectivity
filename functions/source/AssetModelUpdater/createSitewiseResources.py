@@ -22,6 +22,7 @@ log.setLevel(logging.DEBUG)
 class CreateSitewiseResources:
     def __init__(self):
         self.iotData = boto3.client('iot-data', endpoint_url=f"https://{os.environ['IoTEndpointURL']}")
+        self.lambda_client = boto3.client('lambda')
         self.boto3Session = boto3.Session()
         self.dynamo = self.boto3Session.resource('dynamodb')
         self.assetModelTable = self.dynamo.Table(os.environ['DynamoDB_Model_Table'])
@@ -229,6 +230,10 @@ class CreateSitewiseResources:
                 qos=1,
                 payload=json.dumps(payload, indent=4, sort_keys=True)
             )
+        self.lambda_client.invoke(
+            FunctionName=os.environ['SiteWiseS3DumpLambda'],
+            InvocationType='Event'
+        )
 
     def processEvent(self, event):
         self.modelList = self.createModels()

@@ -457,6 +457,7 @@ Resources:
         - functions/packages/MQTTDataProcess/mqttdataprocess.js.zip
         - functions/packages/GGDeployer/ggdeployer.zip
         - functions/packages/StackCleanup/stackcleanupfunction.zip
+        - functions/packages/SiteWiseDump/sitewise_dump.zip
         - scripts/physical-brownfield-all-options.sh
         - scripts/physical-greenfield-option1.sh
         - scripts/physical-greenfield-option2a.sh
@@ -618,7 +619,36 @@ Resources:
             Ref: AWS::AccountId
           stackName: 
             Ref: AWS::StackName
-  
+
+  SiteWiseS3Dump:
+    DependsOn: 
+      - CopyZips
+      - SiteWiseResourceDataBucket
+    Type: AWS::Lambda::Function
+    Properties:
+      ReservedConcurrentExecutions: 1
+      Runtime: python3.8
+      Role:
+        Fn::GetAtt:
+          - LambdaExecRole
+          - Arn
+      Handler: sitewise_dump.lambda_handler
+      Timeout: 180
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/SiteWiseDump/sitewise_dump.zip'
+      Description: Puts SiteWise model and asset data in S3 upon successful AMC completion
+      Environment:
+        Variables:
+          BucketName:
+            Ref: SiteWiseResourceDataBucket
+
+  SiteWiseResourceDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+
   quicksightiotruletrigger:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZips
@@ -1200,6 +1230,13 @@ Resources:
                 Effect: Allow
                 Resource: arn:aws:logs:*:*:*
               - Action:
+                  - lambda:InvokeFunction
+                Effect: Allow
+                Resource: 
+                  - Fn::GetAtt:
+                    - SiteWiseS3Dump
+                    - Arn
+              - Action:
                   - iot:Publish
                   - iotsitewise:DescribeAssetModel
                   - iotsitewise:CreateAssetModel
@@ -1388,6 +1425,7 @@ Resources:
             Ref: EdgeDeviceID
           IoTEndpointURL:
             Ref: IoTEndpointURL
+          SiteWiseS3DumpLambda: !GetAtt SiteWiseS3Dump.Arn
       Timeout: 900
 
   AssetModelUpdaterRule:
@@ -1419,7 +1457,6 @@ Resources:
         Fn::GetAtt:
           - AssetModelUpdaterRule
           - Arn
-
 
   ApiHandlerRole:
     Type: AWS::IAM::Role
