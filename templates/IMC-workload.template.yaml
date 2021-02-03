@@ -1066,10 +1066,17 @@ Resources:
         Fn::GetAtt:
           - EdgeGroupFuncDef
           - Id
-      Functions: []
-      DefaultConfig:
-        Execution:
-          IsolationMode: NoContainer
+      Functions:
+        - 
+          FunctionArn: arn:aws:lambda:::function:GGStreamManager:1
+          FunctionConfiguration:
+            MemorySize: 4194304
+            Pinned: true 
+            Timeout: 5
+          Id: StreamManager
+      # DefaultConfig:
+      #   Execution:
+      #     IsolationMode: NoContainer
   EdgeGroupSubDef:
     Type: AWS::Greengrass::SubscriptionDefinition
     DependsOn: CopyZips
@@ -1163,11 +1170,24 @@ Resources:
     Properties:
       LoggerDefinitionId: !Ref EdgeGroupLoggerDef
       Loggers:
-        - Id: EdgeGroupLoggerDefVersion
+        - Id: FileSystemGreengrassSystem
           Type: FileSystem
           Component: GreengrassSystem
           Level: DEBUG
           Space: '128'
+        - Id: FileSystemLambda
+          Type: FileSystem
+          Component: Lambda
+          Level: DEBUG
+          Space: '128'
+        - Id: AWSCloudWatchGreengrassSystem
+          Type: AWSCloudWatch
+          Component: GreengrassSystem
+          Level: DEBUG
+        - Id: AWSCloudWatchLambda
+          Type: AWSCloudWatch
+          Component: Lambda
+          Level: DEBUG
   EdgeGroup:
     Type: AWS::Greengrass::Group
     DependsOn: CopyZips
