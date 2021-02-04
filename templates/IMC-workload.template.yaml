@@ -1326,6 +1326,19 @@ Resources:
             Ref: AMCIncomingResource
       Timeout: 900
 
+  AssetModelIngestionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AssetModelIngestionLambdaResource
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AssetModelIngestionLambdaResource}
+
+  AssetModelIngestionDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub ${AssetModelIngestionLambdaResource}-dashboard
+      DashboardBody: !Sub | 
+        {"widgets":[{"type":"log","properties":{"region": "${AWS::Region}","title": "${AssetModelIngestionLambdaResource}-errors","query": "SOURCE '${AssetModelConverterLogGroup}'| fields @timestamp, @message\n| filter @message like \"[ERROR]\"\n| display @timestamp, @message"}}]}
+
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
     DependsOn: CopyZips
