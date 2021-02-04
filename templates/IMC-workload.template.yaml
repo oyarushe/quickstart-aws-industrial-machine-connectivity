@@ -1074,9 +1074,6 @@ Resources:
             Pinned: true 
             Timeout: 5
           Id: StreamManager
-      # DefaultConfig:
-      #   Execution:
-      #     IsolationMode: NoContainer
   EdgeGroupSubDef:
     Type: AWS::Greengrass::SubscriptionDefinition
     DependsOn: CopyZips
@@ -1417,6 +1414,19 @@ Resources:
           IoTEndpointURL:
             Ref: IoTEndpointURL
       Timeout: 900
+  
+  AssetModelConverterLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AssetModelConverterLambdaResource
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AssetModelConverterLambdaResource}
+
+  AssetModelConverterDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub ${AssetModelConverterLambdaResource}-dashboard
+      DashboardBody: !Sub | 
+        {"widgets":[{"type":"log","properties":{"region": "${AWS::Region}","title": "${AssetModelConverterLambdaResource}-errors","query": "SOURCE '${AssetModelConverterLogGroup}'| fields @timestamp, @message\n| filter @message like \"[ERROR]\"\n| display @timestamp, @message"}}]}
 
   # Asset Model Updater
   AssetModelUpdaterLambdaResource:
@@ -1447,6 +1457,19 @@ Resources:
             Ref: IoTEndpointURL
           SiteWiseS3DumpLambda: !GetAtt SiteWiseS3Dump.Arn
       Timeout: 900
+
+  AssetModelUpdaterLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AssetModelUpdaterLambdaResource
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AssetModelUpdaterLambdaResource}
+
+  AssetModelUpdaterDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub ${AssetModelUpdaterLambdaResource}-dashboard
+      DashboardBody: !Sub | 
+        {"widgets":[{"type":"log","properties":{"region": "${AWS::Region}","title": "${AssetModelUpdaterLambdaResource}-errors","query": "SOURCE '${AssetModelConverterLogGroup}'| fields @timestamp, @message\n| filter @message like \"[ERROR]\"\n| display @timestamp, @message"}}]}
 
   AssetModelUpdaterRule:
     Type: AWS::IoT::TopicRule
