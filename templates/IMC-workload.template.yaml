@@ -1306,6 +1306,18 @@ Resources:
             Version: "2012-10-17"
           PolicyName: AMCLambdaPolicy
 
+  StatusTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-status-table'
+      BillingMode: PAY_PER_REQUEST
+      KeySchema: 
+      - AttributeName: 'amcStatus'
+        KeyType: 'HASH'
+      AttributeDefinitions:
+      - AttributeName: 'amcStatus'
+        AttributeType: 'S'
+
   # Asset Model Ingestion
   AssetModelIngestionLambdaResource:
     Type: AWS::Lambda::Function
@@ -1324,6 +1336,8 @@ Resources:
         Variables:
           IncomingBucket:
             Ref: AMCIncomingResource
+          StatusTable:
+            Ref: StatusTable
       Timeout: 900
 
   AssetModelIngestionLogGroup:
@@ -1426,6 +1440,8 @@ Resources:
             Ref: AMCDriver
           IoTEndpointURL:
             Ref: IoTEndpointURL
+          StatusTable:
+            Ref: StatusTable
       Timeout: 900
   
   AssetModelConverterLogGroup:
@@ -1469,6 +1485,8 @@ Resources:
           IoTEndpointURL:
             Ref: IoTEndpointURL
           SiteWiseS3DumpLambda: !GetAtt SiteWiseS3Dump.Arn
+          StatusTable:
+            Ref: StatusTable
       Timeout: 900
 
   AssetModelUpdaterLogGroup:

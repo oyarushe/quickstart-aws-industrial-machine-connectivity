@@ -28,14 +28,14 @@ log.setLevel(logging.DEBUG)
 
 class AssetModelConverter:
     def __init__(self):
-        # self.iotData = boto3.client('iot-data')
-        # self.iotData = boto3.client('iot-data', region_name='eu-central-1', endpoint_url='https://a1wvqh2r72tlw2-ats.iot.eu-central-1.amazonaws.com')
         self.iotData = boto3.client('iot-data', endpoint_url=f"https://{os.environ['IoTEndpointURL']}")
+        self.dynamodb = boto3.client('dynamodb')
         self.s3Utils = S3Utils(os.environ['IncomingBucket'])
         # Time to wait for no change in birth object count in seconds
         self.birthObjectScanTime = int(os.environ.get('OverrideScanTime', 10))
         self.keepBirthObjects = bool(os.environ.get('KeepBirthObjects', False))
         self.driverName = os.environ['DriverName']
+        self.tableName = os.environ['StatusTable']
 
         # list of S3 birth object files we're working with
         self.birthObjects = []
@@ -155,6 +155,12 @@ class AssetModelConverter:
             topic=self.assetModelUpdaterTopic,
             qos=1,
             payload=json.dumps(payload, indent=4, sort_keys=True)
+        )
+
+        now = datetime.now()
+        self.dynamodb.put_item(
+            TableName=self.tableName,
+            Item={'amcStatus':{'S':"DynamoDB Updated"},"timestamp":{'S': now.strftime(now.strftime('%b-%d-%Y %H:%M:%S'))}}
         )
 
     def processEvent(self, event):
