@@ -1,10 +1,9 @@
 // Include details about the license and how they can sign up. If no license is required, clarify that. 
 
-Some configurations of the IMC Quick Start will involve the use of 3rd party software and the user is responsible for obtaining a license directly from the software vendor. The 2 software vendors that have products that integrate with the IMC Quick Start are:
+No licenses are required to deploy this Quick Start. All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs.
 
-. Inductive Automation (Ignition Server)
-* Cirrus Link Solutions' MQTT Transmission Module
-. PTC (KEPServerEX)
+Some configurations of the {partner-product-short-name} Quick Start involve the use of third-party software. You are responsible for obtaining a license directly from the software vendor. Products that integrate with the {partner-product-short-name} Quick Start are available from the following software vendors:
 
-All AWS service resources consumed during the launch of the Quick Start will incurr AWS service usage costs.
-
+* Inductive Automation (vendor for Ignition)
+* Cirrus Link (vendor for the MQTT transmission module for the Ignition software stack)
+* PTC (vendor for KEPServerEX)

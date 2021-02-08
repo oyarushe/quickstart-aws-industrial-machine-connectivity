@@ -1,53 +1,52 @@
-// This doc is for the "Post deployment steps section"
+// This doc is for the "Post-deployment steps" section
 // Current URL: https://aws-quickstart.github.io/quickstart-aws-industrial-machine-connectivity/#_post_deployment_steps
-
 
 Stack deployment will take approximately {deployment_time}. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/post-deployment.md[post-deployment steps^] to configure the IMC Quick Start to make it operational.
 
 NOTE: After post-deployment steps, return back to finish the deployment.
 
-== CloudFormation Stack Cleanup
+=== Clean up the AWS CloudFormation stack deployment
 
-Follow these steps to clean up the IMC CloudFormation stack deployment:
+Follow these steps to clean up the Quick Start AWS CloudFormation stack deployment.
 
-==== Cloud resources Cleanup
+==== Clean up cloud assets
 
-. Navigate to the CloudFormation console and delete the base stack (not the stack named "NESTED"), in order to clean up the account as much as possible. Most of the resources will be deleted, but the stack deletion will fail due to non-empty S3 buckets and potentially a deployed Greengrass group (for all Virtual options by default, and for all Physical deployments that have been completed on a piece of hardware. The steps required to delete a stack are:
-.. Empty the S3 buckets:
-.. Navigate to the S3 service in the AWS Console.
+. Open the AWS CloudFormation console, and delete the base stack (not the stack named *NESTED*) to clean up the account as much as possible. Most of the resources are deleted, but the stack deletion fails due to nonempty S3 buckets and potentially a deployed AWS IoT Greengrass group (for all virtual options by default, and for all physical deployments that have been completed on a piece of hardware).
+. Empty the S3 buckets.
+.. Sign in to the AWS Management Console, and open the Amazon S3 service.
 .. In the search bar, enter your stack name.
-.. For each bucket that is associated with the stack, select the bucket and click “Empty” under the search bar. The bucket naming convention is: 
+.. For each bucket that is associated with the stack, choose the bucket, and choose *Empty* under the search bar. This is the bucket-naming convention (replacing the bracketed elements): 
 
- [name_of_stack]-[bucket_identifier]-[unique hash]
+ `<name_of_stack>-<bucket_identifier>-<unique hash>`
++
+Following are the values for <bucket_identifiers> for each deployment:
++
+* amcincomingresource
+* amcoutputresource
+* devicesbucketresource
+* imcs3bucket
+* lambdazipsbucket
+. Force a reset of the AWS IoT Greengrass group.
+.. Open the AWS IoT Greengrass console.
+.. Choose the AWS IoT Greengrass group with the *EdgeDeviceID* parameter provided to the stack.
+.. Under *Actions*, choose *Reset Deployments*.
+.. Select the check box indicating that you want to force the reset.
+.. Choose *Reset Deployment*.
+. Navigate back to the AWS CloudFormation console, and again delete the base stack—the main stack (the one that does not have *NESTED* in a gray box associated with it).
+. (Optional) Clean up other resources, such as AWS IoT SiteWise portal, gateway, models, and assets as well as the QuickSight dataset.
 
-.. Here are the following `[bucket_identifiers]` that exist for each deployment:
-... amcincomingresource
-... amcoutputresource
-... devicesbucketresource
-... imcs3bucket
-... lambdazipsbucket
-. Force a reset of the GreenGrass group:
-.. Navigate to the GreenGrass console
-.. Select the GreenGrass group with the “Name for the Edge device” parameter name provided to the stack 
-.. Under “Actions”, select “Reset Deployments”
-.. Check the box that asks if you want to force the reset
-.. Click “Reset Deployment”
-. Navigate back to the CloudFormation console and once again delete the base stack. 
-.. There is a master and nested stack. you must delete the master stack (the one that does not have “NESTED” in a gray box associated with it.
-. Other resources to clean up after stack deletion (if desired, for cleanliness): SiteWise Portal, SiteWise Gateway, SiteWise Models and Assets, QuickSight dataset.
+==== Clean up edge hardware
 
-==== Edge Hardware Cleanup
+. Navigate to a terminal on the edge hardware. Run the `sudo su` command to become the root user.
+. Stop and remove Ignition from hardware as follows, replacing the information in brackets. (Not applicable for physical brownfield deployments.)
 
-. Navigate to a terminal on the edge hardware. Become the root user using the “sudo su” command.
-. Stop and remove Ignition from hardware (Not applicable for Physical-Brownfield deployments): 
-
- cd /[path_to_Ignition_download]/Ignition-AWS-Kit-MQTT-v4
+ cd /<path_to_Ignition_download>/Ignition-AWS-Kit-MQTT-v4
  ./remove.sh
  cd ..
  rm device.tar.gz group.tar.gz opcclient.der Ignition-AWS-Kit-MQTT-v4.zip physical-greenfield-option<insert_option_here>.sh
  rm -rf Ignition-AWS-Kit-MQTT-v4 
 
-. Stop and remove GreenGrass:
+. Stop and remove AWS IoT Greengrass:
 
  apt remove aws-iot-greengrass-core 
  rm -rf /greengrass

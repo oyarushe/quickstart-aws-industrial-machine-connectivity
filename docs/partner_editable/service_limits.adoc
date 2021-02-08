@@ -1,15 +1,15 @@
-// Replace the <n> in each row to specify the number of resources used in this deployment. Remove the rows for resources that aren’t used.
+// Replace the <n> in each row to specify the number of resources used in this deployment. Remove the rows for resources that aren't used.
 |===
 |Resource |This deployment uses
 
 // Space needed to maintain table headers
-|VPCs |1
-|AWS Identity and Access Management (IAM) security groups |1
-|IAM roles |12
-|DynamoDb Tables |2
-|AWS Lambda Functions |10
-|AWS IoT Topic Rules |6
-|AWS Kinesis Firehose streams |2
-|AWS S3 Buckets |4
-|Amazon EC2 Instances |2
+|VPC |1
+|Security group |1
+|AWS Identity and Access Management (IAM) roles |12
+|DynamoDB tables |2
+|Lambda functions |10
+|AWS IoT topic rules |6
+|Kinesis Data Firehose streams |2
+|S3 buckets |4
+|EC2 instances |2
 |===
