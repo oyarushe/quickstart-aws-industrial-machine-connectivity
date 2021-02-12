@@ -287,3 +287,6 @@ Outputs:
   FullScriptParamsBrownField:
     Condition: IfPhysical
     Value: !GetAtt 'Workload.Outputs.FullScriptParamsBrownField'
+  Postdeployment:
+    Value: https://fwd.aws/QPEw8
+    Description: See the deployment guide for post-deployment steps.

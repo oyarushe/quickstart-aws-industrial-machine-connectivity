@@ -4,29 +4,36 @@
 
 :xrefstyle: short
 
-The primary objective of the Quick Start is to help partners deliver an inexpensive proof of value from their IIoT solution. For example, a partner might deliver a deployment that helps a customer visualize near-real-time operational metrics and analyze root causes when a line goes down. When customers get a taste of deriving business value from their IIoT architecture, they want to go further to develop a complete production architecture that addresses all their critical use cases. 
+The primary objective of the {partner-product-short-name} Quick Start is to help AWS Partners deliver a proof of concept that addresses a use case of high value to the customer. For example, the customer might want to start by visualizing near-real-time operational metrics and analyzing root causes when a line goes down. After a successful proof of concept, the partner and customer may work together to build out the production architecture to address other critical use cases. 
 
-At the heart of the {partner-product-short-name} Quick Start is the Asset Model Converter (AMC). The AMC is a serverless, module-based framework. It automatically converts definitions of a customer's asset hierarchy (such as factory, lines, machines, tags) from third-party (AWS Partner) edge software applications to equivalent definitions in AWS IoT SiteWise models and assets. Partner edge applications include Inductive Automation's https://inductiveautomation.com/ignition/[Ignition^] and PTC's https://www.kepware.com/en-us/products/kepserverex/[KEPServerEX^].
+With this Quick Start, you can automate production rollout of a connected-factory architecture across multiple sites. You can apply artificial intelligence and machine learning either in the cloud or at the edge. You can organize, store, and manage your IIoT data in various ways:
 
-After asset hierarchies are defined in AWS IoT SiteWise, your data can be ingested continuously to the AWS Cloud. All the pertinent metadata is readily accessible to applications that use that data to deliver business value. For example, you may set up dashboards that monitor the condition of your assets, as shown at the top of <<IMC-QS-overview>>. (The example dashboard shown is labeled "MVP" for minimum viable product). Elements of the Quick Start are outlined in the dotted orange box. The text at the right describes what happens from the edge (bottom) and the cloud (top).
+* Create or transfer virtual assets. 
+* Create or transfer asset hierarchies. 
+* Create a time-series hot-data store. 
+* Transfer data from a historian or a SCADA (supervisory control and data acquisition) system. 
+* Archive cold data in Amazon Simple Storage Service Glacier (Amazon S3 Glacier). 
+
+The {partner-product-short-name} architecture includes AWS managed IoT edge services and AWS-qualified edge hardware. You can use a wide range of programmable logic controllers (PLCs) and protocols. You can convert to HTTPS, MQTT (Message Queuing Telemetry Transport), or OPC Unified Architecture (UA).
 
 [#IMC-QS-overview]
-.Overview of the {partner-product-name} Quick Start
-[link=images/imc_qs_overview.png]
-image::../images/imc_qs_overview.png[IMC Quick Start overview]
+.{partner-product-short-name} Quick Start conceptual diagram
+image::../images/imc_qs_overview.png[IMC Quick Start conceptual diagram,width=55%]
 
-The {partner-product-short-name} Quick Start helps connect industrial assets to AWS Cloud services along with visualizing data using AWS IoT SiteWise Monitor and Amazon QuickSight dashboards. The IoT partner edge software applications handle the industrial protocol translation from the programmable logic controllers (PLCs), other devices, historians, and supervisory control and data acquisition (SCADA) systems they connect to. The {partner-product-short-name} architecture integrates both the data collected by the edge software applications and the asset model hierarchy that they maintain. 
+When you launch the {partner-product-short-name} Quick Start, an AWS CloudFormation template automates the deployment of resources into your AWS account. <<IMC-QS-overview>> shows a dotted orange box around the {partner-product-short-name} Quick Start's main components.
 
-The AWS CloudFormation templates provision the cloud resources and generate the scripts required to bootstrap physical edge devices. 
+* In the factory: 
+** AWS IoT Greengrass ingests data from PLCs, equipment, data stores (SCADA or historian), and other customer assets. 
+** AWS IoT Greengrass runs on an industrial PC (an AWS-qualified edge-gateway device) that's also running third-party asset-modeling edge software. Examples of this software include Inductive Automation's https://inductiveautomation.com/ignition/[Ignition^] and PTC's https://www.kepware.com/en-us/products/kepserverex/[KEPServerEX^].  
+* In the AWS Cloud:
+** AWS IoT Core receives and routes messages either directly from the third-party edge software or from the AWS IoT Greengrass core.
+** AWS IoT SiteWise maintains the asset hierarchy's metadata. It contains a managed database for all the time-series data generated by the customer assets. After asset hierarchies are defined in AWS IoT SiteWise, your IIoT data is continuously extracted, converted, filtered, and sent to the AWS Cloud. All the pertinent metadata is readily accessible to applications that use this information to deliver business value.
+** Amazon Simple Storage Service (Amazon S3) stores your manufacturing data.
+** Amazon QuickSight gives you access to custom business-intelligence dashboards and visualizations for data stored in the S3 bucket so that you can monitor the condition of your assets.
 
-This Quick Start includes the software and a list of hardware required to connect your assets to the AWS Cloud and visualize your data. It also includes the following modules (drivers):
+You deploy this Quick Start in either in virtual mode (for evaluation and training) or in physical mode (for customer deployments). The mode you choose depends on whether your edge hardware is virtual or physical. 
 
-* Ignition by Inductive Automation
-** Cirrus Link MQTT (Message Queue Telemetry Transport) module
-** Ignition Project File Export 
-* KEPServerEX by PTC
-** KEPServerEX Project File Export
+* The architecture for virtual edge hardware includes an Amazon Elastic Compute Cloud (Amazon EC2) instance. 
+* The architecture for physical edge hardware includes an industrial PC on the customer premises. 
 
-You deploy this Quick Start in either virtual mode (for evaluation and training) or physical mode (for customer deployments). The mode you choose depends on whether your edge hardware is virtual or physical. The architecture for virtual edge hardware includes an Amazon Elastic Compute Cloud (Amazon EC2) instance. The architecture for physical edge hardware includes an industrial PC. The mode determines the way you configure connectivity and security. All other cloud-based resources are largely the same for virtual and physical deployments.
-
-As an option, you can use Amazon Simple Storage Service Glacier (https://aws.amazon.com/glacier/[Amazon S3 Glacier^]) to help provide secure, durable, low-cost data archiving and long-term backup.
+The mode determines the way you configure connectivity and security. All other cloud-based resources are largely the same for virtual and physical deployments.
