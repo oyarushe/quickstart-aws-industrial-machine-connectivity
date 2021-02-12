@@ -1,4 +1,4 @@
-//This document is the ASCII DOC version of the "IMC - Virtual Deployment User Guide" word document found in the IMC Quick Start Github repo (URL: https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/master/documentation/IMC%20-%20Virtual%20Deployment%20User%20Guide.docx)
+//This document is the ASCII DOC version of the "IMC - Virtual Deployment User Guide" word document found in the IMC Quick Start Github repo (URL: https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/documentation/IMC%20-%20Virtual%20Deployment%20User%20Guide.docx)
 
 === Virtual Deployment Guide
 
@@ -53,14 +53,14 @@ To launch the virtual deployment of the IMC Quick Start, open up the AWS Console
 * Pre-Requisite:
 ** Select “Template is ready”
 * Specify Template (Choose one of the below):
-** Template Source: Leave as default – “Amazon S3 URL”. Most users will want to use the “IMC-main.template.yaml” CloudFormation master template that’s in the AWS Quick Start S3 bucket. The full S3 URL for the master template is:
-*** Master Template S3 URL: https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-main.template.yaml
+** Template Source: Leave as default – “Amazon S3 URL”. Most users will want to use the “IMC-main.template.yaml” CloudFormation main template that’s in the AWS Quick Start S3 bucket. The full S3 URL for the main template is:
+*** Main Template S3 URL: https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-main.template.yaml
 *** This template launches the solution in a new VPC. Note, only 5 VPCs per account are permitted. 
 ** Alternatively, launch the “IMC-workload.template.yaml” Cloudformation template. The workload template launches the solution in your default VPC. 
 *** Workload Template S3 URL: https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-workload.template.yaml
 * Click Next to proceed to Step 2 of the CloudFormation stack launch (Specify stack details)
 
-===== Step 2 – Specify Stack Details (if using master template)
+===== Step 2 – Specify Stack Details (if using main template)
 
 * Stack Name: 
 ** Stack Name: Give the stack a unique name such as “IMC-Virtual”
