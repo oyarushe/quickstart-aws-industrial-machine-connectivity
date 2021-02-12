@@ -26,8 +26,6 @@ As shown in <<architecture-virtual>>, the virtual deployment of the {partner-pro
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
 
-//TODO Shivansh, I've asterisked the VPC bullet. Which other components get the asterisk?
-
 === Physical deployment
 
 When you deploy this Quick Start in physical mode (on the customer's premises, such as in a factory), you build an environment like the one shown in <<architecture-physical>>. Elements of the Quick Start are outlined in the dotted orange box.
