@@ -1,7 +1,7 @@
 // This doc is for the "Post-deployment steps" section
 // Current URL: https://aws-quickstart.github.io/quickstart-aws-industrial-machine-connectivity/#_post_deployment_steps
 
-Stack deployment will take approximately {deployment_time}. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/post-deployment.md[post-deployment steps^] to configure the IMC Quick Start to make it operational.
+Stack deployment takes approximately {deployment_time}. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/post-deployment.md[post-deployment steps^] to configure the IMC Quick Start to make it operational.
 
 NOTE: After post-deployment steps, return back to finish the deployment.
 
