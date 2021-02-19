@@ -2,7 +2,7 @@
 
 No licenses are required to deploy this Quick Start. All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs.
 
-Some configurations of the {partner-product-short-name} Quick Start involve the use of third-party edge software. You are responsible for obtaining a license directly from the software vendor. Software that integrates with the {partner-product-short-name} Quick Start is available from the following vendors:
+Some configurations of the {partner-product-short-name} Quick Start involve the use of a partner edge application. You are responsible for obtaining a license directly from the software vendor. Applications that integrate with the {partner-product-short-name} Quick Start are available from the following vendors:
 
 * Inductive Automation, vendor for Ignition.
 * Cirrus Link, vendor for the MQTT transmission module for the Ignition software stack.
