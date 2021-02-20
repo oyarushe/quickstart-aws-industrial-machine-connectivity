@@ -1,32 +1,32 @@
 
-.Edge Deployment Configuration
+.Edge-deployment configuration
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|Name for the edge device
-(`EdgeDeviceID`)|`Virtual`|Name for the edge device. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Type of deployment (virtual or physical)
-(`DeploymentType`)|`Virtual`|Type of edge deployment|Deployment flows
-(`DeploymentOption`)|`Option1`|They further defined deployment type --- Option1 (or OPC-UA Path via SiteWise) --- Option 2a (MQTT Ignition --> Iot Core) --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
+|Parameter label (name) |Default value|Description|Name for the edge-gateway device
+(`EdgeDeviceID`)|`Virtual`|If your deployment uses a physical edge-gateway device (industrial PC), enter a name. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Type of deployment
+(`DeploymentType`)|`Virtual`|Type of edge deployment. If your deployment uses physical edge hardware, choose "Physical."|Dataflow option
+(`DeploymentOption`)|`Option1`|Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core).
 |===
-.Amazon EC2 Configuration
+.Amazon EC2 configuration
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|SSH Key Name
+|Parameter label (name) |Default value|Description|SSH key name
 (`EC2KeyPairName`)|`SiteWiseTest`|Name of an existing EC2 key pair. All instances will launch with this key pair.|Default VPC ID
-(`VpcId`)|`**__Requires input__**`|The ID of the VPC that the solution will be hosted in|Greengrass EC2 instance type
+(`VpcId`)|`**__Requires input__**`|ID of the VPC that the solution will be hosted in.|Greengrass EC2 instance type
 (`GreengrassInstanceType`)|`t3.small`|Amazon EC2 instance type for the Greengrass EC2 instances.|Ignition EC2 instance type
-(`IgnitionInstanceType`)|`t3.large`|Amazon EC2 instance type for the Ignition EC2 instances.|Availibility Zone launch selection
-(`AZ`)|`**__Requires input__**`|The availability zone which EC2 instances will be launched into|VPC Subnet ID (match the Subnet ID with your Availability Zone selection)
-(`EC2Subnet`)|`**__Requires input__**`|This is the subnet ID where the EC2(s) will be deployed|CIDR range for Ignition/Greengrass access
-(`PublicSubnet1CIDR`)|`0.0.0.0/0`|We will narrow this down after the stack deploys.|AssetModelConverter driver
-(`AMCDriver`)|`IgnitionCirrusLink`|Choose the driver that the AssetModelConverter uses to translate hierarchy data.|Email address for the SiteWise Portal administrator
-(`SitewiseMonitorEmail`)|`**__Requires input__**`|NO_DESCRIPTION|Your public IP address
-(`UserPublicIP`)|`**__Requires input__**`|Supply your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
+(`IgnitionInstanceType`)|`t3.large`|Amazon EC2 instance type for the Ignition EC2 instances.|Availability Zone launch selection
+(`AZ`)|`**__Requires input__**`|Availability Zone that the EC2 instances will be launched into.|VPC subnet ID
+(`EC2Subnet`)|`**__Requires input__**`|Subnet ID where the EC2 instances will be launched. Match the subnet ID with your Availability Zone selection.|CIDR block for Ignition/Greengrass access
+(`PublicSubnet1CIDR`)|`0.0.0.0/0`|You will narrow this down after the stack deploys.|Asset Model Converter driver
+(`AMCDriver`)|`IgnitionCirrusLink`|The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport.|Email address for the SiteWise portal administrator
+(`SitewiseMonitorEmail`)|`**__Requires input__**`|Enter the email address.|Your public IP address
+(`UserPublicIP`)|`**__Requires input__**`|Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
 |===
-.AWS Quick Start Configuration
+.AWS Quick Start configuration
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|Quick Start S3 Bucket Name
-(`QSS3BucketName`)|`**__Requires input__**`|S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Quick Start S3 Key Prefix
-(`QSS3KeyPrefix`)|`**__Requires input__**`|S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).|Quick Start S3 bucket region
-(`QSS3BucketRegion`)|`us-east-1`|The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+|Parameter label (name) |Default value|Description|Quick Start S3 bucket name
+(`QSS3BucketName`)|`**__Requires input__**`|Name of the S3 bucket for your copy of the Quick Start assets. Keep the default name unless you are customizing the template. Changing the name updates code references to point to a new Quick Start location. This name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). See https://aws-quickstart.github.io/option1.html.|Quick Start S3 key prefix
+(`QSS3KeyPrefix`)|`**__Requires input__**`|S3 key prefix that is used to simulate a directory for your copy of the Quick Start assets. Keep the default prefix unless you are customizing the template. Changing this prefix updates code references to point to a new Quick Start location. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html and https://aws-quickstart.github.io/option1.html.|Quick Start S3 bucket Region
+(`QSS3BucketRegion`)|`us-east-1`|AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. Keep the default Region unless you are customizing the template. Changing this Region updates code references to point to a new Quick Start location. When using your own bucket, specify the Region. See https://aws-quickstart.github.io/option1.html.
 |===

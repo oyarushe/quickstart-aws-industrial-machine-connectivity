@@ -1,4 +1,6 @@
-- us-east-1 (N. Virginia)
-- us-west-2 (Ohio)
-- eu-west-1 (Ireland)
-- eu-central-1 (Frankfurt)
+This Quick Start supports the following Regions:
+
+* us-east-1, US East (N. Virginia)
+* us-west-2, US West (Oregon)
+* eu-west-1, Europe (Ireland)
+* eu-central-1, Europe (Frankfurt)
