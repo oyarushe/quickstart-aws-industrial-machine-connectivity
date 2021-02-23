@@ -109,7 +109,7 @@ If you do not already have an EC2 SSH (Secure Shell) key pair available (PEM fil
 === Create an AWS IoT SiteWise service-linked role 
 Run the following command from the AWS CLI:
 
- +aws iam create-service-linked-role --aws-service-name iotsitewise.amazonaws.com --description "Service-linked role to support IoT SiteWise"+
+ aws iam create-service-linked-role --aws-service-name iotsitewise.amazonaws.com --description "Service-linked role to support IoT SiteWise"
 
 For more information about creating service-linked-roles, see https://docs.aws.amazon.com/iot-sitewise/latest/userguide/using-service-linked-roles.html[Using service-linked roles for AWS IoT SiteWise^].
 
