@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 from datetime import datetime
 
 import boto3
@@ -22,7 +22,7 @@ def handler(event, context):
     # Re-deploy SiteWise Gateway to recognize new tags
     sitewiseUtils = SitewiseUtils()
     gatewayID = sitewiseUtils.getGatewayIDByName()
-    sitewiseUtils.updateGateway(gatewayID)    
+    sitewiseUtils.updateGateway(gatewayID)
 
     # Write to DynamoDB indicating status
     now = datetime.now()

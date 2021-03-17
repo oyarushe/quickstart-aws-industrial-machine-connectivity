@@ -11,7 +11,6 @@ Metadata:
         Parameters:
           - EdgeDeviceID
           - DeploymentType
-          - IoTEndpointURL
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -63,8 +62,6 @@ Metadata:
         default: Email address for the SiteWise Portal administrator
       AZ: 
         default: Availibility Zone launch selection
-      IoTEndpointURL:
-        default: IoT Connectivity Endpoint
 
 Parameters:
   SitewiseMonitorEmail:
@@ -157,9 +154,6 @@ Parameters:
   AZ:
     Description: The availability zone which EC2 instances will be launched into
     Type: AWS::EC2::AvailabilityZone::Name
-  IoTEndpointURL:
-    Description: This is your custom endpoint that allows you to connect to AWS IoT
-    Type: String
 
 Conditions:
   UsingDefaultBucket: !Equals
@@ -338,6 +332,7 @@ Resources:
         - !Ref AMCIncomingResource
         - !Ref AMCOutputResource
         - !Ref LambdaZipsBucket
+        - !Ref SiteWiseResourceDataBucket
       group_name: !Ref EdgeDeviceID
 
   StackCleanupRole:
@@ -1438,8 +1433,6 @@ Resources:
             Ref: AMCAssetTable
           DriverName:
             Ref: AMCDriver
-          IoTEndpointURL:
-            Ref: IoTEndpointURL
           StatusTable:
             Ref: StatusTable
       Timeout: 900
@@ -1482,8 +1475,6 @@ Resources:
             !GetAtt EdgeGroup.Id
           gatewayName:
             Ref: EdgeDeviceID
-          IoTEndpointURL:
-            Ref: IoTEndpointURL
           SiteWiseS3DumpLambda: !GetAtt SiteWiseS3Dump.Arn
           StatusTable:
             Ref: StatusTable

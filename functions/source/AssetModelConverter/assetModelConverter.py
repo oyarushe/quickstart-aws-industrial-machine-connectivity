@@ -28,7 +28,7 @@ log.setLevel(logging.DEBUG)
 
 class AssetModelConverter:
     def __init__(self):
-        self.iotData = boto3.client('iot-data', endpoint_url=f"https://{os.environ['IoTEndpointURL']}")
+        self.iotData = boto3.client('iot-data')
         self.dynamodb = boto3.client('dynamodb')
         self.s3Utils = S3Utils(os.environ['IncomingBucket'])
         # Time to wait for no change in birth object count in seconds

@@ -21,7 +21,7 @@ log.setLevel(logging.DEBUG)
 
 class CreateSitewiseResources:
     def __init__(self):
-        self.iotData = boto3.client('iot-data', endpoint_url=f"https://{os.environ['IoTEndpointURL']}")
+        self.iotData = boto3.client('iot-data')
         self.boto3Session = boto3.Session()
         self.dynamo = self.boto3Session.resource('dynamodb')
         self.assetModelTable = self.dynamo.Table(os.environ['DynamoDB_Model_Table'])
