@@ -1,18 +1,18 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Workload template to deploy AWS Quick Start for Industrial machine connectivity. (qs-1qtb0iud5)
+Description: Template to deploy the Industrial Machine Connectivity Quick Start into an existing VPC. (qs-1qtb0iud5)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Launch into an existing VPC"
+    EntrypointName: "Parameters for deploying into an existing VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: Edge Deployment Configuration
+          default: Edge-deployment configuration
         Parameters:
           - EdgeDeviceID
           - DeploymentType
       - Label:
-          default: Amazon EC2 Configuration
+          default: Amazon EC2 configuration
         Parameters:
           - EC2KeyPairName
           - VpcId
@@ -25,7 +25,7 @@ Metadata:
           - SitewiseMonitorEmail
           - UserPublicIP
       - Label:
-          default: AWS Quick Start Configuration
+          default: AWS Quick Start configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
@@ -327,12 +327,12 @@ Resources:
     Properties:
       ServiceToken: !GetAtt 'StackCleanupFunction.Arn'
       buckets: 
-        - !Ref imcs3bucket
         - !Ref DevicesBucketResource
         - !Ref AMCIncomingResource
         - !Ref AMCOutputResource
         - !Ref LambdaZipsBucket
         - !Ref SiteWiseResourceDataBucket
+        - !Ref imcs3bucket
       group_name: !Ref EdgeDeviceID
 
   StackCleanupRole:

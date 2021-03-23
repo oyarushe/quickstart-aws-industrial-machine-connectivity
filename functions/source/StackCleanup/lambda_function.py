@@ -90,8 +90,13 @@ def delete_sitewise_portal():
 def clear_s3_buckets(buckets):
 
     for bucket in buckets:
+        if "imcs3bucket" in bucket:
+            # This bucket often fails to clear properly, waiting
+            # to see if it helps to clean up residual objects
+            time.sleep(10)
         bucket_resource = s3.Bucket(bucket)
         bucket_resource.objects.all().delete()
+        bucket_resource.object_versions.delete()
 
 def reset_greengrass_deployment(group_name):
     groups = greengrass.list_groups()
