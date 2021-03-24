@@ -92,6 +92,7 @@ image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 
 .. Open KepServerEx.
 .. Select the project you'd like to export by clicking on it.
+..Select Project
 [link=images/SelectProject.png]
 image::../images/SelectProject.png[Select Project]
 .. Hit File and Save As.
