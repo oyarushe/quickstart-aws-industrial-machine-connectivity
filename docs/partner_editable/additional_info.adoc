@@ -1,19 +1,20 @@
-// Add steps as necessary for accessing the software, post-configuration, and testing. Don’t include full usage instructions for your software, but add links to your product documentation for that information.
+// Add steps as necessary for accessing the software, post-configuration, and testing. Don't include full usage instructions for your software, but add links to your product documentation for that information.
 //Should any sections not be applicable, remove them
 
 //== Test the deployment
 // If steps are required to test the deployment, add them here. If not, remove the heading
 
-== Post deployment steps
+== Post-deployment steps
+
+:xrefstyle: short
+
 // If Post-deployment steps are required, add them here. If not, remove the heading
 
-Depending upon which deployment configuration you chose, there are different post deployment configuration steps.
 
-* Link to Virtual deployment guide
-* Link to Physical greenfield deployment guide
-* Link to Physical brownfield deployment guide
+//Reference post-deployment.adoc file
+include::./post_deployment.adoc[]
 
-//== Best practices for using {partner-product-name} on AWS
+//== Best practices for using the {partner-product-short-name} Quick Start on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
 //_Add any best practices for using the software._
@@ -23,12 +24,15 @@ Depending upon which deployment configuration you chose, there are different pos
 
 //_Add any security-related information._
 
-== Other useful information
+// == Other useful information
 //Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
 
 //_Add any other details that will help the customer use the software on AWS._
 
-* Guide for Creating AMC drivers (link to external document)
-* AMC approved DyanamoDB table format (link to external document)
-* Adding a line and device to an Ignition project (link to external document)
-* Extending/modifying the IMC kit with new features and capabilities (link to external document)
+=== Additional resources
+
+* https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/amc.md[Asset Model Converter (AMC) and creating AMC drivers]
+* https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/additional-info.md#amc-approved-dynamodb-format[AMC approved DyanamoDB table format]
+* https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/additional-info.md#add-a-line-and-device-to-an-ignition-project[Adding a line and device to an Ignition project]
+* https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/additional-info.md#setting-up-a-quicksight-dashboard-along-with-the-imc-quick-start-deployment[Setting up a QuickSight dashboard]
+* https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/additional-info.md#launching-cloudformation-stack-from-your-own-s3-bucket[Extending or modifying the {partner-product-short-name} Quick Start with new features and capabilities]
