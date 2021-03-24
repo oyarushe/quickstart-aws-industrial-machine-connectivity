@@ -82,7 +82,13 @@ image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 
 *AMC driver: IgnitionFileExport*
 
-. Obtain your JSON file that represents the new hierarchy:
+. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
+
+.. `<name_of_stack>-<amcincomingresource>-<hash>`
+
+*AMC driver: KepServerFileExport*
+
+. Obtain your JSON file that represents the new hierarchy: 
 
 .. Open KepServerEx.
 .. Select the project you'd like to export by clicking on it.
@@ -98,13 +104,8 @@ image::../images/EncryptionSettings.png[Encryption Settings]
 [link=images/NameAndExport.png]
 image::../images/NameAndExport.png[Name and Export]
 
-. Drop the file into the following S3 bucket (replacing the information in brackets):
+. Drop it into the following S3 bucket:
 
-.. `<name_of_stack>-<amcincomingresource>-<hash>`
-
-*AMC driver: KepServerFileExport*
-
-. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket:
 .. `<name_of_stack>-<amcincomingresource>-<hash>`
 
 *Q.* How do I add a QuickSight visual?
