@@ -96,12 +96,15 @@ image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 [link=images/SelectProject.png]
 image::../images/SelectProject.png[Select Project]
 .. Hit File and Save As.
+..Save As
 [link=images/SaveAs.png]
 image::../images/SaveAs.png[Save As]
 .. Input the project encryption settings and hit "Ok".
+..Encryption Settings
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
 .. Name the export file, and save the file as a JSON Project File.
+..Name and Export
 [link=images/NameAndExport.png]
 image::../images/NameAndExport.png[Name and Export]
 
