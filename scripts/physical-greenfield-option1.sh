@@ -35,6 +35,9 @@ dpkg -i aws-iot-greengrass-keyring.deb
 echo "deb https://dnw9lb6lzp2d8.cloudfront.net stable main" | tee /etc/apt/sources.list.d/greengrass.list
 apt update -y
 apt install aws-iot-greengrass-core unzip python3.7 openjdk-8-jre -y
+apt-cache madison openjdk-8-jdk
+wget https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-linux-amd64.deb
+apt install ./bellsoft-jdk8u282+8-linux-amd64.deb
 systemctl enable greengrass.service
 ln -s /usr/bin/java /usr/bin/java8
 mkdir /var/sitewise 
