@@ -16,3 +16,4 @@ ubuntu*.log
 package
 cdk.out/
 imcquickstart.egg-info/
+.venv
