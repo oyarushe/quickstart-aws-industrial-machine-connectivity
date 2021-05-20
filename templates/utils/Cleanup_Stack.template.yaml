@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Template to copy lambda zip code to s3 bucket'
+
+Parameters:
+  LambdaZipsBucket:
+    Type: String
+  QSS3KeyPrefix:
+    Type: String
+  DeleteModelsInDynamoDB:
+    Type: String
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+  DynamoDBAssetTable:
+    Type: String
+  DynamoDBModelTable:
+    Type: String
+  Buckets:
+    Description: Buckets to cleanup
+    Type: CommaDelimitedList
+  DeleteGreengrass:
+    Type: String
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+  EdgeDeviceIDs:
+    Description: EdgeDevices to cleanup
+    Type: CommaDelimitedList
+  
+
+Resources:
+  StackCleanup:
+      Type: Custom::StackCleanup
+      DependsOn:
+        - StackCleanupRole
+      Properties:
+        ServiceToken: !GetAtt 'StackCleanupFunction.Arn'
+        delete_models: !Ref DeleteModelsInDynamoDB
+        buckets: !Ref Buckets
+        delete_greengrass: !Ref DeleteGreengrass
+        group_names: !Ref EdgeDeviceIDs
+
+
+  StackCleanupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies:
+        - PolicyName: stack-cleanup
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - greengrass:ListGroups
+                  - greengrass:ResetDeployments
+                  - greengrass:GetGroup
+                  - iot:UpdateThingShadow
+                  - s3:*
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - iotsitewise:ListPortals
+                  - iotsitewise:ListProjects
+                  - iotsitewise:ListDashboards
+                  - iotsitewise:DeleteDashboard
+                  - iotsitewise:DeleteProject
+                  - iotsitewise:ListAccessPolicies
+                  - iotsitewise:DeleteAccessPolicies
+                  - iotsitewise:DeletePortal
+                  - iotsitewise:DescribeAssetModel
+                  - iotsitewise:UpdateAssetModel
+                  - iotsitewise:DeleteAssetModel
+                  - iotsitewise:DescribeAsset
+                  - iotsitewise:UpdateAssetProperty
+                  - iotsitewise:ListAssets
+                  - iotsitewise:ListAssociatedAssets
+                  - iotsitewise:DeleteAsset
+                  - iotsitewise:DisassociateAssets
+                  - sso:DeleteManagedApplicationInstance
+                  - quicksight:ListDataSets
+                  - quicksight:ListDataSources
+                  - quicksight:DeleteDataSet
+                  - quicksight:DeleteDataSource
+                  - dynamodb:Scan
+                Resource: "*"
+  
+  StackCleanupFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Cleans up the required resources to delete the stack.
+      Environment:
+        Variables:
+          stackName:
+            Ref: AWS::StackName
+          DynamoDB_Asset_Table:
+            Ref: DynamoDBAssetTable
+          DynamoDB_Model_Table: 
+            Ref: DynamoDBModelTable
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.7
+      Role: !GetAtt 'StackCleanupRole.Arn'
+      Timeout: 900
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/StackCleanup/stackcleanupfunction.zip'

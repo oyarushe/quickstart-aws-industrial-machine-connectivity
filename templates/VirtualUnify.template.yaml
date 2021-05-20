@@ -1,0 +1,572 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'IMC Backend Quickstart -- VirtualOption1 (Please do not remove). (qs-1qtb0iudq)'
+Parameters:
+  EdgeInstanceGreengrassInstanceProfile:
+    Type: String
+    Description: The instance profile for the EC2 instance running Greengrass 
+  GreengrassInstanceType:
+    Type: String
+    Description: Instance type for for the EC2 instance running Greengrass 
+  IoTEndpoint: 
+    Type: String
+    Description: IoT Endpoint, retrieved from custom resource lambda in workload template
+  EdgeDeviceID:
+    Type: String
+    Description: Name for the edge device. 
+  DeviceBucketRes:
+    Description: Information for the device bucket 
+    Type: String
+  EC2AMI:
+    Description: The AMI that the EC2 instances will be using
+    Type: AWS::EC2::Image::Id
+  DataStreamPrefix:
+    Description: Ignition EC2 datastream prefix
+    Type: String
+  IgnitionInstanceType:
+    Description: Amazon EC2 instance type for the EC2 instances.
+    Type: String
+  EC2KeyPairName:
+    Description: Name of an existing EC2 key pair. All instances will launch with
+      this key pair.
+    Type: AWS::EC2::KeyPair::KeyName
+  EC2Subnet:
+    ConstraintDescription: Must be a valid subnet ID 
+    Description: This is the subnit ID where the EC2(s) will be deployed
+    Type: AWS::EC2::Subnet::Id
+  DeploymentType:
+    Description: Type of edge deployment
+    Type: String
+  DeploymentOption:
+    Description: They further defined deployment type
+      --- Option1 (or OPC-UA Path via SiteWise)
+      --- Option 2a (MQTT Ignition --> Iot Core)
+      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
+    Type: String
+  EIIgnitionInstanceProfile:
+    Description: Profile for the ignition instance that is running at the edge
+    Type: String
+  EdgeSecGroupResourceGroupID:
+    Description: This is the group id for the security group for the edge instance
+    Type: 'List<AWS::EC2::SecurityGroup::Id>'
+  RestAPIId:
+    Description: ID for the Rest API
+    Type: String
+  QSS3KeyPrefix:
+    Description: Quick Start S3 key prefix
+    Type: String
+  LambdaZipsBucket:
+    Description: Bucket location of the project zip files
+    Type: String
+  AZ:
+    Description: AZ to launch EC2 instances into
+    Type: String
+
+Resources:
+  BucketNotificationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  
+  BucketNotificationsHandlerRoleDefaultPolicyResource:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: s3:PutBucketNotification
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: BucketNotificationsHandlerRoleDefaultPolicyResource
+      Roles:
+        - Ref: BucketNotificationRole
+
+  BucketNotificationsHandlerResource:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)
+      Code:
+        ZipFile: >-
+          exports.handler = (event, context) => {
+              // eslint-disable-next-line @typescript-eslint/no-require-imports, import/no-extraneous-dependencies
+              const s3 = new (require('aws-sdk').S3)();
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const https = require('https');
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const url = require('url');
+              log(JSON.stringify(event, undefined, 2));
+              const props = event.ResourceProperties;
+              if (event.RequestType === 'Delete') {
+                  props.NotificationConfiguration = {}; // this is how you clean out notifications
+              }
+              const req = {
+                  Bucket: props.BucketName,
+                  NotificationConfiguration: props.NotificationConfiguration,
+              };
+              return s3.putBucketNotificationConfiguration(req, (err, data) => {
+                  log({ err, data });
+                  if (err) {
+                      return submitResponse('FAILED', err.message + `\nMore information in CloudWatch Log Stream: ${context.logStreamName}`);
+                  }
+                  else {
+                      return submitResponse('SUCCESS');
+                  }
+              });
+              function log(obj) {
+                  console.error(event.RequestId, event.StackId, event.LogicalResourceId, obj);
+              }
+              // tslint:disable-next-line:max-line-length
+              // adapted from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-cfnresponsemodule
+              // to allow sending an error messge as a reason.
+              function submitResponse(responseStatus, reason) {
+                  const responseBody = JSON.stringify({
+                      Status: responseStatus,
+                      Reason: reason || 'See the details in CloudWatch Log Stream: ' + context.logStreamName,
+                      PhysicalResourceId: event.PhysicalResourceId || event.LogicalResourceId,
+                      StackId: event.StackId,
+                      RequestId: event.RequestId,
+                      LogicalResourceId: event.LogicalResourceId,
+                      NoEcho: false,
+                  });
+                  log({ responseBody });
+                  const parsedUrl = url.parse(event.ResponseURL);
+                  const options = {
+                      hostname: parsedUrl.hostname,
+                      port: 443,
+                      path: parsedUrl.path,
+                      method: 'PUT',
+                      headers: {
+                          'content-type': '',
+                          'content-length': responseBody.length,
+                      },
+                  };
+                  const request = https.request(options, (r) => {
+                      log({ statusCode: r.statusCode, statusMessage: r.statusMessage });
+                      context.done();
+                  });
+                  request.on('error', (error) => {
+                      log({ sendError: error });
+                      context.done();
+                  });
+                  request.write(responseBody);
+                  request.end();
+              }
+          };
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - BucketNotificationRole
+          - Arn
+      Runtime: nodejs10.x
+      Timeout: 300
+    DependsOn:
+      - BucketNotificationsHandlerRoleDefaultPolicyResource
+
+  EdgeInstanceGreengrassResource:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !Sub '${AZ}'
+      IamInstanceProfile:
+        Ref: EdgeInstanceGreengrassInstanceProfile
+      ImageId: !Ref 'EC2AMI'
+      InstanceType: !Ref 'GreengrassInstanceType'
+      KeyName: !Ref 'EC2KeyPairName'
+      SecurityGroupIds: !Ref EdgeSecGroupResourceGroupID
+      SubnetId: !Ref 'EC2Subnet'
+      Tags:
+        - Key: Name
+          Value: !Sub '${DeploymentType}/${DeploymentOption}/Greengrass_${EdgeDeviceID}' 
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - >-
+                #!/bin/bash
+
+                                set -ex
+
+                                apt update -y
+                                # apt upgrade -y
+                                apt install -y awscli unzip fail2ban
+
+                                addgroup --system ggc_group
+                                adduser --system --ingroup ggc_group ggc_user
+                                mkdir -p /greengrass
+                                mkdir -p /greengrass/certs
+                                cd /greengrass/certs/
+                                wget -O root.ca.pem https://www.amazontrust.com/repository/AmazonRootCA1.pem
+                                wget --inet4-only -O aws-iot-greengrass-keyring.deb https://d1onfpft10uf5o.cloudfront.net/greengrass-apt/downloads/aws-iot-greengrass-keyring.deb
+                                dpkg -i aws-iot-greengrass-keyring.deb
+                                wget --inet4-only -O aws-iot-greengrass-keyring.deb https://d1onfpft10uf5o.cloudfront.net/greengrass-apt/downloads/aws-iot-greengrass-keyring.deb
+                                dpkg -i aws-iot-greengrass-keyring.deb
+                                echo "deb https://dnw9lb6lzp2d8.cloudfront.net stable main" | tee /etc/apt/sources.list.d/greengrass.list
+                                apt update -y
+                                apt install aws-iot-greengrass-core unzip python3.7 openjdk-8-jre -y
+                                systemctl enable greengrass.service
+                                ln -s /usr/bin/java /usr/bin/java8
+                                mkdir /var/sitewise 
+                                chown ggc_user /var/sitewise
+                                chmod 700 /var/sitewise
+
+                                aws s3api get-object --bucket
+              - " "
+              - Ref: DeviceBucketRes
+              - " --key "
+              - Ref: EdgeDeviceID
+              - /
+              - Ref: EdgeDeviceID
+              - !Sub | 
+                Core.tar.gz group.tar.gz
+                                tar -xzvf group.tar.gz -C /greengrass
+                                /greengrass/ggc/core/greengrassd start
+                                sleep 10
+                                wget -O /home/ubuntu/opcclient.der https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/deploygg/${EdgeDeviceID}
+              - "\n\n                "
+  EdgeInstanceIgnitionResource:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: !Sub '${AZ}'
+      IamInstanceProfile: !Ref EIIgnitionInstanceProfile
+      ImageId: !Ref EC2AMI
+      InstanceType: !Ref IgnitionInstanceType
+      KeyName: !Ref EC2KeyPairName
+      SecurityGroupIds: !Ref EdgeSecGroupResourceGroupID
+      SubnetId: !Ref EC2Subnet
+      Tags:
+        - Key: Name
+          Value: !Sub '${DeploymentType}/${DeploymentOption}/Ignition_${EdgeDeviceID}'
+      UserData:
+        Fn::Base64: !Join 
+            - ""
+            - - !Sub | 
+                #!/bin/bash
+
+                                set -ex
+
+                                apt update -y
+                                # apt upgrade -y
+                                apt install -y awscli unzip fail2ban
+
+                                # Get Ignition automation files
+                                wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip http://files.inductiveautomation.com/aws-imc-kit/Ignition-AWS-Kit-MQTT-v5.zip
+                                unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
+                                cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
+                                chmod +x install.sh
+
+                                # Set up certs for running installation script
+
+                                wget https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/updateconnectivity/${EdgeDeviceID}/withip/${EdgeInstanceGreengrassResource.PrivateIp}
+              - !Sub |
+                
+                                sleep 10
+
+                                ipaddress=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
+                                certurl="https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/deployggwithsitewise/${EdgeDeviceID}?ignition-ip=$ipaddress&datastreamprefix=${DataStreamPrefix}"
+                                wget -O /home/ubuntu/groupca.pem "$certurl"
+                                wget -O /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/opcua/opcclient.der https://www.amazontrust.com/repository/AmazonRootCA1.pem
+                                aws s3api get-object --bucket ${DeviceBucketRes} --key ${EdgeDeviceID}/${EdgeDeviceID}Device.tar.gz group.tar.gz
+                                tar -xzvf group.tar.gz -C /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts
+                                mv /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs/* /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/mqtt
+                                rmdir /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/certs
+                                sed -i "s/defaultclient/${EdgeDeviceID}Device/g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+                                sed -i "s%abcdefexample-ats.iot.us-east-1.amazonaws.com%${IoTEndpoint}%g" /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/artifacts/config.json
+                                python3 /home/ubuntu/Ignition-AWS-Kit-MQTT-v4/scripts/editConfig.py
+                                # Run installation
+                                ./install.sh
+
+  # edge resources from IMC-workload.template.yaml
+  EdgeGroupThingCoreDefault:
+    Type: Custom::IoTThing
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - GreengrassLambdaResource
+          - Arn
+      StackName:
+        Ref: AWS::StackName
+      EventType: CreateIoTThing
+      ThingName:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - Core
+      GatewayID:
+        Fn::Sub: ${EdgeDeviceID}
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  EdgeGroupThingDeviceDefault:
+    Type: Custom::IoTThing
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - GreengrassLambdaResource
+          - Arn
+      StackName:
+        Ref: AWS::StackName
+      EventType: CreateIoTThing
+      ThingName:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - Device
+      GatewayID:
+        Fn::Sub: ${EdgeDeviceID}
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  EdgeGroupFuncDef:
+    Type: AWS::Greengrass::FunctionDefinition
+    Properties:
+      Name:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - FuncDef,
+  EdgeGroupFuncDefVersion:
+    Type: AWS::Greengrass::FunctionDefinitionVersion
+    Properties:
+      FunctionDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupFuncDef
+          - Id
+      Functions: []
+      DefaultConfig:
+        Execution:
+          IsolationMode: NoContainer
+  EdgeGroupSubDef:
+    Type: AWS::Greengrass::SubscriptionDefinition
+    Properties:
+      Name:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - SubDef
+  EdgeGroupSubDefVersion:
+    Type: AWS::Greengrass::SubscriptionDefinitionVersion
+    Properties:
+      SubscriptionDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupSubDef
+          - Id
+      Subscriptions:
+        - Id: DeviceToIoTCore
+          Source:
+            Fn::GetAtt:
+              - EdgeGroupThingDeviceDefault
+              - thingArn
+          Subject: "#"
+          Target: cloud
+  EdgeGroupConDef:
+    Type: AWS::Greengrass::ConnectorDefinition
+    Properties:
+      Name:
+        Fn::Join:
+          - ""
+          - - Fn::Sub: ${EdgeDeviceID}
+            - ConDef
+  EdgeGroupConDefVersion:
+    Type: AWS::Greengrass::ConnectorDefinitionVersion
+    Properties:
+      ConnectorDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupConDef
+          - Id
+      Connectors:
+        - ConnectorArn: arn:aws:greengrass:us-east-1::/connectors/IoTSiteWise/versions/5
+          Id: SiteWiseConnector
+  EdgeGroupCoreDef:
+    Type: AWS::Greengrass::CoreDefinition
+    Properties:
+      Name: EdgeGroupCoreDef
+  EdgeGroupCoreDefVersion:
+    Type: AWS::Greengrass::CoreDefinitionVersion
+    Properties:
+      CoreDefinitionId:
+        Fn::GetAtt:
+          - EdgeGroupCoreDef
+          - Id
+      Cores:
+        - CertificateArn:
+            Fn::GetAtt:
+              - EdgeGroupThingCoreDefault
+              - certificateArn
+          Id: EdgeGroupCoreDefCore
+          ThingArn:
+            Fn::GetAtt:
+              - EdgeGroupThingCoreDefault
+              - thingArn
+  EdgeGroupDeviceDef:
+    Type: AWS::Greengrass::DeviceDefinition
+    Properties:
+      Name: EdgeGroupDeviceDef
+      InitialVersion:
+        Devices:
+          - CertificateArn:
+              Fn::GetAtt:
+                - EdgeGroupThingDeviceDefault
+                - certificateArn
+            Id: EdgeGroupDeviceDefDevice
+            ThingArn:
+              Fn::GetAtt:
+                - EdgeGroupThingDeviceDefault
+                - thingArn
+  EdgeGroupLoggerDef:
+    Type: 'AWS::Greengrass::LoggerDefinition'
+    Properties:
+      Name: EdgeGroupLoggerDef
+  EdgeGroupLoggerDefVersion:
+    Type: 'AWS::Greengrass::LoggerDefinitionVersion'
+    Properties:
+      LoggerDefinitionId: !Ref EdgeGroupLoggerDef
+      Loggers:
+        - Id: EdgeGroupLoggerDefVersion
+          Type: FileSystem
+          Component: GreengrassSystem
+          Level: DEBUG
+          Space: 128
+  EdgeGroup:
+    Type: AWS::Greengrass::Group
+    Properties:
+      Name:
+        Fn::Sub: ${EdgeDeviceID}
+      RoleArn:
+        Fn::GetAtt:
+          - GGResourceRole
+          - Arn
+  EdgeGroupVersion:
+    Type: AWS::Greengrass::GroupVersion
+    Properties:
+      GroupId:
+        Fn::GetAtt:
+          - EdgeGroup
+          - Id
+      ConnectorDefinitionVersionArn:
+        Ref: EdgeGroupConDefVersion
+      CoreDefinitionVersionArn:
+        Ref: EdgeGroupCoreDefVersion
+      DeviceDefinitionVersionArn:
+        Fn::GetAtt:
+          - EdgeGroupDeviceDef
+          - LatestVersionArn
+      FunctionDefinitionVersionArn:
+        Ref: EdgeGroupFuncDefVersion
+      SubscriptionDefinitionVersionArn:
+        Ref: EdgeGroupSubDefVersion
+      LoggerDefinitionVersionArn:
+        Ref: EdgeGroupLoggerDefVersion
+
+  LambdaExecRoleResource:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: arn:aws:logs:*:*:*
+              - Action: iot:*
+                Effect: Allow
+                Resource: "*"
+              - Action: greengrass:*
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:GetRole
+                  - iam:DeleteRole
+                  - iam:PassRole
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:ListStackResources
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Effect: Allow
+                Resource:
+                  - !Sub 'arn:aws:s3:::${DeviceBucketRes}/${EdgeDeviceID}*'
+            Version: "2012-10-17"
+          PolicyName: GGLambdaPolicy
+  GreengrassLambdaResource:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/GreengrassLambda/GreengrassLambda.zip'
+      Handler: handler.handler
+      Role:
+        Fn::GetAtt:
+          - LambdaExecRoleResource
+          - Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          DevicesBucket: !Ref DeviceBucketRes
+      Timeout: 60
+  GGResourceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: greengrass.amazonaws.com
+        Version: "2012-10-17"
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: arn:aws:logs:*:*:*
+              - Action: iot:*
+                Effect: Allow
+                Resource: "*"
+              - Action: iotsitewise:BatchPutAssetPropertyValue
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+          PolicyName: GGResourcePolicy
+Outputs:
+  IgnitionURL:
+    Value:
+      Fn::Sub: "http://${EdgeInstanceIgnitionResource.PublicIp}:8088"
+  EdgeInstanceGreengrassResourcePublicIP:
+    Value:
+      Fn::Sub: "${EdgeInstanceGreengrassResource.PublicIp}"
+  EdgeDeviceID:
+    Value:
+      Fn::Sub: "${EdgeDeviceID}"
