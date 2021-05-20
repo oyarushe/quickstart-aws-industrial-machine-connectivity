@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Unify Asset Model Converter, create dataset and templates in Unify
-
+Read kepserver json configuration file from  kepserver_folder and ingest as dataset to Unify
+Read ignition json configuration file form ignition_folder and ingest as dataset and templates to Unify
 Written by Element Analytics, Inc., 2021
 """
 
@@ -173,6 +173,6 @@ if __name__ == '__main__':
     os.environ['OverrideScanTime'] = '1'
     os.environ['KeepBirthObjects'] = 'Yes'
     os.environ['RegionName'] = 'us-east-1'
-    os.environ['SecretName'] = 'arn:aws:secretsmanager:us-east-1:668802550511:secret:UnifySecret-Vw5piGXuURhW-wg7Q34'
+    os.environ['SecretName'] = ''
     os.environ['AppendTemplatePrefix'] = 'Yes'
     AssetModelConverter(incomming_bucket).process()

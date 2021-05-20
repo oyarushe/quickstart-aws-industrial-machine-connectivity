@@ -1,5 +1,5 @@
 """
-Unify Asset Model Converter, create dataset and templates in Unify
+Create Unify machine user and save the credential in Secret Manager
 
 Written by Element Analytics, Inc., 2021
 """
@@ -14,9 +14,6 @@ if (os.path.exists(package_dir + '/local.ini')):
 
 from unify_common.secrets_manager import SecretsManager
 import json
-import boto3
-import base64
-from botocore.exceptions import ClientError
 import uuid
 from unify.properties import Properties, ClusterSetting
 from unify.orgadmin import OrgAdmin
@@ -96,11 +93,11 @@ def lambda_handler(event, context):
 if __name__ == "__main__":
     region_name = "us-east-1"
     stack_name = 'test_stack_1'
-    secret_name = 'UnifySecret-YyEtTYAfL1b8'
-    cluster = 'https://platform.ean.io/'
+    secret_name = 'imcUnifyTest001'
+    cluster = os.getenv('cluster')
     user_name = os.getenv('username')
     password = os.getenv('password')
-    org_id = 23843
+    org_id = os.getenv('org_id')
 
     set_machine_user_secret(region_name, stack_name, secret_name, cluster, user_name, password, org_id)
 
