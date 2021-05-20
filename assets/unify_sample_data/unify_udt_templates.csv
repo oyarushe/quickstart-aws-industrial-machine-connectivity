@@ -1,0 +1,33 @@
+Template Name,Template Data Export Name,Template Description,Template Standard,Base Template,Attribute,Attribute Data Export Name,Attribute Description,Type,Datatype,Interpolation Method,UoM,Attribute Type,Formula,Important,Disabled
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Current,Current,,Double,Double,Linear,A,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Description,Description,,String,String,Linear,,Static,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Differential Pressure,Differential_Pressure,,Double,Double,Linear,psi,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Functional Location,Functional_Location,,String,String,Linear,,Static,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Inlet Pressure,Inlet_Pressure,,Double,Double,Linear,psi,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Inlet Temperature,Inlet_Temperature,,Double,Double,Linear,C,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Inlet Volumetric Flow Rate,Inlet_Volumetric_Flow_Rate,,Double,Double,Linear,ft^3/min,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Manufacturer,Manufacturer,,String,String,Linear,,Static,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Model Number,Model_Number,,String,String,Linear,,Static,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Outlet Pressure,Outlet_Pressure,,Double,Double,Linear,psi,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Outlet Temperature,Outlet_Temperature,,Double,Double,Linear,C,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Outlet Volumetric Flow Rate,Outlet_Volumetric_Flow_Rate,,Double,Double,Linear,ft^3/min,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Power,Power,,Double,Double,Linear,kW,Continuous Value,,No,No
+UnifyUDT/Compressor,UnifyUDT-Compressor,,,,Rotational Speed,Rotational_Speed,,Double,Double,Linear,rpm,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Current,Current,,Double,Double,Linear,A,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Description,Description,,String,String,Linear,,Static,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Differential Pressure,Differential_Pressure,,Double,Double,Linear,psi,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Functional Location,Functional_Location,,String,String,Linear,,Static,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Inlet Pressure,Inlet_Pressure,,Double,Double,Linear,psi,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Inlet Temperature,Inlet_Temperature,,Double,Double,Linear,C,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Inlet Volumetric Flow Rate,Inlet_Volumetric_Flow_Rate,,Double,Double,Linear,ft^3/min,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Manufacturer,Manufacturer,,String,String,Linear,,Static,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Model Number,Model_Number,,String,String,Linear,,Static,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Outlet Pressure,Outlet_Pressure,,Double,Double,Linear,psi,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Outlet Temperature,Outlet_Temperature,,Double,Double,Linear,C,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Outlet Volumetric Flow Rate,Outlet_Volumetric_Flow_Rate,,Double,Double,Linear,ft^3/min,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Power,Power,,Double,Double,Linear,kW,Continuous Value,,No,No
+UnifyUDT/Pump,UnifyUDT-Pump,,,,Rotational Speed,Rotational_Speed,,Double,Double,Linear,rpm,Continuous Value,,No,No
+Process,Process,,,,UnifyUDT/Compressor,UnifyUDT-Compressor,,UnifyUDT/Compressor,String,Linear,,Static,,No,No
+Process,Process,,,,UnifyUDT/Pump,UnifyUDT-Pump,,UnifyUDT/Pump,String,Linear,,Static,,No,No
+Region,Region,,,,Site,Site,,Site,String,Linear,,Static,,No,No
+Site,Site,,,,Process,Process,,Process,String,Linear,,Static,,No,No

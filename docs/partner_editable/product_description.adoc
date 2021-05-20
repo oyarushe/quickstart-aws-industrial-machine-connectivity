@@ -33,3 +33,9 @@ image::../images/imc_qs_overview.png[IMC Quick Start conceptual diagram, 85%]
 ** AWS IoT Core receives and routes MQTT messages either directly from the partner edge application or from the AWS IoT Greengrass core.
 ** Amazon S3 can serve as a cold-storage tier for data.
 ** Amazon QuickSight lets you build custom business-intelligence dashboards and visualizations for data stored in the S3 bucket.
+* Included with Element Unify:
+** Element Unify integrates, contextualizes, and manages IT/OT metadata.
+*** Edge data can easily be contextualized with metadata from IT/OT systems to increase business value.
+*** Complex asset templates can be created to define asset class definitions for data modeling.
+*** Lambda functions continuously updates the data model from Element Unify to AWS IoT SiteWise, propagating changes and maintaining an evergreen data model.
+*** Connects existing browfield AWS IoT SiteWise models, allowing further enrichment and rearrangement of AWS IoT SiteWise with context from SAP, P&IDs, and other industrial sources.
