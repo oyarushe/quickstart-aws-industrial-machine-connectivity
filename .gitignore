@@ -17,3 +17,4 @@ package
 cdk.out/
 imcquickstart.egg-info/
 .venv
+**/.deps
