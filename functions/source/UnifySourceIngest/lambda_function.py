@@ -40,7 +40,7 @@ class AssetModelConverter:
         self.keepBirthObjects = bool(os.environ.get('KeepBirthObjects', False))
         self.region_name = os.environ['RegionName']
         self.secret_name = os.environ['SecretName']
-        self.appen_template_prefix = os.environ.get('AppendTemplatePrefix', False) # Append site_name and server_name on template if Yes
+        self.append_template_prefix = os.environ.get('AppendTemplatePrefix', False) # Append site_name and server_name on template if Yes
         self.ingestedFiles = []
 
 
@@ -117,7 +117,7 @@ class AssetModelConverter:
                     ]))
                     object_data  = self.get_file_data(temp_folder, s3_file)
                     if (keyPrefix == ignition_folder):
-                        agent.ingest([object_data], site_name, server_name, self.appen_template_prefix, labels)
+                        agent.ingest([object_data], site_name, server_name, self.append_template_prefix, labels)
                     elif (keyPrefix == kepserver_folder):
                         agent.ingest([object_data], site_name, server_name, labels)
                     else:
