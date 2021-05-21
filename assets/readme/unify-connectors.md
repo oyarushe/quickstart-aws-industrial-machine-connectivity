@@ -84,7 +84,7 @@ The Element Unify asset modeling component of the IMC consists of a series of AW
     - Parameter:
       - Template_id (int): Id of existing template
       - Template_name (str): Name of existing template
-      - Version (int): ??
+      - Version (int): Version of the template
       - Categories (list of str): List of categories to set on templates
 
 #### Asset template configuration
