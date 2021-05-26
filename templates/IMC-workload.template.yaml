@@ -1785,6 +1785,7 @@ Resources:
         IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
         EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
         GreengrassInstanceType: !Ref GreengrassInstanceType
+        Site: 'baytown'
   UnifyVirtualIgnition2:
     Type: 'AWS::CloudFormation::Stack'
     Condition: IfUnifyVirtual
@@ -1822,6 +1823,7 @@ Resources:
         IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
         EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
         GreengrassInstanceType: !Ref GreengrassInstanceType
+        Site: 'houston'
 Outputs:
   IgnitionURL:
     Condition: IfAMCVirtual

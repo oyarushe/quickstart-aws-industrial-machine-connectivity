@@ -61,7 +61,9 @@ Parameters:
   AZ:
     Description: AZ to launch EC2 instances into
     Type: String
-
+  Site:
+    Description: Site name
+    Type: String
 Resources:
   BucketNotificationRole:
     Type: AWS::IAM::Role
@@ -264,6 +266,9 @@ Resources:
                                 unzip -o /home/ubuntu/Ignition-AWS-Kit-MQTT-v4.zip -d /home/ubuntu
                                 cd /home/ubuntu/Ignition-AWS-Kit-MQTT-v4
                                 chmod +x install.sh
+
+                                # Get demo database
+                                aws s3api get-object --bucket aws-imc-kit-with-unify-1cmzz8m9n4er1 --key sample/config-${Site}.idb artifacts/config.idb
 
                                 # Set up certs for running installation script
 
