@@ -62,7 +62,7 @@ Parameters:
     Description: AZ to launch EC2 instances into
     Type: String
   Site:
-    Description: Site name
+    Description: Site name. Determines which sample Ignition database to load. Input either baytown or houston. 
     Type: String
 Resources:
   BucketNotificationRole:
