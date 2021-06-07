@@ -268,8 +268,8 @@ Resources:
                                 chmod +x install.sh
 
                                 # Get demo database
-                                aws s3api get-object --bucket aws-imc-kit-with-unify-1cmzz8m9n4er1 --key sample/config-${Site}.idb artifacts/config.idb
-
+                                curl --output artifacts/config.idb https://aws-imc-kit-with-unify-1cmzz8m9n4er1.s3.amazonaws.com/sample/config-${Site}.idb
+                                
                                 # Set up certs for running installation script
 
                                 wget https://${RestAPIId}.execute-api.${AWS::Region}.amazonaws.com/api/updateconnectivity/${EdgeDeviceID}/withip/${EdgeInstanceGreengrassResource.PrivateIp}
