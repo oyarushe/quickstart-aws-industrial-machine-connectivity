@@ -32,14 +32,19 @@ def lambda_handler(event, context):
 
     try:
         if event['RequestType'] == 'Delete':
-            group_name = event['ResourceProperties']['group_name']
-            reset_greengrass_deployment(group_name)
+            delete_greengrass = event['ResourceProperties']['delete_greengrass']
+            if (delete_greengrass == 'Yes'):
+                group_names = event['ResourceProperties']['group_names']
+                for group_name in group_names:
+                    reset_greengrass_deployment(group_name)
             buckets = event['ResourceProperties']['buckets']
             clear_s3_buckets(buckets)
             delete_sitewise_portal()
             CleanupQuicksight(region=region, stackName=stackName).cleanup()
-            sitewiseUtils = SitewiseUtils()
-            sitewiseUtils.deleteAllModels()
+            delete_models = event['ResourceProperties']['delete_models']
+            if (delete_models == 'Yes'):
+                sitewiseUtils = SitewiseUtils()
+                sitewiseUtils.deleteAllModels()
     except Exception as e:
         logging.error('Exception: %s' % e, exc_info=True)
         status = cfnresponse.FAILED
@@ -98,7 +103,7 @@ def reset_greengrass_deployment(group_name):
     if 'Groups' in groups:
         payload = groups['Groups']
         while 'NextToken' in groups:
-            groups = greenrass.list_groups(
+            groups = greengrass.list_groups(
                 NextToken = groups['NextToken'])
             payload.extend(groups['Groups'])
     for group in payload:
