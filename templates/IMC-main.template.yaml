@@ -34,8 +34,6 @@ Metadata:
           - EC2KeyPairName
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - IgnitionPrefix1
-          - IgnitionPrefix2
           - AMCDriver
           - UserPublicIP
           - SitewiseMonitorEmail
@@ -81,10 +79,6 @@ Metadata:
         default: Greengrass EC2 instance type
       IgnitionInstanceType:
         default: Ignition EC2 instance type
-      IgnitionPrefix1:
-        default: First Ignition EC2 datastream prefix
-      IgnitionPrefix2:
-        default: Second Ignition EC2 datastream prefix
       AMCDriver:
         default: Asset Model Converter driver
       UserPublicIP:
@@ -226,14 +220,6 @@ Parameters:
     Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
     Type: Number
     Default: 0
-  IgnitionPrefix1:
-    AllowedPattern: ^([0-9a-zA-Z-_]+)*$
-    Description: If your asset modeling application is Element Unify, enter a prefix for time-series data streams from the first Ignition source. For example, Baytown-Primary, to represent <Site Name>-<Server Name>.
-    Type: String
-  IgnitionPrefix2:
-    AllowedPattern: ^([0-9a-zA-Z-_]+)*$
-    Description: If your asset modeling application is Element Unify, enter a prefix for time-series data streams from the second Ignition source. For example, Houston-Secondary, to represent <Site Name>-<Server Name>.
-    Type: String
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
@@ -253,7 +239,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml        
+        - https://aws-quickstart.s3.us-east-1.amazonaws.com/quickstart-aws-industrial-machine-connectivity/submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
         - S3Bucket: !If
             - UsingDefaultBucket
             - !Sub 'aws-quickstart-${AWS::Region}'
@@ -305,8 +291,6 @@ Resources:
         UnifyUsername: !Ref UnifyUsername
         UnifyPassword: !Ref UnifyPassword
         UnifyOrgId: !Ref UnifyOrgId
-        IgnitionPrefix1: !Ref IgnitionPrefix1
-        IgnitionPrefix2: !Ref IgnitionPrefix2
         ModelingVendorType: !Ref ModelingVendorType
 
 Outputs:
