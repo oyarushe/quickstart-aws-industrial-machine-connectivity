@@ -30,8 +30,6 @@ Metadata:
           - VpcId
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - IgnitionPrefix1
-          - IgnitionPrefix2
           - AZ
           - EC2Subnet
           - PublicSubnet1CIDR
@@ -76,10 +74,6 @@ Metadata:
         default: Greengrass EC2 instance type
       IgnitionInstanceType:
         default: Ignition EC2 instance type
-      IgnitionPrefix1:
-        default: First Ignition EC2 datastream prefix
-      IgnitionPrefix2:
-        default: Second Ignition EC2 datastream prefix
       EC2Subnet:
         default: VPC subnet ID
       AMCDriver:
@@ -118,12 +112,6 @@ Parameters:
     Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
     Type: Number
     Default: 0
-  IgnitionPrefix1:
-    Description: If your asset modeling application is Element Unify, enter a prefix for time-series data streams coming from the first Ignition source. For example, Baytown-Primary, to represent <Site Name>-<Server Name>.
-    Type: String
-  IgnitionPrefix2:
-    Description: If your asset modeling application is Element Unify, enter a prefix for time-series data streams coming from the second Ignition source. For example, Houston-Secondary, to represent <Site Name>-<Server Name>.
-    Type: String
   SitewiseMonitorEmail:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
@@ -1770,13 +1758,13 @@ Resources:
         AZ: !Ref AZ 
         EC2Subnet: !Ref EC2Subnet
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, !Ref IgnitionPrefix1]]
+        EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Baytown-Primary']]
         DeploymentType: !Ref DeploymentType
         DeploymentOption: !Ref DeploymentOption
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        DataStreamPrefix: !Ref IgnitionPrefix1
+        DataStreamPrefix: 'Baytown-Primary'
         EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
@@ -1808,13 +1796,13 @@ Resources:
         AZ: !Ref AZ 
         EC2Subnet: !Ref EC2Subnet
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, !Ref IgnitionPrefix2]]
+        EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Houston-Secondary']]
         DeploymentType: !Ref DeploymentType
         DeploymentOption: !Ref DeploymentOption
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        DataStreamPrefix: !Ref IgnitionPrefix2
+        DataStreamPrefix: 'Houston-Secondary'
         EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
