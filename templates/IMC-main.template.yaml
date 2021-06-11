@@ -109,6 +109,7 @@ Parameters:
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: The Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
     Description: Name of the S3 bucket for your copy of the Quick Start assets. 
       Keep the default name unless you are customizing the template. 
       Changing the name updates code references to point to a new Quick 
@@ -119,6 +120,7 @@ Parameters:
   QSS3KeyPrefix:
     AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
     ConstraintDescription: The Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
+    Default: quickstart-aws-industrial-machine-connectivity/
     Description: S3 key prefix that is used to simulate a directory for your copy of the 
       Quick Start assets. Keep the default prefix unless you are customizing 
       the template. Changing this prefix updates code references to point to 
