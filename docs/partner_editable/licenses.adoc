@@ -8,4 +8,3 @@ Some configurations of the {partner-product-short-name} Quick Start involve the 
 * Cirrus Link, vendor for the MQTT transmission module for the Ignition software stack.
 * PTC, vendor for KEPServerEX.
 * Element Analytics, Inc., vendor for Element Unify
-* Other vendors to be added.
