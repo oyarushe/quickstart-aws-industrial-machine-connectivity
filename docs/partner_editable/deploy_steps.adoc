@@ -37,15 +37,7 @@ Each deployment takes about {deployment_time} to complete.
 |===
 +
 [start=2]
-.. *Option 2 - Element Unify* Element Unify uses a no code/low code approach to model building using metadata from input sources such as PTC KepServerEX, Ignition from Inductive Automation, P&IDs, and PI Asset Framework from AVEVA, and feed models to AWS IoT SiteWise. Unify is suitable for single site deployments and for organizations looking to establish a solid foundation for their operational data infrastructure with a view to roll out across multiple regions and sites.
-+
-Fully integrated with the AWS Integrated Machine Connectivity (IMC) kit, Unify enables you to:
-+
-* Easily extend SiteWise to multiple edge source systems
-* Improve time to insight, traceability, and data usage
-* Keep SiteWise up to date (‘evergreening’)
-+
-Learn more about the https://www.elementanalytics.com/solutions/element-unify-for-aws[Element Unify for AWS] or check it out on the https://aws.amazon.com/marketplace/pp/prodview-trvx6gn4vqeok[AWS Marketplace].
+.. *Option 2 - Element Unify* Element Unify uses a no code/low code approach to build and publish models to AWS IoT SiteWise.
 +
 [cols="3,1"]
 |===
