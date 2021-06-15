@@ -1,10 +1,10 @@
 // Include details about the license and how they can sign up. If no license is required, clarify that. 
 
-No licenses are required to deploy this Quick Start. All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs.
+All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs. If choosing to deploy Element Unify, a license is required. For AWS Partners or customers who do not have a license to use Element Unify, a free trial is provided through the https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB[AWS marketplace].
 
 Some configurations of the {partner-product-short-name} Quick Start involve the use of a partner edge application. You are responsible for obtaining a license directly from the software vendor. Applications that integrate with the {partner-product-short-name} Quick Start are available from the following vendors:
 
 * Inductive Automation, vendor for Ignition.
 * Cirrus Link, vendor for the MQTT transmission module for the Ignition software stack.
 * PTC, vendor for KEPServerEX.
-* Other vendors to be added.
+* Element Analytics, Inc., vendor for Element Unify

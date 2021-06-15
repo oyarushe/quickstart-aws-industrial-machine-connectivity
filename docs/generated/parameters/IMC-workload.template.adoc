@@ -1,11 +1,26 @@
 
+.Asset Modeling configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Asset modeling and deployment application
+(`ModelingVendorType`)|`Asset Model Converter`|Select the asset modeling application to create and update source system assets into AWS IoT SiteWise. Element Unify builds a single, federated & contextualized asset data model. For more information, see https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB.
+|===
+.Element Unify configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Unify host
+(`UnifyHostname`)|`https://app001-aws.elementanalytics.com/`|If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/|Unify organization id
+(`UnifyOrgId`)|`0`|If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>|Unify user name
+(`UnifyUsername`)|`**__Requires input__**`|If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.|Unify password
+(`UnifyPassword`)|`**__Requires input__**`|If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+|===
 .Edge-deployment configuration
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
 |Parameter label (name) |Default value|Description|Name for the edge-gateway device
 (`EdgeDeviceID`)|`Virtual`|If your deployment uses a physical edge-gateway device (industrial PC), enter a name. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Type of deployment
 (`DeploymentType`)|`Virtual`|Type of edge deployment. If your deployment uses physical edge hardware, choose "Physical."|Dataflow option
-(`DeploymentOption`)|`Option1`|Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core).
+(`DeploymentOption`)|`Option1`|Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
 |===
 .Amazon EC2 configuration
 [width="100%",cols="16%,11%,73%",options="header",]
@@ -13,12 +28,12 @@
 |Parameter label (name) |Default value|Description|SSH key name
 (`EC2KeyPairName`)|`SiteWiseTest`|Name of an existing EC2 key pair. All instances will launch with this key pair.|Default VPC ID
 (`VpcId`)|`**__Requires input__**`|ID of the VPC that the solution will be hosted in.|Greengrass EC2 instance type
-(`GreengrassInstanceType`)|`t3.small`|Amazon EC2 instance type for the Greengrass EC2 instances.|Ignition EC2 instance type
-(`IgnitionInstanceType`)|`t3.large`|Amazon EC2 instance type for the Ignition EC2 instances.|Availability Zone launch selection
+(`GreengrassInstanceType`)|`t3.small`|Amazon EC2 instance type for the Greengrass EC2 instances. Note that if the Asset modeling configuration is Element Unify, then two instances of Greengrass EC2 will be deployed to demonstrate multi-site modeling capabilities.|Ignition EC2 instance type
+(`IgnitionInstanceType`)|`t3.large`|Amazon EC2 instance type for the Ignition EC2 instances. Note that if the Asset modeling configuration is Element Unify, then two instances of Ignition EC2 will be deployed to demonstrate multi-site modeling capabilities.|Availability Zone launch selection
 (`AZ`)|`**__Requires input__**`|Availability Zone that the EC2 instances will be launched into.|VPC subnet ID
 (`EC2Subnet`)|`**__Requires input__**`|Subnet ID where the EC2 instances will be launched. Match the subnet ID with your Availability Zone selection.|CIDR block for Ignition/Greengrass access
 (`PublicSubnet1CIDR`)|`0.0.0.0/0`|You will narrow this down after the stack deploys.|Asset Model Converter driver
-(`AMCDriver`)|`IgnitionCirrusLink`|The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport.|Email address for the SiteWise portal administrator
+(`AMCDriver`)|`IgnitionCirrusLink`|The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport. If you're not using Asset Model Converter, select Element Unify.|Email address for the SiteWise portal administrator
 (`SitewiseMonitorEmail`)|`**__Requires input__**`|Enter the email address.|Your public IP address
 (`UserPublicIP`)|`**__Requires input__**`|Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
 |===

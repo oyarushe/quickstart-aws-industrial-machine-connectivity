@@ -1,0 +1,88 @@
+project:
+  name: quickstart-aws-industrial-machine-connectivity
+  owner: quickstart@amazon.com
+  package_lambda: false
+  # s3_bucket: ''
+  shorten_stack_name: true
+  parameters:
+      QSS3BucketName: $[taskcat_autobucket] # will need to follow 'virtual deployment' instructions in user guide 
+      QSS3KeyPrefix: quickstart-aws-industrial-machine-connectivity/ # will need to follow 'virtual deployment' instructions in user guide 
+      QSS3BucketRegion: $[taskcat_current_region]
+  template: templates/IMC-main.template.yaml
+
+tests:
+  #IgnitionCirrusLinkTest
+  # ICLTest:
+  #   parameters:
+  #     AMCDriver: "IgnitionCirrusLink"
+  #     DeploymentOption: "Option1"
+  #     DeploymentType: "Virtual"
+  #     EC2KeyPairName: OVERRIDE
+  #     EdgeDeviceID: Virtual
+  #     GreengrassInstanceType: t3.small
+  #     IgnitionInstanceType: t3.large
+  #     PublicSubnet1CIDR: 10.0.128.0/20
+  #     SitewiseMonitorEmail: test@example.com
+  #     UserPublicIP: '75.31.75.239'
+  #     VPCCIDR: 10.0.0.0/16
+  #     VPCTenancy: default
+  #   regions:
+  #     - us-east-1
+  
+  ElementUnifyTest:
+    parameters:
+      AMCDriver: "Element Unify"
+      DeploymentOption: "Option1"
+      DeploymentType: "Virtual"
+      EC2KeyPairName: OVERRIDE
+      EdgeDeviceID: Unifytest
+      GreengrassInstanceType: t3.small
+      IgnitionInstanceType: t3.large
+      ModelingVendorType: Element Unify
+      PublicSubnet1CIDR: 10.0.128.0/20
+      SitewiseMonitorEmail: test@example.com
+      UnifyHostname: OVERRIDE
+      UnifyOrgId: OVERRIDE
+      UnifyPassword: OVERRIDE
+      UnifyUsername: OVERRIDE
+      UserPublicIP: '75.31.75.239'
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
+    regions:
+      - us-east-1
+
+  # VOption2a:
+  #   parameters:
+  #     DeploymentType: Virtual
+  #     DeploymentOption: Option2a
+  #   regions:
+  #     - us-west-2
+
+  # VOption2b:
+  #   parameters:
+  #     DeploymentType: Virtual
+  #     DeploymentOption: Option2b
+  #   regions:
+  #     - eu-west-1
+
+  # POption1:
+  #   parameters:
+  #     DeploymentType: Physical
+  #     DeploymentOption: Option1
+  #   regions:
+  #     - us-east-1
+
+  # POption2a:
+  #   parameters:
+  #     DeploymentType: Physical
+  #     DeploymentOption: Option2a
+  #   regions:
+  #     - us-west-2
+
+  # PGOption2b:
+  #   parameters:
+  #     DeploymentType: Physical
+  #     DeploymentOption: Option2b
+  #   regions:
+  #     - eu-west-1
+

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.12">
+<meta name="generator" content="Asciidoctor 2.0.15">
 <title>Industrial Machine Connectivity on the AWS Cloud</title>
 <style>
 
@@ -182,7 +182,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
   padding-top:0;
   overflow:hidden;
   background:#283e5b;
-  border-bottom: 4px solid #435c7c;
+  /* border-bottom: 4px solid #435c7c; */
   width:320px;
   height:154px;
   top:0;
@@ -411,7 +411,7 @@ span.icon>.fa{cursor:default}
 a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
 .admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
-.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";color: rgb(3, 87, 21);}
 .admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
 .admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
 .admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
@@ -747,8 +747,43 @@ p {
   font-weight  : 300 !important;
 }
 
-#toc.toc2 #toctitle{
-  background-image: url('images/AWS-Logo.svg');
+/* image layout */
+#toc.toc2 #toctitle {
+  background-image: url("images/AWS-Logo.svg");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+  width: auto;
+  height: 15%;
+}
+
+/* Left Navbar size */
+#toc.toc2 {
+  width: 17%;
+  min-width: 15em;
+}
+
+/* auto width for main page */
+body.toc2 {
+  padding-left: 22%;
+  padding-right: 2%;
+}
+
+/* hide left nav bar if page size is smaller than 767px */
+@media screen and (max-width: 767px) {
+  #toc {
+      display: none !important;
+  }
+  body.toc2 {
+    padding-left: 1%;
+    padding-right: 1%;
+    position: relative;
+  }
+
+  #content {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 }
 
 /* QS Tables */
@@ -797,7 +832,9 @@ p.footer-text a{color:#d7d8d8}
 <ul class="sectlevel2">
 <li><a href="#_virtual_deployment">Virtual deployment</a></li>
 <li><a href="#_physical_deployment">Physical deployment</a></li>
+<li><a href="#_asset_modeling">Asset Modeling</a></li>
 <li><a href="#_the_asset_model_converter">The Asset Model Converter</a></li>
+<li><a href="#_element_unify">Element Unify</a></li>
 </ul>
 </li>
 <li><a href="#_planning_the_deployment">Planning the deployment</a>
@@ -836,8 +873,8 @@ p.footer-text a{color:#d7d8d8}
 <li><a href="#_troubleshooting">Troubleshooting</a></li>
 <li><a href="#_parameter_reference">Parameter reference</a>
 <ul class="sectlevel2">
-<li><a href="#_parameters_for_deploying_into_a_new_vpc">Parameters for deploying into a new VPC</a></li>
 <li><a href="#_parameters_for_deploying_into_an_existing_vpc">Parameters for deploying into an existing VPC</a></li>
+<li><a href="#_parameters_for_deploying_into_a_new_vpc">Parameters for deploying into a new VPC</a></li>
 </ul>
 </li>
 <li><a href="#_send_us_feedback">Send us feedback</a></li>
@@ -860,7 +897,7 @@ p.footer-text a{color:#d7d8d8}
 <div class="paragraph text-center">
 <p><strong>February 2021</strong><br>
 <em>Thomas Cummins, AWS IoT Partner team</em><br>
-<em>Shivansh Singh, AWS Quick Start team</em></p>
+<em>Shivansh Singh, AWS Integration &amp; Automation team</em></p>
 </div>
 <div class="admonitionblock tip text-left">
 <table>
@@ -884,7 +921,7 @@ report bugs, or submit feature ideas for this Quick Start.
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide provides instructions for deploying the Industrial Machine Connectivity (IMC) Quick Start reference architecture on the AWS Cloud.</p>
+<p>This guide provides instructions for deploying the Industrial Machine Connectivity (IMC) Quick Start reference architecture on the AWS Cloud. It also includes an option to deploy Element Unify to increase data modeling and metadata integration capabilities.</p>
 </div>
 <div class="paragraph">
 <p>The Quick Start helps you bring data from your Industrial Internet of Things (IIoT) assets to the AWS Cloud in a structured way. It&#8217;s for developers and AWS Partners, regional and global systems integrators, independent software vendors, and original equipment manufacturers who want to generate immediate business value from an IIoT architecture.</p>
@@ -1002,7 +1039,7 @@ see the pricing pages for each AWS service you use. Prices are subject to change
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-gettingstarted-turnonreports.html" target="_blank" rel="noopener">create AWS Cost and Usage Reports</a> to deliver billing metrics to an Amazon Simple Storage Service (Amazon S3) bucket in your account. These reports provide cost estimates based on usage throughout each month and aggregate the data at the end of the month. For more information, see <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-costusage.html" target="_blank" rel="noopener">What are AWS Cost and Usage Reports?</a>
+After you deploy the Quick Start, create <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-gettingstarted-turnonreports.html" target="_blank" rel="noopener">AWS Cost and Usage Reports</a> to deliver billing metrics to an Amazon Simple Storage Service (Amazon S3) bucket in your account. These reports provide cost estimates based on usage throughout each month and aggregate the data at the end of the month. For more information, see <a href="https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html" target="_blank" rel="noopener">What are AWS Cost and Usage Reports?</a>
 </td>
 </tr>
 </table>
@@ -1013,7 +1050,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <h2 id="_software_licenses">Software licenses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>No licenses are required to deploy this Quick Start. All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs.</p>
+<p>All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs. If choosing to deploy Element Unify, a license is required. For AWS Partners or customers who do not have a license to use Element Unify, a free trial is provided through the <a href="https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB">AWS marketplace</a>.</p>
 </div>
 <div class="paragraph">
 <p>Some configurations of the IMC Quick Start involve the use of a partner edge application. You are responsible for obtaining a license directly from the software vendor. Applications that integrate with the IMC Quick Start are available from the following vendors:</p>
@@ -1030,7 +1067,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <p>PTC, vendor for KEPServerEX.</p>
 </li>
 <li>
-<p>Other vendors to be added.</p>
+<p>Element Analytics, Inc., vendor for Element Unify</p>
 </li>
 </ul>
 </div>
@@ -1085,7 +1122,7 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 </div>
 </li>
 <li>
-<p><strong>Asset Model Converter.</strong> The AMC is a serverless, module-based framework that uses Amazon S3, Amazon DynamoDB, and Lambda to map the partner edge application&#8217;s asset-modeling conventions onto AWS IoT SiteWise. When you launch the Quick Start, the AMC automatically converts data from the partner edge application&#8217;s asset-hierarchy definition object (a JSON file with definitions for factory, lines, machines, and tags) into AWS IoT SiteWise models and assets. For details, see <a href="#amc-architecture">Figure 4</a>.</p>
+<p><strong>Asset Model Converter.</strong> The AMC is a serverless, module-based framework that uses Amazon S3, Amazon DynamoDB, and Lambda to map the partner edge application&#8217;s asset-modeling conventions onto AWS IoT SiteWise. When you launch the Quick Start, the AMC automatically converts data from the partner edge application&#8217;s asset-hierarchy definition object (a JSON file with definitions for factory, lines, machines, and tags) into AWS IoT SiteWise models and assets. For details, see <a href="#amc-architecture">Figure 6</a>.</p>
 </li>
 <li>
 <p><strong>AWS IoT SiteWise.</strong> With this managed service, you can collect, model, analyze, and visualize data from industrial equipment at scale. The service, which maintains the asset hierarchy&#8217;s metadata, contains a managed database for all the time-series data generated by the customer assets. It includes a SaaS dashboard-building feature called AWS IoT SiteWise Monitor. You use SiteWise Monitor to build custom dashboards, or portals, to view and share near-real-time data from your connected devices and equipment.</p>
@@ -1105,22 +1142,41 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 </ul>
 </div>
 <div class="paragraph">
+<p>When you deploy this Quick Start with Element Unify in virtual mode, you build the following Industrial Machine Connectivity environment in the AWS Cloud. Components of the Quick Start with Element Unify are outlined in the dotted orange box.</p>
+</div>
+<div id="architecture-element-virtual" class="imageblock">
+<div class="content">
+<img src="images/IMCQuickStartArchitecture-ElementUnify-Virtual.png" alt="Virtual Element Unify architecture">
+</div>
+<div class="title">Figure 3. Architecture of the IMC Quick Start with Element Unify-virtualdeployment</div>
+</div>
+<div class="paragraph">
+<p>In addition to what is shown in <a href="#architecture-virtual">Figure 2</a>, as shown in <a href="#architecture-element-virtual">Figure 3</a>, the virtual deployment of the IMC Quick Start with Element Unify sets up the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The data orchestration between Element Unify and AWS IoT SiteWise utilizes a serverless, module-based, framework that includes Amazon S3, AWS Lambda, and AWSSecrets Manager to automate the import of the partner edge application&#8217;s metadata structure onto Element Unify prior to deployment to AWS IoT SiteWise. Metadata is converted from the partner edge application&#8217;s asset-hierarchy definition object (a JSON file with definitions for factory, lines, machines, and tags) as datasets and asset templates in Element Unify. An AWS Partner or customer can then utilize Element Unify to manage the data model or integrate contextualization with metadata from IT/OT systems before creating AWS IoT SiteWise models and assets. For details, see <a href="#element-unify-architecture">Figure 8</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
 <p><span class="small">* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.</span></p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_physical_deployment">Physical deployment</h3>
 <div class="paragraph">
-<p>When you deploy this Quick Start in physical mode (on the customer&#8217;s premises, such as in a factory), you build an environment like the one shown in <a href="#architecture-physical">Figure 3</a>. Elements of the Quick Start are outlined in the dotted orange box.</p>
+<p>When you deploy this Quick Start in physical mode (on the customer&#8217;s premises, such as in a factory), you build an environment like the one shown in <a href="#architecture-physical">Figure 4</a>. Elements of the Quick Start are outlined in the dotted orange box.</p>
 </div>
 <div id="architecture-physical" class="imageblock">
 <div class="content">
 <img src="images/IMCQuickStartArchitecture-Physical.png" alt="Physical architecture">
 </div>
-<div class="title">Figure 3. Architecture of the IMC Quick Start—physical deployment</div>
+<div class="title">Figure 4. Architecture of the IMC Quick Start—physical deployment</div>
 </div>
 <div class="paragraph">
-<p>Unlike the virtual deployment (<a href="#architecture-virtual">Figure 2</a>), the physical deployment (<a href="#architecture-physical">Figure 3</a>) has the AWS IoT Greengrass core running on an industrial PC on the customer&#8217;s premises. The physical deployment uses the same resources as the virtual deployment with the following differences:</p>
+<p>Unlike the virtual deployment (<a href="#architecture-virtual">Figure 2</a>), the physical deployment (<a href="#architecture-physical">Figure 4</a>) has the AWS IoT Greengrass core running on an industrial PC on the customer&#8217;s premises. The physical deployment uses the same resources as the virtual deployment with the following differences:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1132,20 +1188,65 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>When you deploy this Quick Start with Element Unify in physical mode (on the customer&#8217;s premises, such as in a factory), you build an environment like the one shown in <a href="#architecture-element-physical">Figure 5</a>. Elements of the Quick Start are outlined in the dotted orange box.</p>
+</div>
+<div id="architecture-element-physical" class="imageblock">
+<div class="content">
+<img src="images/IMCQuickStartArchitecture-ElementUnify-Physical.png" alt="Physical Element Unify architecture">
+</div>
+<div class="title">Figure 5. Architecture of the IMC Quick Start with Element Unify—physical deployment</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_asset_modeling">Asset Modeling</h3>
+<div class="paragraph">
+<p>When you depoy the IMC Quick Start, you choose an application for data modeling. This parameter determines which data modeling and deployment application to use for the IMC Quick Start to build, deploy, and manage AWS IoT SiteWise. For the AWS CloudFormation stack <code>Asset Modeling configuration</code> parameter, you can choose any of the two applications: Asset Model Converter or Element Unify.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_the_asset_model_converter">The Asset Model Converter</h3>
 <div class="paragraph">
-<p>For both virtual and physical architectures, at the heart of the IMC Quick Start is the Asset Model Converter (AMC), detailed in <a href="#amc-architecture">Figure 4</a>. The AMC is a serverless, module-based framework. It automatically converts definitions of a customer&#8217;s asset hierarchy (factory, lines, machines, and tags) from the partner edge application to equivalent definitions in AWS IoT SiteWise models and assets.</p>
+<p>For both virtual and physical architectures, at the heart of the IMC Quick Start is the Asset Model Converter (AMC), detailed in <a href="#amc-architecture">Figure 6</a>. The AMC is a serverless, module-based framework. It automatically converts definitions of a customer&#8217;s asset hierarchy (factory, lines, machines, and tags) from the partner edge application to equivalent definitions in AWS IoT SiteWise models and assets.</p>
 </div>
 <div id="amc-architecture" class="imageblock">
 <div class="content">
 <a class="image" href="images/AMCArchitecture.png"><img src="images/AMCArchitecture.png" alt="AMC architecture"></a>
 </div>
-<div class="title">Figure 4. AMC architecture diagram</div>
+<div class="title">Figure 6. AMC architecture diagram</div>
 </div>
 <div class="paragraph">
-<p>The AMC architecture, shown in <a href="#amc-architecture">Figure 4</a>, has a serverless sequence flow. The AMC ingests asset-hierarchy-definition files or messages generated by the partner edge application and converts them into a schema compatible with AWS IoT SiteWise. It then automatically provisions a matching asset hierarchy (factory, lines, machines, and tags) in AWS IoT SiteWise. With this automatic mapping, application builders have immediate access to the customer&#8217;s asset hierarchy within a managed service (AWS IoT SiteWise) in the AWS Cloud. These application builders may be the customer&#8217;s own developers, regional or global systems integrators, or an AWS ProServe team.</p>
+<p>The AMC architecture, shown in <a href="#amc-architecture">Figure 6</a>, has a serverless sequence flow. The AMC ingests asset-hierarchy-definition files or messages generated by the partner edge application and converts them into a schema compatible with AWS IoT SiteWise. It then automatically provisions a matching asset hierarchy (factory, lines, machines, and tags) in AWS IoT SiteWise. With this automatic mapping, application builders have immediate access to the customer&#8217;s asset hierarchy within a managed service (AWS IoT SiteWise) in the AWS Cloud. These application builders may be the customer&#8217;s own developers, regional or global systems integrators, or an AWS ProServe team.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_element_unify">Element Unify</h3>
+<div class="paragraph">
+<p>Element Unify is a data management platform to integrate, contextualize, and govern industrial IT/OT data, and standardize the data into analyics-ready data sources and asset models. Element Unify allows industrial, SI, and GSI teams to work collaboratively to build rich data context at scale with no-code, supporting single site and multiple site deployments. Element Unify automates the deployment and updates of the data model directly to AWS IoT SiteWise.</p>
+</div>
+<div class="paragraph">
+<p>Element Unify provides a single federated, contextualized source of data from which users can establish their own single version of the truth, all with a powerful governance engine ensuring data integrity across the enterprise.</p>
+</div>
+<div class="paragraph">
+<p>By aligning and scaling critial IT/OT data, as depicted in <a href="#element-unify-itot-together">Figure 7</a>, the value of data is unlocked, enabling the delivery of high impact, enterprise-wide analytics that improve core business performance outcomes like asset flexibility, security, reliability, safety, and cost.</p>
+</div>
+<div id="element-unify-itot-together" class="imageblock">
+<div class="content">
+<a class="image" href="images/ElementUnifyBringingITOTTogether.png"><img src="images/ElementUnifyBringingITOTTogether.png" alt="Element Unify bring together IT/OT data for AWS"></a>
+</div>
+<div class="title">Figure 7. Element Unify bring together IT/OT data for AWS</div>
+</div>
+<div class="paragraph">
+<p>The deployment of Element Unify in the Quick Start is detailed in <a href="#element-unify-architecture">Figure 8</a>. The architecture is based on a serverless, module-based framework. It automatically converts data from the partner edge application’s asset-hierarchy (factory, lines, machines, and tags) to equivalent definitions in Element Unify and AWS IoT SiteWise.</p>
+</div>
+<div id="element-unify-architecture" class="imageblock">
+<div class="content">
+<a class="image" href="images/ElementUnifyArchitecture.png"><img src="images/ElementUnifyArchitecture.png" alt="Element Unify architecture"></a>
+</div>
+<div class="title">Figure 8. Element Unify architecture diagram</div>
+</div>
+<div class="paragraph">
+<p>The architecture, shown in <a href="#element-unify-architecture">Figure 8</a>, has a serverless sequence flow. A source connector ingests the asset-hierarchy definition or tag definition files generated by the partner edge application and converts it into a schema compatible with Element Unify. An AWS Partner or customer can then use Element Unify to manage industral data models and assets for either single site or multiple site deployments at scale. Element Unify contextualizes metadata from edge sources, maps them to complex asset templates and asset hierarchies. An AWS Lambda automatically provisions a matching asset hierarchy (factory, lines, machines, and tags) to AWS IoT SiteWise. This Lambda runs hourly, continuously monitoring both Element Unify and AWS IoT SiteWise to synchronize the underlying data model and maintain an evergreen state.</p>
 </div>
 </div>
 </div>
@@ -1162,7 +1263,7 @@ and <a href="https://aws.amazon.com/training/" target="_blank" rel="noopener">AW
 deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 </div>
 <div class="paragraph">
-<p>This Quick Start also assumes familiarity with AWS IoT Core, AWS IoT SiteWise, AWS IoT Greengrass, and the partner edge application to be used, such as Inductive Automation&#8217;s Ignition and PTC&#8217;s KEPServerEX.</p>
+<p>This Quick Start also assumes familiarity with AWS IoT Core, AWS IoT SiteWise, AWS IoT Greengrass, the partner edge application to be used, such as Inductive Automation&#8217;s Ignition and PTC&#8217;s KEPServerEX, and Element Unify.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1182,7 +1283,7 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 <div class="sect3">
 <h4 id="_resource_quotas">Resource quotas</h4>
 <div class="paragraph">
-<p>If necessary, request <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">service quota increases</a> for the following resources. You might request quota increases to avoid exceeding the default limits for any resources that are shared across multiple deployments. The <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">Service Quotas console</a> displays your usage and quotas for some aspects of some services. For more information, see <a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">What is Service Quotas?</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html" target="_blank" rel="noopener">AWS service quotas</a>.</p>
+<p>If necessary, request <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">service quota increases</a> for the following resources. You might need to request increases if your existing deployment currently uses these resources and if this Quick Start deployment could result in exceeding the default quotas. The <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">Service Quotas console</a> displays your usage and quotas for some aspects of some services. For more information, see <a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">What is Service Quotas?</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html" target="_blank" rel="noopener">AWS service quotas</a>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1214,7 +1315,7 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Lambda functions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AWS IoT topic rules</p></td>
@@ -1226,11 +1327,15 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">S3 buckets</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EC2 instances</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secrets Manager</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 </tbody>
 </table>
@@ -1312,7 +1417,7 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Greenfield.</strong> In a greenfield physical deployment, you build from scratch for a new environment. AWS IoT Greengrass and the partner edge application run on a single edge-gateway device (an industrial PC) with Ignition installed alongside AWS IoT Greengrass on the same PC, as shown in <a href="#architecture-physical">Figure 3</a>.</p>
+<p><strong>Greenfield.</strong> In a greenfield physical deployment, you build from scratch for a new environment. AWS IoT Greengrass and the partner edge application run on a single edge-gateway device (an industrial PC) with Ignition installed alongside AWS IoT Greengrass on the same PC, as shown in <a href="#architecture-physical">Figure 4</a> and <a href="#architecture-element-physical">Figure 5</a>.</p>
 </li>
 <li>
 <p><strong>Brownfield.</strong> In a brownfield physical deployment, you build within an existing environment. A brownfield deployment can demonstrate the capabilities of the IMC Quick Start in cases where the customer already has a  application running on premises. AWS IoT Greengrass runs on a standalone industrial PC and connects to the partner edge application, which may be running on a virtual machine in the server room of a factory. Assume that your access to the hardware is limited or nonexistent and that your ability to reconfigure the edge-software server is limited to additive changes.</p>
@@ -1414,7 +1519,7 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="sect2">
 <h3 id="_review_the_dataflow_options">Review the dataflow options</h3>
 <div class="paragraph">
-<p>When you deploy the IMC Quick Start, you choose between three dataflow options. Each option ingests data differently from the edge environment into the AWS Cloud. For illustrations of these dataflows in the virtual and physical deployments, see (<a href="#architecture-virtual">Figure 2</a>) and (<a href="#architecture-physical">Figure 3</a>).</p>
+<p>When you deploy the IMC Quick Start, you choose between three dataflow options. Each option ingests data differently from the edge environment into the AWS Cloud. For illustrations of these dataflows in the virtual and physical deployments, see (<a href="#architecture-virtual">Figure 2</a>) and (<a href="#architecture-physical">Figure 4</a>).</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1452,7 +1557,7 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="sect2">
 <h3 id="_review_the_amc_drivers">Review the AMC drivers</h3>
 <div class="paragraph">
-<p>When you deploy the IMC Quick Start, you choose an AMC driver. This driver determines which edge application the IMC Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack <code>AMCDriver</code> parameter, you can choose any of three drivers: IgnitionCirrusLink, IgnitionFileExport, or KepwareFileExport.</p>
+<p>When you deploy the IMC Quick Start, you choose an AMC driver. This driver determines which edge application the IMC Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack <code>AMCDriver</code> parameter, you can choose any of four drivers: IgnitionCirrusLink, IgnitionFileExport, KepwareFileExport, or Element Unify.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1465,7 +1570,22 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <li>
 <p><strong>KepwareFileExport</strong>. This AMC driver uses the manual tag-definition file-export mechanism within Kepware. With this AMC driver, you manually export the tag-definition file and upload it to an S3 bucket to initiate the AMC process during the post-deployment steps. For the AWS CloudFormation stack&#8217;s <code>AMCDriver</code> parameter, you choose <code>KepwareFileExport</code>.</p>
 </li>
+<li>
+<p><strong>ElementUnify</strong>. If choosing Element Unify as the Asset Modeling configuration parameter, then select <code>Element Unify</code> for the AMC driver. This will not deploy any drivers for the Asset Model Converter. With Element Unify, you manually export the tag-definition file from either edge application and upload it to an S3 bucket to initiate the automated import of the source system file into Element Unify.</p>
+</li>
 </ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you choose to include Element Unify in the Quick Start deployment, a valid Element Unify account is required.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1660,10 +1780,11 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see <a href="#_deployment_options">Deployment options</a> earlier in this guide.</p>
-</li>
-</ol>
-</div>
+<p>Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see <a href="#_deployment_options">Deployment options</a> earlier in this guide. There are two options for asset data modeling:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Option 1 - Asset Model Converter</strong> The Asset model converter converts tag definitions and source data models from edge devices into AWS IoT SiteWise models.</p>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 75%;">
@@ -1680,6 +1801,31 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 </tr>
 </tbody>
 </table>
+</li>
+<li>
+<p><strong>Option 2 - Element Unify</strong> Element Unify uses a no code/low code approach to build and publish models to AWS IoT SiteWise.</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 75%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-imc-unify&amp;templateURL=https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-main.template.yaml&amp;param_ModelingVendorType=Element%20Unify&amp;param_VPCCIDR=10.0.0.0/16&amp;param_EdgeDeviceID=Virtual&amp;param_PublicSubnet1CIDR=10.0.128.0/20&amp;param_VPCTenancy=default&amp;param_UnifyHostname=https://app001-aws.elementanalytics.com/&amp;param_UnifyOrgId=0&amp;param_DeploymentType=Virtual&amp;param_AMCDriver=Element%20Unify&amp;param_GreengrassInstanceType=t3.small&amp;param_IgnitionInstanceType=t3.large&amp;param_QSS3BucketRegion=us-east-1&amp;param_DeploymentOption=Option1&amp;param_QSS3BucketName=aws-quickstart&amp;param_QSS3KeyPrefix=quickstart-aws-industrial-machine-connectivity/" target="_blank" rel="noopener">Deploy Industrial Machine Connectivity with Element Unify into a new VPC on AWS</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-main.template.yaml" target="_blank" rel="noopener">View template</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-imc-unify&amp;templateURL=https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-workload.template.yaml&amp;param_ModelingVendorType=Element%20Unify&amp;param_VPCCIDR=10.0.0.0/16&amp;param_EdgeDeviceID=Virtual&amp;param_VPCTenancy=default&amp;param_UnifyHostname=https://app001-aws.elementanalytics.com/&amp;param_UnifyOrgId=0&amp;param_DeploymentType=Virtual&amp;param_AMCDriver=Element%20Unify&amp;param_GreengrassInstanceType=t3.small&amp;param_IgnitionInstanceType=t3.large&amp;param_QSS3BucketRegion=us-east-1&amp;param_DeploymentOption=Option1&amp;param_QSS3BucketName=aws-quickstart&amp;param_QSS3KeyPrefix=quickstart-aws-industrial-machine-connectivity/" target="_blank" rel="noopener">Deploy Industrial Machine Connectivity with Element Unify into a new VPC on AWS</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-workload.template.yaml" target="_blank" rel="noopener">View template</a></p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
 <div class="olist arabic">
 <ol class="arabic" start="2">
 <li>
@@ -1695,10 +1841,6 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <li>
 <p>On the <strong>Specify stack details</strong> page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details on each parameter, see the <a href="#_parameter_reference">Parameter reference</a> section of this guide. When you finish reviewing and customizing the parameters, choose <strong>Next</strong>.</p>
 </li>
-</ol>
-</div>
-<div class="olist arabic">
-<ol class="arabic" start="5">
 <li>
 <p>On the <strong>Configure stack options</strong> page, you can <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html" target="_blank" rel="noopener">specify tags</a> (key-value pairs) for resources in your stack and <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html" target="_blank" rel="noopener">set advanced options</a>. When you’re finished, choose <strong>Next</strong>.</p>
 </li>
@@ -1712,15 +1854,9 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <p>Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the IMC deployment is ready.</p>
 </li>
 <li>
-<p>Use the values displayed in the <strong>Outputs</strong> tab for the stack, as shown in <a href="#cfn_outputs">Figure 5</a>, to view the created resources.</p>
+<p>To view the created resources, see the values displayed in the <strong>Outputs</strong> tab for the stack.</p>
 </li>
 </ol>
-</div>
-<div id="cfn_outputs" class="imageblock">
-<div class="content">
-<a class="image" href="images/cfn_outputs.png"><img src="images/cfn_outputs.png" alt="cfn_outputs" width="100%" height="100%"></a>
-</div>
-<div class="title">Figure 5. IMC outputs after successful deployment</div>
 </div>
 </div>
 </div>
@@ -2046,7 +2182,7 @@ Line 1/CNC2/Temperature</pre>
 <div class="content">
 <a class="image" href="images/RefreshBirthCertificates.png"><img src="images/RefreshBirthCertificates.png" alt="Refresh birth certificates"></a>
 </div>
-<div class="title">Figure 6. Refresh Sparkplug Birth Certificates</div>
+<div class="title">Figure 9. Refresh Sparkplug Birth Certificates</div>
 </div>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
@@ -2213,7 +2349,7 @@ You may create Amazon QuickSight visuals for the data that is put in the S3 buck
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Open the AWS IoT SiteWise console, and choose <strong>Ingest</strong>, <strong>Gateways</strong>.</p>
+<p>Open the AWS IoT SiteWise console, and choose <strong>Edge</strong>, <strong>Gateways</strong>.</p>
 </li>
 <li>
 <p>Choose the gateway created during the stack launch (replacing the information in brackets):</p>
@@ -2317,7 +2453,7 @@ You may create Amazon QuickSight visuals for the data that is put in the S3 buck
 <div class="content">
 <a class="image" href="images/IgnitionSettings.png"><img src="images/IgnitionSettings.png" alt="Ignition settings"></a>
 </div>
-<div class="title">Figure 7. Ignition—Settings</div>
+<div class="title">Figure 10. Ignition—Settings</div>
 </div>
 <div class="olist arabic">
 <ol class="arabic" start="2">
@@ -2339,7 +2475,7 @@ You may create Amazon QuickSight visuals for the data that is put in the S3 buck
 <div class="content">
 <a class="image" href="images/Ignition-MQTT-Settings.png"><img src="images/Ignition-MQTT-Settings.png" alt="Ignition MQTT settings"></a>
 </div>
-<div class="title">Figure 8. Ignition—MQTT transmission module settings</div>
+<div class="title">Figure 11. Ignition—MQTT transmission module settings</div>
 </div>
 <div class="olist arabic">
 <ol class="arabic" start="6">
@@ -2365,10 +2501,10 @@ You may create Amazon QuickSight visuals for the data that is put in the S3 buck
 <div class="content">
 <a class="image" href="images/Ignition-MQTT-Filtered-Properties.png"><img src="images/Ignition-MQTT-Filtered-Properties.png" alt="Ignition MQTT filtered properties"></a>
 </div>
-<div class="title">Figure 9. Ignition—MQTT transmission module filtered properties</div>
+<div class="title">Figure 12. Ignition—MQTT transmission module filtered properties</div>
 </div>
 <div class="paragraph">
-<p>If these settings are as shown in <a href="#ignition-mqtt-filtered">Figure 9</a> and you&#8217;re still receiving errors, check the Lambda function responsible for creating the models and assets in AWS IoT SiteWise for errors:</p>
+<p>If these settings are as shown in <a href="#ignition-mqtt-filtered">Figure 12</a> and you&#8217;re still receiving errors, check the Lambda function responsible for creating the models and assets in AWS IoT SiteWise for errors:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -2465,16 +2601,15 @@ You may create Amazon QuickSight visuals for the data that is put in the S3 buck
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Unless you are customizing the Quick Start templates for your own deployment projects, we recommend that you keep the default settings for the parameters labeled <code>Quick Start S3 bucket name</code>, <code>Quick Start S3 bucket
-Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parameter settings automatically updates code references to point to a new Quick Start location. For more information, see the <a href="https://aws-quickstart.github.io/option1.html" target="_blank" rel="noopener">AWS Quick Start Contributor’s Guide</a>.
+Unless you are customizing the Quick Start templates for your own deployment projects, keep the default settings for the parameters labeled <strong>Quick Start S3 bucket name</strong>, <strong>Quick Start S3 bucket Region</strong>, and <strong>Quick Start S3 key prefix</strong>. Changing these parameter settings automatically updates code references to point to a new Quick Start location. For more information, see the <a href="https://aws-quickstart.github.io/option1.html" target="_blank" rel="noopener">AWS Quick Start Contributor’s Guide</a>.
 </td>
 </tr>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_parameters_for_deploying_into_a_new_vpc">Parameters for deploying into a new VPC</h3>
+<h3 id="_parameters_for_deploying_into_an_existing_vpc">Parameters for deploying into an existing VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Network configuration</caption>
+<caption class="title">Table 1. Asset Modeling configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2489,27 +2624,56 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">VPC CIDR
-(<code>VPCCIDR</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.0.0/16</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the VPC.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 1 CIDR
-(<code>PublicSubnet1CIDR</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.128.0/20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the public DMZ subnet.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">VPC tenancy
-(<code>VPCTenancy</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Allowed tenancy of instances deployed into the VPC.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Asset modeling and deployment application
+(<code>ModelingVendorType</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Asset Model Converter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select the asset modeling application to create and update source system assets into AWS IoT SiteWise. Element Unify builds a single, federated &amp; contextualized asset data model. For more information, see <a href="https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB" class="bare">https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB</a>.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Edge-deployment configuration</caption>
+<caption class="title">Table 2. Element Unify configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify host
+(<code>UnifyHostname</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://app001-aws.elementanalytics.com/" class="bare">https://app001-aws.elementanalytics.com/</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically <a href="https://app001-aws.elementanalytics.com/" class="bare">https://app001-aws.elementanalytics.com/</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify organization id
+(<code>UnifyOrgId</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. <a href="https://UnifyHostName/#/org/&lt;org" class="bare">https://UnifyHostName/#/org/&lt;org</a> id&gt;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify user name
+(<code>UnifyUsername</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify password
+(<code>UnifyPassword</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Edge-deployment configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2539,12 +2703,12 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Dataflow option
 (<code>DeploymentOption</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Option1</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Amazon EC2 configuration</caption>
+<caption class="title">Table 4. Amazon EC2 configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2559,34 +2723,52 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SSH key-pair name
+<td class="tableblock halign-left valign-top"><p class="tableblock">SSH key name
 (<code>EC2KeyPairName</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keypairtest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SiteWiseTest</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Name of an existing EC2 key pair. All instances will launch with this key pair.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default VPC ID
+(<code>VpcId</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the VPC that the solution will be hosted in.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Greengrass EC2 instance type
 (<code>GreengrassInstanceType</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>t3.small</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 instance type for the Greengrass EC2 instances.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 instance type for the Greengrass EC2 instances. Note that if the Asset modeling configuration is Element Unify, then two instances of Greengrass EC2 will be deployed to demonstrate multi-site modeling capabilities.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ignition EC2 instance type
 (<code>IgnitionInstanceType</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>t3.large</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 instance type for the Ignition EC2 instances.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 instance type for the Ignition EC2 instances. Note that if the Asset modeling configuration is Element Unify, then two instances of Ignition EC2 will be deployed to demonstrate multi-site modeling capabilities.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Availability Zone launch selection
+(<code>AZ</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Availability Zone that the EC2 instances will be launched into.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VPC subnet ID
+(<code>EC2Subnet</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subnet ID where the EC2 instances will be launched. Match the subnet ID with your Availability Zone selection.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for Ignition/Greengrass access
+(<code>PublicSubnet1CIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0.0.0.0/0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">You will narrow this down after the stack deploys.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Asset Model Converter driver
 (<code>AMCDriver</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>IgnitionCirrusLink</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The driver that the Asset Model Converter uses to translate hierarchy data. If you&#8217;re not using the default driver, choose IgnitionFileExport or KepwareFileExport.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Your public IP address
-(<code>UserPublicIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The driver that the Asset Model Converter uses to translate hierarchy data. If you&#8217;re not using the default driver, choose IgnitionFileExport or KepwareFileExport. If you&#8217;re not using Asset Model Converter, select Element Unify.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise portal administrator
@@ -2594,10 +2776,16 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enter the email address.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Your public IP address
+(<code>UserPublicIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)</p></td>
+</tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. AWS Quick Start configuration</caption>
+<caption class="title">Table 5. AWS Quick Start configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2633,9 +2821,108 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </table>
 </div>
 <div class="sect2">
-<h3 id="_parameters_for_deploying_into_an_existing_vpc">Parameters for deploying into an existing VPC</h3>
+<h3 id="_parameters_for_deploying_into_a_new_vpc">Parameters for deploying into a new VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. Edge-deployment configuration</caption>
+<caption class="title">Table 6. Network configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VPC CIDR
+(<code>VPCCIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.0.0/16</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the VPC.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 1 CIDR
+(<code>PublicSubnet1CIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.128.0/20</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for the public DMZ subnet.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VPC tenancy
+(<code>VPCTenancy</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allowed tenancy of instances deployed into the VPC.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. Asset Modeling configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Asset modeling and deployment application
+(<code>ModelingVendorType</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Asset Model Converter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select the asset modeling application to create and update source system assets into AWS IoT SiteWise. Element Unify builds a single, federated &amp; contextualized asset data model. For more information, see <a href="https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB" class="bare">https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. Element Unify configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify host
+(<code>UnifyHostname</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://app001-aws.elementanalytics.com/" class="bare">https://app001-aws.elementanalytics.com/</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter the Element Unify hostname. If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically <a href="https://app001-aws.elementanalytics.com/" class="bare">https://app001-aws.elementanalytics.com/</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify username (email)
+(<code>UnifyUsername</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify password
+(<code>UnifyPassword</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unify organization id
+(<code>UnifyOrgId</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. <a href="https://UnifyHostName/#/org/&lt;org" class="bare">https://UnifyHostName/#/org/&lt;org</a> id&gt;</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. Edge-deployment configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2670,7 +2957,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. Amazon EC2 configuration</caption>
+<caption class="title">Table 10. Amazon EC2 configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2685,16 +2972,10 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SSH key name
+<td class="tableblock halign-left valign-top"><p class="tableblock">SSH key-pair name
 (<code>EC2KeyPairName</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SiteWiseTest</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keypairtest</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Name of an existing EC2 key pair. All instances will launch with this key pair.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default VPC ID
-(<code>VpcId</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the VPC that the solution will be hosted in.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Greengrass EC2 instance type
@@ -2709,34 +2990,10 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock">Amazon EC2 instance type for the Ignition EC2 instances.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Availability Zone launch selection
-(<code>AZ</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Availability Zone that the EC2 instances will be launched into.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">VPC subnet ID
-(<code>EC2Subnet</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Subnet ID where the EC2 instances will be launched. Match the subnet ID with your Availability Zone selection.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block for Ignition/Greengrass access
-(<code>PublicSubnet1CIDR</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0.0.0.0/0</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">You will narrow this down after the stack deploys.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Asset Model Converter driver
 (<code>AMCDriver</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>IgnitionCirrusLink</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The driver that the Asset Model Converter uses to translate hierarchy data. If you&#8217;re not using the default driver, choose IgnitionFileExport or KepwareFileExport.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise portal administrator
-(<code>SitewiseMonitorEmail</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enter the email address.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The driver that the Asset Model Converter uses to translate hierarchy data. If you&#8217;re not using the default driver, choose IgnitionFileExport or KepwareFileExport. If you&#8217;re not using Asset Model Converter, select Element Unify.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Your public IP address
@@ -2744,10 +3001,16 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email address for the SiteWise portal administrator
+(<code>SitewiseMonitorEmail</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter the email address.</p></td>
+</tr>
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. AWS Quick Start configuration</caption>
+<caption class="title">Table 11. AWS Quick Start configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2825,8 +3088,16 @@ and to share your customizations with others.</p>
 </div>
 <p class="footer-text">
 <!-- We can use document attributes: -->
-<!-- Generated with Asciidoctor v2.0.12. -->
+<!-- Generated with Asciidoctor v2.0.15. -->
 <a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2021, Amazon Web Services, Inc. or its affiliates. All rights reserved.
 </p>
 </body>
 </html>
+<!--
+repo commit:
+d7af42373a12583446351b517440431b023b6adb
+
+submodule config:
+ a9d6c5903745c1091793d3cd1f960948919c2c9f docs/boilerplate (heads/main)
+ ffc7af4e59a09dbf52199a3ecf70f3805abeff48 submodules/quickstart-aws-vpc (v1.0-58-gffc7af4)
+-->
