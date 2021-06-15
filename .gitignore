@@ -5,7 +5,6 @@ __pycache__/
 .taskcat
 taskcat_outputs/
 env/
-index.html
 docs/generated
 
 .DS_Store
