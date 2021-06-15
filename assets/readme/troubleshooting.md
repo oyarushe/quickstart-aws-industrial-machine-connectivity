@@ -4,7 +4,7 @@
 
 First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the SiteWise Gateway:
 
-1. Navigate to the AWS IoT SiteWise console and select Ingest -> Gateways 
+1. Navigate to the AWS IoT SiteWise console and select Edge -> Gateways 
 2. Select the gateway created during the stack launch:
     
     Naming convention: `[name_of_stack]_Automated_Gateway`
