@@ -453,7 +453,6 @@ Resources:
         - scripts/physical-brownfield-all-options.sh
         - scripts/physical-greenfield-option1.sh
         - scripts/physical-greenfield-option2a.sh
-        - scripts/physical-greenfield-option2b.sh
   CopyZipsRole:
     Type: AWS::IAM::Role
     Properties:
