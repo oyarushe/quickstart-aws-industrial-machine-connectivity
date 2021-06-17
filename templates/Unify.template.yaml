@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Template to connect element unify.'
+Description: 'Template to connect element unify. (qs-1qtb0iudq)'
 Parameters:
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
@@ -58,7 +58,7 @@ Resources:
               Service: lambda.amazonaws.com
         Version: "2012-10-17"
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - PolicyDocument:
             Statement:
@@ -67,7 +67,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
-                Resource: arn:aws:logs:*:*:*
+                Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
               - Action:
                   - s3:ListBucket
                   - s3:DeleteObject
@@ -80,11 +80,21 @@ Resources:
                   - !GetAtt UnifyBucket.Arn
                   - !Join ["", [!GetAtt UnifyBucket.Arn, "*"]]
               - Action:
-                  - 'secretsmanager:*'
+                  - secretsmanager:PutSecretValue
+                  - secretsmanager:ListSecretVersionIds
+                  - secretsmanager:GetRandomPassword
+                  - secretsmanager:ListSecrets
+                  - secretsmanager:UpdateSecret
+                  - secretsmanager:DeleteSecret
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:CreateSecret
                 Effect: Allow
-                Resource: '*'
+                Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:*
               - Action:
                   - iot:Publish
+                Effect: Allow
+                Resource: !Sub arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:*
+              - Action:
                   - iotsitewise:DescribeAssetModel
                   - iotsitewise:CreateAssetModel
                   - iotsitewise:ListAssetModels

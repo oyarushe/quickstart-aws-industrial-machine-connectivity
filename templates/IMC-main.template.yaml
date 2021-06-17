@@ -12,17 +12,6 @@ Metadata:
           - PublicSubnet1CIDR
           - VPCTenancy
       - Label:
-          default: Asset Modeling configuration
-        Parameters:
-          - ModelingVendorType
-      - Label:
-          default: Element Unify configuration
-        Parameters:
-          - UnifyHostname
-          - UnifyUsername
-          - UnifyPassword
-          - UnifyOrgId
-      - Label:
           default: Edge-deployment configuration
         Parameters:
           - EdgeDeviceID
@@ -54,16 +43,6 @@ Metadata:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
-      ModelingVendorType:
-        default: Asset modeling and deployment application
-      UnifyHostname:
-        default: Unify host
-      UnifyUsername:
-        default: Unify username (email)
-      UnifyPassword:
-        default: Unify password
-      UnifyOrgId:
-        default: Unify organization id
       VPCCIDR:
         default: VPC CIDR
       EC2KeyPairName:
@@ -184,45 +163,14 @@ Parameters:
       - IgnitionCirrusLink
       - IgnitionFileExport
       - KepwareFileExport
-      - Element Unify
-    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport. If you're not using Asset Model Converter, select Element Unify.
-  ModelingVendorType:
-    AllowedValues:
-      - Asset Model Converter
-      - Element Unify
-    Description: Select the asset modeling application to create and update source system assets into AWS IoT SiteWise. Element Unify builds a single, federated & contextualized asset data model. For more information, see https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB.
-    Type: String
-    Default: Asset Model Converter
-  UnifyHostname:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify hostname. If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
-    Type: String
-    Default: https://app001-aws.elementanalytics.com/
-  UnifyUsername:
-    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
-    ConstraintDescription: Must be a valid email address.
-    Description: If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
-    Type: String
-  UnifyPassword:
-    Description: If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.
-    Type: String
-    NoEcho: true
-  UnifyOrgId:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
-    Type: Number
-    Default: 0
+    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport.
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
     - 'aws-quickstart'
-  IfVirtual: !Equals
-    - !Ref DeploymentType
-    - 'Virtual'
   IfPhysical: !Equals
     - !Ref DeploymentType
     - 'Physical'
-  IfAMCVirtual: !And
-    - !Equals [!Ref DeploymentType, 'Virtual']
-    - !Not [!Equals [!Ref ModelingVendorType, 'Element Unify']]
 
 Resources:
   VPC:
@@ -276,15 +224,9 @@ Resources:
         UserPublicIP: !Ref UserPublicIP
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         SitewiseMonitorEmail: !Ref SitewiseMonitorEmail
-        UnifyHostname: !Ref UnifyHostname
-        UnifyUsername: !Ref UnifyUsername
-        UnifyPassword: !Ref UnifyPassword
-        UnifyOrgId: !Ref UnifyOrgId
-        ModelingVendorType: !Ref ModelingVendorType
 
 Outputs:
   IgnitionURL:
-    Condition: IfAMCVirtual
     Value: !GetAtt 'Workload.Outputs.IgnitionURL'
   DependenciesBucket:
     Condition: IfPhysical
