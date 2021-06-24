@@ -7,6 +7,18 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
+          default: Asset Modeling configuration
+        Parameters:
+          - ModelingVendorType
+      - Label:
+          default: Element Unify configuration
+        Parameters:
+          - UnifyHostname
+          - UnifyOrgId
+          - UnifyUsername
+          - UnifyPassword
+          - DeploymentOption
+      - Label:
           default: Edge-deployment configuration
         Parameters:
           - EdgeDeviceID
@@ -38,10 +50,22 @@ Metadata:
         default: Quick Start S3 key prefix
       QSS3BucketRegion:
         default: Quick Start S3 bucket Region
+      ModelingVendorType:
+        default: Asset modeling and deployment application
+      UnifyHostname:       
+        default: Unify host
+      UnifyUsername:
+        default: Unify user name
+      UnifyPassword:
+        default: Unify password
+      UnifyOrgId:
+        default: Unify organization id
+      DeploymentOption:
+        default: Dataflow option
       EC2KeyPairName:
         default: SSH key name
       EdgeDeviceID:
-        default: Name for the edge-gateway device 
+        default: Name for the edge-gateway device
       DeploymentType:
         default: Type of deployment
       VpcId:
@@ -64,6 +88,39 @@ Metadata:
         default: Availability Zone launch selection
 
 Parameters:
+  ModelingVendorType:
+    AllowedValues:
+      - Asset Model Converter
+      - Element Unify
+    Description: Select the asset modeling application to create and update source system assets into AWS IoT SiteWise. Element Unify builds a single, federated & contextualized asset data model. For more information, see https://aws.amazon.com/marketplace/pp/Element-Element-Unify-Software/B08VZY2ZJB.
+    Type: String
+    Default: Asset Model Converter
+  UnifyHostname:
+    Description: If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
+    Type: String
+    Default: https://app001-aws.elementanalytics.com/
+  UnifyUsername:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address.
+    Description: If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Type: String
+  UnifyPassword:
+    Description: If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Type: String
+    NoEcho: true
+  UnifyOrgId:
+    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
+    Type: Number
+    Default: 0
+  DeploymentOption:
+    AllowedValues:
+      - Option1
+      - Option2a
+      - Option2b
+    ConstraintDescription: Must be a valid dataflow option. 
+    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
+    Type: String
+    Default: Option1 
   SitewiseMonitorEmail:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
@@ -85,7 +142,8 @@ Parameters:
       - IgnitionCirrusLink
       - IgnitionFileExport
       - KepwareFileExport
-    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport. 
+      - Element Unify
+    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport. If you're not using Asset Model Converter, select Element Unify.
   EdgeDeviceID:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Edge-gateway device name can include numbers, lowercase
@@ -106,6 +164,7 @@ Parameters:
     ConstraintDescription: The Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
       (-).
+    Default: aws-quickstart
     Description: Name of the S3 bucket for your copy of the Quick Start assets. 
       Keep the default name unless you are customizing the template. 
       Changing the name updates code references to point to a new Quick 
@@ -113,11 +172,11 @@ Parameters:
       uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
       See https://aws-quickstart.github.io/option1.html.
     Type: String
-    Default: aws-quickstart
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/]*$
     ConstraintDescription: The Quick Start key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), and forward slash (/).
+    Default: quickstart-aws-industrial-machine-connectivity/
     Description: S3 key prefix that is used to simulate a directory for your copy of the 
       Quick Start assets. Keep the default prefix unless you are customizing 
       the template. Changing this prefix updates code references to point to 
@@ -126,7 +185,6 @@ Parameters:
       See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
       and https://aws-quickstart.github.io/option1.html.
     Type: String
-    Default: quickstart-aws-industrial-machine-connectivity/
   QSS3BucketRegion:
     Default: 'us-east-1'
     Description: AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. Keep the default Region unless you are customizing the template. Changing this Region updates code references to point to a new Quick Start location. When using your own bucket, specify the Region. See https://aws-quickstart.github.io/option1.html.
@@ -144,14 +202,14 @@ Parameters:
     Description: ID of the VPC that the solution will be hosted in.
     Type: String
   GreengrassInstanceType:
-    Description: Amazon EC2 instance type for the Greengrass EC2 instances.
+    Description: Amazon EC2 instance type for the Greengrass EC2 instances. Note that if the Asset modeling configuration is Element Unify, then two instances of Greengrass EC2 will be deployed to demonstrate multi-site modeling capabilities.
     Type: String
     Default: t3.small
     AllowedValues:
       - t3.small
       - t3.medium
   IgnitionInstanceType:
-    Description: Amazon EC2 instance type for the Ignition EC2 instances.
+    Description: Amazon EC2 instance type for the Ignition EC2 instances. Note that if the Asset modeling configuration is Element Unify, then two instances of Ignition EC2 will be deployed to demonstrate multi-site modeling capabilities.
     Type: String
     Default: t3.large
     AllowedValues:
@@ -172,9 +230,21 @@ Conditions:
   IfPhysical: !Equals
     - !Ref DeploymentType
     - 'Physical'
+  IfAMC: !Equals
+    - !Ref ModelingVendorType
+    - 'Asset Model Converter'
+  IfUnify: !Equals
+    - !Ref ModelingVendorType
+    - 'Element Unify'
   IfVirtual: !Equals
     - !Ref DeploymentType
     - 'Virtual'
+  IfAMCVirtual: !And
+    - !Condition IfAMC
+    - !Condition IfVirtual
+  IfUnifyVirtual: !And
+    - !Condition IfUnify
+    - !Condition IfVirtual
 
 Mappings: 
   EC2AMI: 
@@ -190,6 +260,7 @@ Mappings:
 Resources:
   AMCAssetTable:
     Type: 'AWS::DynamoDB::Table'
+    Condition: IfAMC
     Properties: 
       TableName: !Sub '${AWS::StackName}-asset-table'
       BillingMode: PAY_PER_REQUEST
@@ -210,6 +281,7 @@ Resources:
           ProjectionType: 'ALL'
   AMCModelTable:
     Type: 'AWS::DynamoDB::Table'
+    Condition: IfAMC
     Properties: 
       TableName: !Sub '${AWS::StackName}-asset-model-table'
       BillingMode: PAY_PER_REQUEST
@@ -317,96 +389,7 @@ Resources:
           }
                 MemorySize: 128
                 Timeout: 3
-  StackCleanup:
-    Type: Custom::StackCleanup
-    DependsOn:
-      - StackCleanupRole
-    Properties:
-      ServiceToken: !GetAtt 'StackCleanupFunction.Arn'
-      buckets: 
-        - !Ref DevicesBucketResource
-        - !Ref AMCIncomingResource
-        - !Ref AMCOutputResource
-        - !Ref LambdaZipsBucket
-        - !Ref SiteWiseResourceDataBucket
-        - !Ref imcs3bucket
-      group_name: !Ref EdgeDeviceID
 
-  StackCleanupRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-      Path: /
-      Policies:
-        - PolicyName: stack-cleanup
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action: 
-                  - greengrass:ListGroups
-                  - greengrass:ResetDeployments
-                  - greengrass:GetGroup
-                  - iot:UpdateThingShadow
-                  - s3:*
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                  - iotsitewise:ListPortals
-                  - iotsitewise:ListProjects
-                  - iotsitewise:ListDashboards
-                  - iotsitewise:DeleteDashboard
-                  - iotsitewise:DeleteProject
-                  - iotsitewise:ListAccessPolicies
-                  - iotsitewise:DeleteAccessPolicies
-                  - iotsitewise:DeletePortal
-                  - iotsitewise:DescribeAssetModel
-                  - iotsitewise:UpdateAssetModel
-                  - iotsitewise:DeleteAssetModel
-                  - iotsitewise:DescribeAsset
-                  - iotsitewise:UpdateAssetProperty
-                  - iotsitewise:ListAssets
-                  - iotsitewise:ListAssociatedAssets
-                  - iotsitewise:DeleteAsset
-                  - iotsitewise:DisassociateAssets
-                  - sso:DeleteManagedApplicationInstance
-                  - quicksight:ListDataSets
-                  - quicksight:ListDataSources
-                  - quicksight:DeleteDataSet
-                  - quicksight:DeleteDataSource
-                  - dynamodb:Scan
-                Resource: "*"
-  StackCleanupFunction:
-    DependsOn: 
-      - CopyZips
-      - AMCAssetTable
-      - AMCModelTable
-    Type: AWS::Lambda::Function
-    Properties:
-      Description: Cleans up the required resources to delete the stack.
-      Environment:
-        Variables:
-          stackName:
-            Ref: AWS::StackName
-          DynamoDB_Asset_Table:
-            Ref: AMCAssetTable
-          DynamoDB_Model_Table: 
-            Ref: AMCModelTable
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.7
-      Role: !GetAtt 'StackCleanupRole.Arn'
-      Timeout: 900
-      Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
-        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/StackCleanup/stackcleanupfunction.zip'
   IoTEndpointRole:
     Type: AWS::IAM::Role
     Properties:
@@ -429,132 +412,85 @@ Resources:
                   - iot:DescribeEndpoint
                 Resource:
                   - '*'
-  CopyZips:
-    Type: Custom::CopyZips
-    DependsOn:
-      - CopyZipsRole
+  CopyZipsStack:
+    Type: 'AWS::CloudFormation::Stack'
     Properties:
-      ServiceToken: !GetAtt 'CopyZipsFunction.Arn'
-      DestBucket: !Ref 'LambdaZipsBucket'
-      SourceBucket: !Ref 'QSS3BucketName'
-      Prefix: !Ref 'QSS3KeyPrefix'
-      Objects:
-        - functions/packages/AssetModelConverter/AssetModelConverter.zip
-        - functions/packages/AssetModelIngestion/AssetModelIngestion.zip
-        - functions/packages/AssetModelUpdater/AssetModelUpdater.zip
-        - functions/packages/GreengrassLambda/GreengrassLambda.zip
-        - functions/packages/KinesisProcessor/kinesisprocessor.zip
-        - functions/packages/Quicksight/quicksightfunction.zip
-        - functions/packages/SitewiseMonitor/sitewisemonitorfunction.zip
-        - functions/packages/MQTTDataProcess/mqttdataprocess.js.zip
-        - functions/packages/GGDeployer/ggdeployer.zip
-        - functions/packages/StackCleanup/stackcleanupfunction.zip
-        - functions/packages/SiteWiseDump/sitewise_dump.zip
-        - scripts/physical-brownfield-all-options.sh
-        - scripts/physical-greenfield-option1.sh
-        - scripts/physical-greenfield-option2a.sh
-  CopyZipsRole:
-    Type: AWS::IAM::Role
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Copy_Zips.template.yaml
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        ZipFiles: >
+          functions/packages/AssetModelConverter/AssetModelConverter.zip,
+          functions/packages/AssetModelIngestion/AssetModelIngestion.zip,
+          functions/packages/AssetModelUpdater/AssetModelUpdater.zip,
+          functions/packages/GreengrassLambda/GreengrassLambda.zip,
+          functions/packages/KinesisProcessor/kinesisprocessor.zip,
+          functions/packages/Quicksight/quicksightfunction.zip,
+          functions/packages/SitewiseMonitor/sitewisemonitorfunction.zip,
+          functions/packages/MQTTDataProcess/mqttdataprocess.js.zip,
+          functions/packages/GGDeployer/ggdeployer.zip,
+          functions/packages/StackCleanup/stackcleanupfunction.zip,
+          scripts/physical-brownfield-all-options.sh,
+          scripts/physical-greenfield-option1.sh,
+          scripts/physical-greenfield-option2a.sh,
+          functions/packages/SiteWiseDump/sitewise_dump.zip,
+          functions/packages/UnifyServiceAccountHandler/UnifyServiceAccountHandler.zip,
+          functions/packages/UnifySiteWiseIngest/UnifySiteWiseIngest.zip,
+          functions/packages/UnifySiteWiseUpdater/UnifySiteWiseUpdater.zip,
+          functions/packages/UnifySourceIngest/UnifySourceIngest.zip
+  AMCStackCleanup:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: IfAMC
     Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-      Path: /
-      Policies:
-        - PolicyName: lambda-copier
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:GetObject
-                Resource:
-                  - !Sub 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
-              - Effect: Allow
-                Action:
-                  - s3:PutObject
-                  - s3:DeleteObject
-                Resource:
-                  - !Sub 'arn:aws:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}*'
-  CopyZipsFunction:
-    Type: AWS::Serverless::Function
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Cleanup_Stack.template.yaml
+      Parameters:
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        DynamoDBAssetTable: !Ref AMCAssetTable
+        DynamoDBModelTable: !Ref AMCModelTable
+        Buckets: !Join
+        - ','
+        - - !Ref imcs3bucket
+          - !Ref DevicesBucketResource
+          - !Ref AMCIncomingResource
+          - !Ref AMCOutputResource
+          - !Ref SiteWiseResourceDataBucket
+          - !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        EdgeDeviceIDs: !Join
+        - ','
+        - - !Ref EdgeDeviceID
+  
+  UnifyStackCleanup:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: IfUnify
     Properties:
-      Description: Copies objects from a source S3 bucket to a destination.
-      Handler: index.handler
-      Runtime: python2.7
-      Role: !GetAtt 'CopyZipsRole.Arn'
-      Timeout: 240
-      InlineCode: |
-        import json
-        import logging
-        import threading
-        import boto3
-        import cfnresponse
-        
-        
-        def copy_objects(source_bucket, dest_bucket, prefix, objects):
-            s3 = boto3.client('s3')
-            for o in objects:
-                key = prefix + o
-                copy_source = {
-                    'Bucket': source_bucket,
-                    'Key': key
-                }
-                print('copy_source: %s' % copy_source)
-                print('dest_bucket = %s'%dest_bucket)
-                print('key = %s' %key)
-                s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,
-                      Key=key)
-        
-        
-        def delete_objects(bucket, prefix, objects):
-            s3 = boto3.client('s3')
-            objects = {'Objects': [{'Key': prefix + o} for o in objects]}
-            s3.delete_objects(Bucket=bucket, Delete=objects)
-        
-        
-        def timeout(event, context):
-            logging.error('Execution is about to time out, sending failure response to CloudFormation')
-            cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
-        
-        
-        def handler(event, context):
-            # make sure we send a failure to CloudFormation if the function
-            # is going to timeout
-            timer = threading.Timer((context.get_remaining_time_in_millis()
-                      / 1000.00) - 0.5, timeout, args=[event, context])
-            timer.start()
-            print('Received event: %s' % json.dumps(event))
-            status = cfnresponse.SUCCESS
-            try:
-                source_bucket = event['ResourceProperties']['SourceBucket']
-                dest_bucket = event['ResourceProperties']['DestBucket']
-                prefix = event['ResourceProperties']['Prefix']
-                objects = event['ResourceProperties']['Objects']
-                if event['RequestType'] == 'Delete':
-                    delete_objects(dest_bucket, prefix, objects)
-                else:
-                    copy_objects(source_bucket, dest_bucket, prefix, objects)
-            except Exception as e:
-                logging.error('Exception: %s' % e, exc_info=True)
-                status = cfnresponse.FAILED
-            finally:
-                timer.cancel()
-                cfnresponse.send(event, context, status, {}, None)
-  LambdaZipsBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      Tags: []
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Cleanup_Stack.template.yaml
+      Parameters:
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        DeleteModelsInDynamoDB: 'No'
+        DynamoDBAssetTable: ''
+        DynamoDBModelTable: ''
+        Buckets: !Join
+        - ','
+        - - !Ref imcs3bucket
+          - !Ref DevicesBucketResource
+          - !GetAtt Unify.Outputs.UnifyIncomingBucket
+          - !GetAtt Unify.Outputs.UnifyBucket
+          - !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        EdgeDeviceIDs: !If
+        - IfUnifyVirtual
+        - !Join
+          - ','
+          - - !GetAtt  UnifyVirtualIgnition1.Outputs.EdgeDeviceID
+            - !GetAtt  UnifyVirtualIgnition2.Outputs.EdgeDeviceID
+        - !Join
+          - ','
+          - - !Ref EdgeDeviceID
 
   LambdaExecRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -582,7 +518,6 @@ Resources:
                   - iam:PassRole
                 Resource: "*"
   quicksight:
-    DependsOn: CopyZips
     Type: AWS::Lambda::Function
     Properties:
       ReservedConcurrentExecutions: 1
@@ -594,7 +529,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       Timeout: 180
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/Quicksight/quicksightfunction.zip'
       Description: Invoke a function during stack creation.
       Environment:
@@ -612,7 +547,7 @@ Resources:
 
   SiteWiseS3Dump:
     DependsOn: 
-      - CopyZips
+      - CopyZipsStack
       - SiteWiseResourceDataBucket
     Type: AWS::Lambda::Function
     Properties:
@@ -625,7 +560,7 @@ Resources:
       Handler: sitewise_dump.lambda_handler
       Timeout: 180
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/SiteWiseDump/sitewise_dump.zip'
       Description: Puts SiteWise model and asset data in S3 upon successful AMC completion
       Environment:
@@ -641,7 +576,7 @@ Resources:
 
   quicksightiotruletrigger:
     Type: AWS::IoT::TopicRule
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       TopicRulePayload:
         RuleDisabled: false
@@ -654,7 +589,7 @@ Resources:
                   - Arn
   quicksightFunctionInvocationPermission:
     Type: AWS::Lambda::Permission
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       SourceArn:
         Fn::Join:
@@ -676,7 +611,7 @@ Resources:
 
   sitewisemonitor:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       Runtime: python3.8
       Role:
@@ -686,7 +621,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       Timeout: 180
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/SitewiseMonitor/sitewisemonitorfunction.zip'
       Description: Invoke a function during stack creation.
       Environment:
@@ -706,7 +641,7 @@ Resources:
           
   sitewisemonitoriotruletrigger:
     Type: AWS::IoT::TopicRule
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       TopicRulePayload:
         RuleDisabled: false
@@ -719,7 +654,7 @@ Resources:
                   - Arn
   sitewisemonitorFunctionInvocationPermission:
     Type: AWS::Lambda::Permission
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       SourceArn:
         Fn::Join:
@@ -741,21 +676,21 @@ Resources:
 
   processLambda:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       Runtime: nodejs12.x
       Role: !GetAtt LambdaExecRole.Arn
       Handler: index.handler
       Timeout: 120
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/KinesisProcessor/kinesisprocessor.zip'
       Description: Invoke a function during stack creation. 
 
   KinesisDeliveryStream:
     DependsOn:
       - KinesisDeliveryPolicy
-      - CopyZips
+      - CopyZipsStack
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
       ExtendedS3DestinationConfiguration:
@@ -779,11 +714,11 @@ Resources:
 
   imcs3bucket:
     Type: AWS::S3::Bucket
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
 
   KinesisRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -799,7 +734,7 @@ Resources:
 
   KinesisDeliveryPolicy:
     Type: AWS::IAM::Policy
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       PolicyName: imc_firehose_delivery_policy
       PolicyDocument:
@@ -813,7 +748,7 @@ Resources:
 
   DeviceDataRule:
     Type: AWS::IoT::TopicRule
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       TopicRulePayload:
         RuleDisabled: false
@@ -825,7 +760,7 @@ Resources:
 
   IoTRuleRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -852,7 +787,7 @@ Resources:
 
   SwMonitorRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -881,7 +816,7 @@ Resources:
     DeletionPolicy: Delete
   GGResourceRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Statement:
@@ -909,7 +844,7 @@ Resources:
           PolicyName: GGResourcePolicy
   LambdaExecRoleResource:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Statement:
@@ -969,10 +904,10 @@ Resources:
           PolicyName: GGLambdaPolicy
   GreengrassLambdaResource:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/GreengrassLambda/GreengrassLambda.zip'
       Handler: handler.handler
       Role:
@@ -987,7 +922,7 @@ Resources:
 
   ManageGreengrassDefault:
     Type: Custom::ManageGreengrass
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       ServiceToken:
         Fn::GetAtt:
@@ -1001,7 +936,8 @@ Resources:
 
   EdgeGroupThingCoreDefault:
     Type: Custom::IoTThing
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       ServiceToken:
         Fn::GetAtt:
@@ -1021,7 +957,8 @@ Resources:
     DeletionPolicy: Delete
   EdgeGroupThingDeviceDefault:
     Type: Custom::IoTThing
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       ServiceToken:
         Fn::GetAtt:
@@ -1041,7 +978,8 @@ Resources:
     DeletionPolicy: Delete
   EdgeGroupFuncDef:
     Type: AWS::Greengrass::FunctionDefinition
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Name:
         Fn::Join:
@@ -1050,7 +988,8 @@ Resources:
             - FuncDef,
   EdgeGroupFuncDefVersion:
     Type: AWS::Greengrass::FunctionDefinitionVersion
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       FunctionDefinitionId:
         Fn::GetAtt:
@@ -1066,7 +1005,8 @@ Resources:
           Id: StreamManager
   EdgeGroupSubDef:
     Type: AWS::Greengrass::SubscriptionDefinition
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Name:
         Fn::Join:
@@ -1075,7 +1015,8 @@ Resources:
             - SubDef
   EdgeGroupSubDefVersion:
     Type: AWS::Greengrass::SubscriptionDefinitionVersion
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       SubscriptionDefinitionId:
         Fn::GetAtt:
@@ -1091,7 +1032,8 @@ Resources:
           Target: cloud
   EdgeGroupConDef:
     Type: AWS::Greengrass::ConnectorDefinition
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Name:
         Fn::Join:
@@ -1100,7 +1042,8 @@ Resources:
             - ConDef
   EdgeGroupConDefVersion:
     Type: AWS::Greengrass::ConnectorDefinitionVersion
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       ConnectorDefinitionId:
         Fn::GetAtt:
@@ -1111,12 +1054,14 @@ Resources:
           Id: SiteWiseConnector
   EdgeGroupCoreDef:
     Type: AWS::Greengrass::CoreDefinition
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Name: EdgeGroupCoreDef
   EdgeGroupCoreDefVersion:
     Type: AWS::Greengrass::CoreDefinitionVersion
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       CoreDefinitionId:
         Fn::GetAtt:
@@ -1134,7 +1079,8 @@ Resources:
               - thingArn
   EdgeGroupDeviceDef:
     Type: AWS::Greengrass::DeviceDefinition
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Name: EdgeGroupDeviceDef
       InitialVersion:
@@ -1150,10 +1096,12 @@ Resources:
                 - thingArn
   EdgeGroupLoggerDef:
     Type: 'AWS::Greengrass::LoggerDefinition'
+    Condition: IfAMC
     Properties:
       Name: EdgeGroupLoggerDef
   EdgeGroupLoggerDefVersion:
     Type: 'AWS::Greengrass::LoggerDefinitionVersion'
+    Condition: IfAMC
     Properties:
       LoggerDefinitionId: !Ref EdgeGroupLoggerDef
       Loggers:
@@ -1177,7 +1125,8 @@ Resources:
           Level: DEBUG
   EdgeGroup:
     Type: AWS::Greengrass::Group
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Name:
         Fn::Sub: ${EdgeDeviceID}
@@ -1187,7 +1136,8 @@ Resources:
           - Arn
   EdgeGroupVersion:
     Type: AWS::Greengrass::GroupVersion
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       GroupId:
         Fn::GetAtt:
@@ -1210,15 +1160,18 @@ Resources:
 
   AMCIncomingResource:
     Type: AWS::S3::Bucket
+    Condition: IfAMC
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
   AMCOutputResource:
     Type: AWS::S3::Bucket
+    Condition: IfAMC
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
   AMCLambdaRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Statement:
@@ -1311,10 +1264,11 @@ Resources:
   # Asset Model Ingestion
   AssetModelIngestionLambdaResource:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/AssetModelIngestion/AssetModelIngestion.zip'
       Handler: assetModelIngestion.handler
       Role:
@@ -1345,7 +1299,8 @@ Resources:
 
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Action: lambda:InvokeFunction
       FunctionName:
@@ -1360,7 +1315,8 @@ Resources:
 
   AssetModelIngestionLambdaIngestionNBirthRulePermission:
     Type: AWS::Lambda::Permission
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Action: lambda:InvokeFunction
       FunctionName:
@@ -1375,7 +1331,8 @@ Resources:
 
   IngestionDBirthRule:
     Type: AWS::IoT::TopicRule
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       TopicRulePayload:
         Actions:
@@ -1390,7 +1347,8 @@ Resources:
 
   IngestionNBirthRule:
     Type: AWS::IoT::TopicRule
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       TopicRulePayload:
         Actions:
@@ -1406,11 +1364,12 @@ Resources:
   # Asset Model Converter
   AssetModelConverterLambdaResource:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       ReservedConcurrentExecutions: 1
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/AssetModelConverter/AssetModelConverter.zip'
       Handler: assetModelConverter.handler
       Role:
@@ -1448,11 +1407,12 @@ Resources:
   # Asset Model Updater
   AssetModelUpdaterLambdaResource:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       ReservedConcurrentExecutions: 1
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/AssetModelUpdater/AssetModelUpdater.zip'
       Handler: assetModelUpdater.handler
       Role:
@@ -1490,7 +1450,8 @@ Resources:
 
   AssetModelUpdaterRule:
     Type: AWS::IoT::TopicRule
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       TopicRulePayload:
         Actions:
@@ -1505,7 +1466,8 @@ Resources:
 
   AssetModelUpdaterRulePermission:
     Type: AWS::Lambda::Permission
-    DependsOn: CopyZips
+    Condition: IfAMC
+    DependsOn: CopyZipsStack
     Properties:
       Action: lambda:InvokeFunction
       FunctionName:
@@ -1521,7 +1483,7 @@ Resources:
 
   ApiHandlerRole:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
@@ -1677,13 +1639,12 @@ Resources:
         - video/mpeg
         - video/webm
   APIHandler:
-    DependsOn: CopyZips
     Type: AWS::Lambda::Function
     Properties:
       Runtime: python3.7
       Handler: app.app
       Code:
-        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/GGDeployer/ggdeployer.zip'
       Timeout: 60
       MemorySize: 128
@@ -1707,7 +1668,7 @@ Resources:
 
   Ec2RoleResource:
     Type: AWS::IAM::Role
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       AssumeRolePolicyDocument:
         Statement:
@@ -1727,7 +1688,7 @@ Resources:
           PolicyName: Ec2S3Access
   EdgeSecurityGroupResource:
     Type: AWS::EC2::SecurityGroup
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       GroupDescription: VirtualOption1/EdgeSecurityGroup
       SecurityGroupEgress:
@@ -1758,23 +1719,22 @@ Resources:
       VpcId: !Ref 'VpcId'
   EdgeInstanceGreengrassInstanceProfile:
     Type: AWS::IAM::InstanceProfile
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       Roles:
         - Ref: Ec2RoleResource
   EdgeInstanceIgnitionInstanceProfile:
     Type: AWS::IAM::InstanceProfile
-    DependsOn: CopyZips
+    DependsOn: CopyZipsStack
     Properties:
       Roles:
         - Ref: Ec2RoleResource
 
   Virtual:
     Type: 'AWS::CloudFormation::Stack'
-    Condition: IfVirtual
+    Condition: IfAMCVirtual
     DependsOn:
       - Ec2RoleResource
-      - CopyZips
       - KinesisDeliveryPolicy
     Properties:
       TemplateURL: !Sub
@@ -1799,7 +1759,7 @@ Resources:
         EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
         EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
         DeviceBucketRes: !Ref DevicesBucketResource
-        LambdaZipsBucket: !Ref LambdaZipsBucket
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         LambdaExecRole: !GetAtt LambdaExecRole.Arn
         IMCBucketArn: !GetAtt imcs3bucket.Arn 
         KinesisDelRoleArn: !GetAtt KinesisRole.Arn
@@ -1816,7 +1776,6 @@ Resources:
     Condition: IfPhysical
     DependsOn:
       - Ec2RoleResource
-      - CopyZips
       - KinesisDeliveryPolicy
     Properties:
       TemplateURL: !Sub
@@ -1833,21 +1792,136 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Ref EdgeDeviceID
         DeviceBucketRes: !Ref DevicesBucketResource
-        LambdaZipsBucket: !Ref LambdaZipsBucket
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         LambdaExecRole: !GetAtt LambdaExecRole.Arn
         IMCBucketArn: !GetAtt imcs3bucket.Arn 
         KinesisDelRoleArn: !GetAtt KinesisRole.Arn
         IoTTopicRuleRoleArn: !GetAtt IoTRuleRole.Arn
-        AMCIncomingRes: !Ref AMCIncomingResource
-        AMCIncomingResArn: !GetAtt AMCIncomingResource.Arn
-        AMCConvertLambdaResArn: !GetAtt AssetModelConverterLambdaResource.Arn
+        AMCIncomingRes: !If
+          - IfAMC
+          - !Ref AMCIncomingResource
+          - "AWS::NoValue"
+        AMCIncomingResArn: !If
+          - IfAMC
+          - !GetAtt AMCIncomingResource.Arn
+          - "AWS::NoValue"
+        AMCConvertLambdaResArn: !If
+          - IfAMC
+          -  !GetAtt AssetModelConverterLambdaResource.Arn
+          - "AWS::NoValue"
         RestAPIId: !Ref RestAPI
         IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
-
+        CreateAMCNotify: !If
+          - IfAMC
+          - true
+          - false
+  Unify:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: IfUnify
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/Unify.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        UnifyHostname: !Ref UnifyHostname
+        UnifyUsername: !Ref UnifyUsername
+        UnifyPassword: !Ref UnifyPassword
+        UnifyOrgId: !Ref UnifyOrgId
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+  UnifyVirtualIgnition1:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: IfUnifyVirtual
+    DependsOn:
+      - Ec2RoleResource
+      - KinesisDeliveryPolicy
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/VirtualUnify.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        AZ: !Ref AZ 
+        EC2Subnet: !Ref EC2Subnet
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Baytown-Primary']]
+        DeploymentType: !Ref DeploymentType
+        DeploymentOption: !Ref DeploymentOption
+        DeviceBucketRes: !Ref DevicesBucketResource
+        EC2KeyPairName: !Ref EC2KeyPairName
+        IgnitionInstanceType: !Ref IgnitionInstanceType
+        DataStreamPrefix: 'Baytown-Primary'
+        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
+        EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
+        EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        RestAPIId: !Ref RestAPI
+        IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
+        EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
+        GreengrassInstanceType: !Ref GreengrassInstanceType
+        Site: 'baytown'
+  UnifyVirtualIgnition2:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: IfUnifyVirtual
+    DependsOn:
+      - Ec2RoleResource
+      - KinesisDeliveryPolicy
+      - UnifyVirtualIgnition1
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/VirtualUnify.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        AZ: !Ref AZ 
+        EC2Subnet: !Ref EC2Subnet
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Houston-Secondary']]
+        DeploymentType: !Ref DeploymentType
+        DeploymentOption: !Ref DeploymentOption
+        DeviceBucketRes: !Ref DevicesBucketResource
+        EC2KeyPairName: !Ref EC2KeyPairName
+        IgnitionInstanceType: !Ref IgnitionInstanceType
+        DataStreamPrefix: 'Houston-Secondary'
+        EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]
+        EIIgnitionInstanceProfile: !Ref EdgeInstanceIgnitionInstanceProfile
+        EdgeSecGroupResourceGroupID: !GetAtt EdgeSecurityGroupResource.GroupId
+        LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        RestAPIId: !Ref RestAPI
+        IoTEndpoint: !GetAtt IoTEndpoint.IoTEndpointAddress
+        EdgeInstanceGreengrassInstanceProfile: !Ref EdgeInstanceGreengrassInstanceProfile
+        GreengrassInstanceType: !Ref GreengrassInstanceType
+        Site: 'houston'
 Outputs:
   IgnitionURL:
-    Condition: IfVirtual
+    Condition: IfAMCVirtual
     Value: !GetAtt 'Virtual.Outputs.IgnitionURL'
+  IgnitionURL1:
+    Condition: IfUnifyVirtual
+    Value: !GetAtt 'UnifyVirtualIgnition1.Outputs.IgnitionURL'
+  IgnitionURL2:
+    Condition: IfUnifyVirtual
+    Value: !GetAtt 'UnifyVirtualIgnition2.Outputs.IgnitionURL'
   DependenciesBucket:
     Condition: IfPhysical
     Value: !GetAtt 'Physical.Outputs.DependenciesBucket'

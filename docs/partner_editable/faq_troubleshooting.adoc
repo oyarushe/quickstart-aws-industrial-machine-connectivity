@@ -153,7 +153,7 @@ Prerequisites:
 
 First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the AWS IoT SiteWise gateway:
 
-. Open the AWS IoT SiteWise console, and choose *Ingest*, *Gateways*. 
+. Open the AWS IoT SiteWise console, and choose *Edge*, *Gateways*.
 . Choose the gateway created during the stack launch (replacing the information in brackets):
 .. Naming convention: `<name_of_stack>_Automated_Gateway`
 . In the *Source Configuration for Automated Gateway Config* section, choose *Edit*.

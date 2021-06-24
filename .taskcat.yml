@@ -2,44 +2,55 @@ project:
   name: quickstart-aws-industrial-machine-connectivity
   owner: quickstart@amazon.com
   package_lambda: false
-  s3_bucket: ''
+  # s3_bucket: ''
   shorten_stack_name: true
   parameters:
-      CreateAdditionalPrivateSubnets: 'true'
-      CreatePrivateSubnets: 'true'
-      PrivateSubnet1ACIDR: 10.0.0.0/19
-      PrivateSubnet1BCIDR: 10.0.192.0/21
-      PrivateSubnet2ACIDR: 10.0.32.0/19
-      PrivateSubnet2BCIDR: 10.0.200.0/21
-      PrivateSubnet3ACIDR: 10.0.64.0/19
-      PrivateSubnet3BCIDR: 10.0.208.0/21
-      PrivateSubnet4ACIDR: 10.0.96.0/19
-      PrivateSubnet4BCIDR: 10.0.216.0/21
-      PublicSubnet1CIDR: 10.0.128.0/20
-      PublicSubnet2CIDR: 10.0.144.0/20
-      PublicSubnet3CIDR: 10.0.160.0/20
-      PublicSubnet4CIDR: 10.0.176.0/20
-      VPCCIDR: 10.0.0.0/16
-      VPCTenancy: default
       QSS3BucketName: $[taskcat_autobucket] # will need to follow 'virtual deployment' instructions in user guide 
       QSS3KeyPrefix: quickstart-aws-industrial-machine-connectivity/ # will need to follow 'virtual deployment' instructions in user guide 
       QSS3BucketRegion: $[taskcat_current_region]
-      UserPublicIP: '205.251.233.48' # change
-      EC2KeyPairName: sshvans # change
-      SitewiseMonitorEmail: test@example.com
   template: templates/IMC-main.template.yaml
 
 tests:
-  VOption1:
+  #IgnitionCirrusLinkTest
+  # ICLTest:
+  #   parameters:
+  #     AMCDriver: "IgnitionCirrusLink"
+  #     DeploymentOption: "Option1"
+  #     DeploymentType: "Virtual"
+  #     EC2KeyPairName: OVERRIDE
+  #     EdgeDeviceID: Virtual
+  #     GreengrassInstanceType: t3.small
+  #     IgnitionInstanceType: t3.large
+  #     PublicSubnet1CIDR: 10.0.128.0/20
+  #     SitewiseMonitorEmail: test@example.com
+  #     UserPublicIP: '75.31.75.239'
+  #     VPCCIDR: 10.0.0.0/16
+  #     VPCTenancy: default
+  #   regions:
+  #     - us-east-1
+  
+  ElementUnifyTest:
     parameters:
-      DeploymentType: Virtual
-      DeploymentOption: Option1
+      AMCDriver: "Element Unify"
+      DeploymentOption: "Option1"
+      DeploymentType: "Virtual"
+      EC2KeyPairName: OVERRIDE
+      EdgeDeviceID: Unifytest
+      GreengrassInstanceType: t3.small
+      IgnitionInstanceType: t3.large
+      ModelingVendorType: Element Unify
+      PublicSubnet1CIDR: 10.0.128.0/20
+      SitewiseMonitorEmail: test@example.com
+      UnifyHostname: OVERRIDE
+      UnifyOrgId: OVERRIDE
+      UnifyPassword: OVERRIDE
+      UnifyUsername: OVERRIDE
+      UserPublicIP: '75.31.75.239'
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
     regions:
       - us-east-1
-      - us-west-2
-      - eu-west-1
-      - eu-central-1
-    
+
   # VOption2a:
   #   parameters:
   #     DeploymentType: Virtual

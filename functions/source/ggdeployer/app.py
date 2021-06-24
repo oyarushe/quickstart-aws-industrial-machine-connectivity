@@ -45,6 +45,12 @@ def deployggwithsitewise(groupname):
             GroupId=groupId
         )
 
+        datastreamprefix = ""
+        try:
+            datastreamprefix = app.current_request.query_params.get('datastreamprefix', "")
+        except:
+            print("Could not get datastreamprefix parameter. Will not use a gateway prefix.")
+
         # Going to create a gateway
         pem_encoded_certificate = response['PemEncodedCertificate']
         gateway_capability_json = {
@@ -71,10 +77,12 @@ def deployggwithsitewise(groupname):
                   }
                 ]
               },
-              "measurementDataStreamPrefix": ""
+              "measurementDataStreamPrefix": datastreamprefix
             }
           ]
         }
+        print("Gateway capability will be configured as:")
+        print(json.dumps(gateway_capability_json))
         ignition_ip = None
         endpoint_uri = None
         try:

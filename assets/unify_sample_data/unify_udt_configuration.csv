@@ -1,0 +1,37 @@
+template,attribute,key,value
+UnifyUDT/Compressor,Current,Property Type,Measurement
+UnifyUDT/Compressor,Differential Pressure,Property Type,Measurement
+UnifyUDT/Compressor,Inlet Pressure,Property Type,Measurement
+UnifyUDT/Compressor,Inlet Temperature,Property Type,Measurement
+UnifyUDT/Compressor,Inlet Volumetric Flow Rate,Property Type,Measurement
+UnifyUDT/Compressor,Outlet Pressure,Property Type,Measurement
+UnifyUDT/Compressor,Outlet Temperature,Property Type,Measurement
+UnifyUDT/Compressor,Outlet Volumetric Flow Rate,Property Type,Measurement
+UnifyUDT/Compressor,Power,Property Type,Measurement
+UnifyUDT/Compressor,Rotational Speed,Property Type,Measurement
+UnifyUDT/Compressor,Description,Property Type,Attribute
+UnifyUDT/Compressor,Description,Default Value,Description
+UnifyUDT/Compressor,Functional Location,Property Type,Attribute
+UnifyUDT/Compressor,Functional Location,Default Value,Functional Location
+UnifyUDT/Compressor,Manufacturer,Property Type,Attribute
+UnifyUDT/Compressor,Manufacturer,Default Value,Manufacturer
+UnifyUDT/Compressor,Model Number,Property Type,Attribute
+UnifyUDT/Compressor,Model Number,Default Value,Model Number
+UnifyUDT/Pump,Current,Property Type,Measurement
+UnifyUDT/Pump,Differential Pressure,Property Type,Measurement
+UnifyUDT/Pump,Inlet Pressure,Property Type,Measurement
+UnifyUDT/Pump,Inlet Temperature,Property Type,Measurement
+UnifyUDT/Pump,Inlet Volumetric Flow Rate,Property Type,Measurement
+UnifyUDT/Pump,Outlet Pressure,Property Type,Measurement
+UnifyUDT/Pump,Outlet Temperature,Property Type,Measurement
+UnifyUDT/Pump,Outlet Volumetric Flow Rate,Property Type,Measurement
+UnifyUDT/Pump,Power,Property Type,Measurement
+UnifyUDT/Pump,Rotational Speed,Property Type,Measurement
+UnifyUDT/Pump,Description,Property Type,Attribute
+UnifyUDT/Pump,Description,Default Value,Description
+UnifyUDT/Pump,Functional Location,Property Type,Attribute
+UnifyUDT/Pump,Functional Location,Default Value,Functional Location
+UnifyUDT/Pump,Manufacturer,Property Type,Attribute
+UnifyUDT/Pump,Manufacturer,Default Value,Manufacturer
+UnifyUDT/Pump,Model Number,Property Type,Attribute
+UnifyUDT/Pump,Model Number,Default Value,Model Number

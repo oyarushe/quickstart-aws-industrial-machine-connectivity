@@ -103,7 +103,7 @@ If you are using Ignition software, click the following link to see the [Ignitio
 
 ### Update SiteWise Gateway
 
-1. Navigate to AWS IoT SiteWise console and in the left-hand menu select "Ingest" -> "Gateways"
+1. Navigate to AWS IoT SiteWise console and in the left-hand menu select "Edge" -> "Gateways"
 2. Select the gateway created during the stack launch. The gatweway name will follow the naming convention: 
     `[name_of_stack]_Automated_Gateway`
 3. Click “Edit” in the Source Configuration for Automated Gateway Config” section
