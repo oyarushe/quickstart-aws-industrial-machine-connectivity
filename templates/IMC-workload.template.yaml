@@ -17,12 +17,12 @@ Metadata:
           - UnifyOrgId
           - UnifyUsername
           - UnifyPassword
+          - DeploymentOption
       - Label:
           default: Edge-deployment configuration
         Parameters:
           - EdgeDeviceID
           - DeploymentType
-          - DeploymentOption
       - Label:
           default: Amazon EC2 configuration
         Parameters:
@@ -60,14 +60,14 @@ Metadata:
         default: Unify password
       UnifyOrgId:
         default: Unify organization id
+      DeploymentOption:
+        default: Dataflow option
       EC2KeyPairName:
         default: SSH key name
       EdgeDeviceID:
         default: Name for the edge-gateway device
       DeploymentType:
         default: Type of deployment
-      DeploymentOption:
-        default: Dataflow option
       VpcId:
         default: Default VPC ID
       GreengrassInstanceType:
@@ -112,6 +112,15 @@ Parameters:
     Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
     Type: Number
     Default: 0
+  DeploymentOption:
+    AllowedValues:
+      - Option1
+      - Option2a
+      - Option2b
+    ConstraintDescription: Must be a valid dataflow option. 
+    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
+    Type: String
+    Default: Option1 
   SitewiseMonitorEmail:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
@@ -188,15 +197,6 @@ Parameters:
     Description: Type of edge deployment. If your deployment uses physical edge hardware, choose "Physical."
     Type: String
     Default: Virtual
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
-    Type: String
-    Default: Option1 
   VpcId:
     ConstraintDescription: Must be a valid VPC ID.
     Description: ID of the VPC that the solution will be hosted in.
@@ -324,16 +324,13 @@ Resources:
       Code:
         ZipFile: | 
           var aws = require("aws-sdk");
-
           exports.handler = function(event, context) {
               console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
-
               // For Delete requests, immediately send a SUCCESS response.
               if (event.RequestType == "Delete") {
                   sendResponse(event, context, "SUCCESS");
                   return;
               }
-
               const iot = new aws.Iot();
               iot.describeEndpoint({endpointType: "iot:Data-ATS"}, (err, data) => {
               let responseData, responseStatus;
@@ -346,14 +343,11 @@ Resources:
                       responseData = { IoTEndpointAddress: data.endpointAddress };
                       console.log('response data: ' + JSON.stringify(responseData));
                   }
-
                   sendResponse(event, context, responseStatus, responseData);
               });
           };
-
           // Send response to the pre-signed S3 URL 
           function sendResponse(event, context, responseStatus, responseData) {
-
               var responseBody = JSON.stringify({
                   Status: responseStatus,
                   Reason: "See the details in CloudWatch Log Stream: " + context.logStreamName,
@@ -363,12 +357,9 @@ Resources:
                   LogicalResourceId: event.LogicalResourceId,
                   Data: responseData
               });
-
               console.log("RESPONSE BODY:\n", responseBody);
-
               var https = require("https");
               var url = require("url");
-
               var parsedUrl = url.parse(event.ResponseURL);
               var options = {
                   hostname: parsedUrl.hostname,
@@ -380,22 +371,18 @@ Resources:
                       "content-length": responseBody.length
                   }
               };
-
               console.log("SENDING RESPONSE...\n");
-
               var request = https.request(options, function(response) {
                   console.log("STATUS: " + response.statusCode);
                   console.log("HEADERS: " + JSON.stringify(response.headers));
                   // Tell AWS Lambda that the function execution is done  
                   context.done();
               });
-
               request.on("error", function(error) {
                   console.log("sendResponse Error:" + error);
                   // Tell AWS Lambda that the function execution is done  
                   context.done();
               });
-
               // write data to request body
               request.write(responseBody);
               request.end();
@@ -446,7 +433,7 @@ Resources:
           scripts/physical-brownfield-all-options.sh,
           scripts/physical-greenfield-option1.sh,
           scripts/physical-greenfield-option2a.sh,
-          scripts/physical-greenfield-option2b.sh,
+          functions/packages/SiteWiseDump/sitewise_dump.zip,
           functions/packages/UnifyServiceAccountHandler/UnifyServiceAccountHandler.zip,
           functions/packages/UnifySiteWiseIngest/UnifySiteWiseIngest.zip,
           functions/packages/UnifySiteWiseUpdater/UnifySiteWiseUpdater.zip,
@@ -467,6 +454,7 @@ Resources:
           - !Ref DevicesBucketResource
           - !Ref AMCIncomingResource
           - !Ref AMCOutputResource
+          - !Ref SiteWiseResourceDataBucket
           - !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         EdgeDeviceIDs: !Join
         - ','
@@ -556,7 +544,36 @@ Resources:
             Ref: AWS::AccountId
           stackName: 
             Ref: AWS::StackName
-  
+
+  SiteWiseS3Dump:
+    DependsOn: 
+      - CopyZipsStack
+      - SiteWiseResourceDataBucket
+    Type: AWS::Lambda::Function
+    Properties:
+      ReservedConcurrentExecutions: 1
+      Runtime: python3.8
+      Role:
+        Fn::GetAtt:
+          - LambdaExecRole
+          - Arn
+      Handler: sitewise_dump.lambda_handler
+      Timeout: 180
+      Code:
+        S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/SiteWiseDump/sitewise_dump.zip'
+      Description: Puts SiteWise model and asset data in S3 upon successful AMC completion
+      Environment:
+        Variables:
+          BucketName:
+            Ref: SiteWiseResourceDataBucket
+
+  SiteWiseResourceDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+
   quicksightiotruletrigger:
     Type: AWS::IoT::TopicRule
     DependsOn: CopyZipsStack
@@ -978,10 +995,14 @@ Resources:
         Fn::GetAtt:
           - EdgeGroupFuncDef
           - Id
-      Functions: []
-      DefaultConfig:
-        Execution:
-          IsolationMode: NoContainer
+      Functions:
+        - 
+          FunctionArn: arn:aws:lambda:::function:GGStreamManager:1
+          FunctionConfiguration:
+            MemorySize: 4194304
+            Pinned: true 
+            Timeout: 5
+          Id: StreamManager
   EdgeGroupSubDef:
     Type: AWS::Greengrass::SubscriptionDefinition
     Condition: IfAMC
@@ -1029,7 +1050,7 @@ Resources:
           - EdgeGroupConDef
           - Id
       Connectors:
-        - ConnectorArn: arn:aws:greengrass:us-east-1::/connectors/IoTSiteWise/versions/5
+        - ConnectorArn: arn:aws:greengrass:us-east-1::/connectors/IoTSiteWise/versions/10
           Id: SiteWiseConnector
   EdgeGroupCoreDef:
     Type: AWS::Greengrass::CoreDefinition
@@ -1084,11 +1105,24 @@ Resources:
     Properties:
       LoggerDefinitionId: !Ref EdgeGroupLoggerDef
       Loggers:
-        - Id: EdgeGroupLoggerDefVersion
+        - Id: FileSystemGreengrassSystem
           Type: FileSystem
           Component: GreengrassSystem
           Level: DEBUG
           Space: '128'
+        - Id: FileSystemLambda
+          Type: FileSystem
+          Component: Lambda
+          Level: DEBUG
+          Space: '128'
+        - Id: AWSCloudWatchGreengrassSystem
+          Type: AWSCloudWatch
+          Component: GreengrassSystem
+          Level: DEBUG
+        - Id: AWSCloudWatchLambda
+          Type: AWSCloudWatch
+          Component: Lambda
+          Level: DEBUG
   EdgeGroup:
     Type: AWS::Greengrass::Group
     Condition: IfAMC
@@ -1156,6 +1190,13 @@ Resources:
                 Effect: Allow
                 Resource: arn:aws:logs:*:*:*
               - Action:
+                  - lambda:InvokeFunction
+                Effect: Allow
+                Resource: 
+                  - Fn::GetAtt:
+                    - SiteWiseS3Dump
+                    - Arn
+              - Action:
                   - iot:Publish
                   - iotsitewise:DescribeAssetModel
                   - iotsitewise:CreateAssetModel
@@ -1208,6 +1249,18 @@ Resources:
             Version: "2012-10-17"
           PolicyName: AMCLambdaPolicy
 
+  StatusTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-status-table'
+      BillingMode: PAY_PER_REQUEST
+      KeySchema: 
+      - AttributeName: 'amcStatus'
+        KeyType: 'HASH'
+      AttributeDefinitions:
+      - AttributeName: 'amcStatus'
+        AttributeType: 'S'
+
   # Asset Model Ingestion
   AssetModelIngestionLambdaResource:
     Type: AWS::Lambda::Function
@@ -1227,7 +1280,22 @@ Resources:
         Variables:
           IncomingBucket:
             Ref: AMCIncomingResource
+          StatusTable:
+            Ref: StatusTable
       Timeout: 900
+
+  AssetModelIngestionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AssetModelIngestionLambdaResource
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AssetModelIngestionLambdaResource}
+
+  AssetModelIngestionDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub ${AssetModelIngestionLambdaResource}-dashboard
+      DashboardBody: !Sub | 
+        {"widgets":[{"type":"log","properties":{"region": "${AWS::Region}","title": "${AssetModelIngestionLambdaResource}-errors","query": "SOURCE '${AssetModelConverterLogGroup}'| fields @timestamp, @message\n| filter @message like \"[ERROR]\"\n| display @timestamp, @message"}}]}
 
   AssetModelIngestionLambdaIngestionDBirthRulePermission:
     Type: AWS::Lambda::Permission
@@ -1319,7 +1387,22 @@ Resources:
             Ref: AMCAssetTable
           DriverName:
             Ref: AMCDriver
+          StatusTable:
+            Ref: StatusTable
       Timeout: 900
+  
+  AssetModelConverterLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AssetModelConverterLambdaResource
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AssetModelConverterLambdaResource}
+
+  AssetModelConverterDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub ${AssetModelConverterLambdaResource}-dashboard
+      DashboardBody: !Sub | 
+        {"widgets":[{"type":"log","properties":{"region": "${AWS::Region}","title": "${AssetModelConverterLambdaResource}-errors","query": "SOURCE '${AssetModelConverterLogGroup}'| fields @timestamp, @message\n| filter @message like \"[ERROR]\"\n| display @timestamp, @message"}}]}
 
   # Asset Model Updater
   AssetModelUpdaterLambdaResource:
@@ -1347,7 +1430,23 @@ Resources:
             !GetAtt EdgeGroup.Id
           gatewayName:
             Ref: EdgeDeviceID
+          SiteWiseS3DumpLambda: !GetAtt SiteWiseS3Dump.Arn
+          StatusTable:
+            Ref: StatusTable
       Timeout: 900
+
+  AssetModelUpdaterLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AssetModelUpdaterLambdaResource
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AssetModelUpdaterLambdaResource}
+
+  AssetModelUpdaterDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub ${AssetModelUpdaterLambdaResource}-dashboard
+      DashboardBody: !Sub | 
+        {"widgets":[{"type":"log","properties":{"region": "${AWS::Region}","title": "${AssetModelUpdaterLambdaResource}-errors","query": "SOURCE '${AssetModelConverterLogGroup}'| fields @timestamp, @message\n| filter @message like \"[ERROR]\"\n| display @timestamp, @message"}}]}
 
   AssetModelUpdaterRule:
     Type: AWS::IoT::TopicRule
@@ -1639,7 +1738,7 @@ Resources:
       - KinesisDeliveryPolicy
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/${DeploymentType}${DeploymentOption}.template.yaml
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/VirtualOption1.template.yaml
         - S3Bucket: !If
             - UsingDefaultBucket
             - !Sub 'aws-quickstart-${AWS::Region}'
@@ -1654,7 +1753,6 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Ref EdgeDeviceID
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
         EC2AMI: !FindInMap [EC2AMI, !Ref "AWS::Region", ami]

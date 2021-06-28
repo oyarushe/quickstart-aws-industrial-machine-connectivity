@@ -21,6 +21,7 @@ log.setLevel(logging.DEBUG)
 
 class CreateSitewiseResources:
     def __init__(self):
+        self.lambda_client = boto3.client('lambda')
         self.iotData = boto3.client('iot-data')
         self.boto3Session = boto3.Session()
         self.dynamo = self.boto3Session.resource('dynamodb')
@@ -229,6 +230,10 @@ class CreateSitewiseResources:
                 qos=1,
                 payload=json.dumps(payload, indent=4, sort_keys=True)
             )
+        self.lambda_client.invoke(
+            FunctionName=os.environ['SiteWiseS3DumpLambda'],
+            InvocationType='Event'
+        )
 
     def processEvent(self, event):
         self.modelList = self.createModels()
