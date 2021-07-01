@@ -18,7 +18,6 @@ Metadata:
         Parameters:
           - EdgeDeviceID
           - DeploymentType
-          - DeploymentOption
       - Label:
           default: Amazon EC2 configuration
         Parameters:
@@ -59,8 +58,6 @@ Metadata:
         default: Name for the edge-gateway device
       DeploymentType:
         default: Type of deployment
-      DeploymentOption:
-        default: Dataflow option
       VpcId:
         default: Default VPC ID
       GreengrassInstanceType:
@@ -163,13 +160,6 @@ Parameters:
     Description: Type of edge deployment. If your deployment uses physical edge hardware, choose "Physical."
     Type: String
     Default: Virtual
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-    ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise.
-    Type: String
-    Default: Option1 
   VpcId:
     ConstraintDescription: Must be a valid VPC ID.
     Description: ID of the VPC that the solution will be hosted in.
@@ -1130,7 +1120,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Baytown-Primary']]
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
+        DeploymentOption: 'Option1'
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
@@ -1168,7 +1158,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Houston-Secondary']]
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
+        DeploymentOption: 'Option1'
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType

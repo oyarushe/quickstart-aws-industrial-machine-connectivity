@@ -71,7 +71,7 @@ Parameters:
       - Option2a
       - Option2b
     ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
+    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core).
     Type: String
     Default: Option1 
   SitewiseMonitorEmail:
@@ -149,15 +149,6 @@ Parameters:
     Description: Type of edge deployment. If your deployment uses physical edge hardware, choose "Physical."
     Type: String
     Default: Virtual
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core).
-    Type: String
-    Default: Option1 
   VpcId:
     ConstraintDescription: Must be a valid VPC ID.
     Description: ID of the VPC that the solution will be hosted in.
@@ -392,8 +383,7 @@ Resources:
         DynamoDBModelTable: !Ref AMCModelTable
         Buckets: !Join
         - ','
-        - - !Ref imcs3bucket
-          - !Ref DevicesBucketResource
+        - - !Ref DevicesBucketResource
           - !Ref AMCIncomingResource
           - !Ref AMCOutputResource
           - !Ref SiteWiseResourceDataBucket

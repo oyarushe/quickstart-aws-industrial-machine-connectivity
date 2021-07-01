@@ -51,9 +51,6 @@ Parameters:
   RestAPIId:
     Description: ID for the Rest API
     Type: String
-  IMCBucketArn:
-    Description: ARN of the projects IMC Bucket
-    Type: String
   QSS3KeyPrefix: 
     Description: Quickstart key prefix for S3 Quickstart bucket
     Type: String

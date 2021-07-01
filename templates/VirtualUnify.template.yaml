@@ -415,7 +415,7 @@ Resources:
                   - iot:UpdateCertificate
                   - iot:DescribeEndpoint
                 Effect: Allow
-                Resource: !Sub "arn:${AWS::Partition}:iot::${AWS::AccountId}:*"
+                Resource: !Sub "arn:${AWS::Partition}:*::${AWS::AccountId}:*"
               - Action:
                   - greengrass:GetServiceRoleForAccount
                   - greengrass:AssociateServiceRoleToAccount
