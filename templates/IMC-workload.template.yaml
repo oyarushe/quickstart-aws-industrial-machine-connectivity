@@ -17,7 +17,6 @@ Metadata:
           - UnifyOrgId
           - UnifyUsername
           - UnifyPassword
-          - DeploymentOption
       - Label:
           default: Edge-deployment configuration
         Parameters:
@@ -60,8 +59,6 @@ Metadata:
         default: Unify password
       UnifyOrgId:
         default: Unify organization id
-      DeploymentOption:
-        default: Dataflow option
       EC2KeyPairName:
         default: SSH key name
       EdgeDeviceID:
@@ -112,15 +109,6 @@ Parameters:
     Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
     Type: Number
     Default: 0
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
-    Type: String
-    Default: Option1 
   SitewiseMonitorEmail:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
@@ -1393,12 +1381,14 @@ Resources:
   
   AssetModelConverterLogGroup:
     Type: AWS::Logs::LogGroup
+    Condition: IfAMC
     DependsOn: AssetModelConverterLambdaResource
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelConverterLambdaResource}
 
   AssetModelConverterDashboard:
     Type: AWS::CloudWatch::Dashboard
+    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelConverterLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1860,7 +1850,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Baytown-Primary']]
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
+        DeploymentOption: Option1
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
@@ -1898,7 +1888,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Houston-Secondary']]
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
+        DeploymentOption: Option1
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
