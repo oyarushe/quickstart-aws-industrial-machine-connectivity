@@ -82,7 +82,6 @@ Resources:
               - Action:
                   - secretsmanager:PutSecretValue
                   - secretsmanager:ListSecretVersionIds
-                  - secretsmanager:GetRandomPassword
                   - secretsmanager:ListSecrets
                   - secretsmanager:UpdateSecret
                   - secretsmanager:DeleteSecret
@@ -90,6 +89,10 @@ Resources:
                   - secretsmanager:CreateSecret
                 Effect: Allow
                 Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:*
+              - Action:
+                  - secretsmanager:GetRandomPassword
+                Effect: Allow
+                Resource: "*"
               - Action:
                   - iot:Publish
                 Effect: Allow
