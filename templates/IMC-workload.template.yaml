@@ -534,9 +534,6 @@ Resources:
             Ref: AWS::StackName
 
   SiteWiseS3Dump:
-    DependsOn: 
-      - CopyZipsStack
-      - SiteWiseResourceDataBucket
     Type: AWS::Lambda::Function
     Properties:
       ReservedConcurrentExecutions: 1
@@ -599,7 +596,6 @@ Resources:
 
   sitewisemonitor:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZipsStack
     Properties:
       Runtime: python3.8
       Role:
@@ -664,7 +660,6 @@ Resources:
 
   processLambda:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZipsStack
     Properties:
       Runtime: nodejs12.x
       Role: !GetAtt LambdaExecRole.Arn
@@ -892,7 +887,6 @@ Resources:
           PolicyName: GGLambdaPolicy
   GreengrassLambdaResource:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZipsStack
     Properties:
       Code:
         S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
@@ -1097,12 +1091,12 @@ Resources:
           Type: FileSystem
           Component: GreengrassSystem
           Level: DEBUG
-          Space: '128'
+          Space: 128
         - Id: FileSystemLambda
           Type: FileSystem
           Component: Lambda
           Level: DEBUG
-          Space: '128'
+          Space: 128
         - Id: AWSCloudWatchGreengrassSystem
           Type: AWSCloudWatch
           Component: GreengrassSystem
@@ -1253,7 +1247,6 @@ Resources:
   AssetModelIngestionLambdaResource:
     Type: AWS::Lambda::Function
     Condition: IfAMC
-    DependsOn: CopyZipsStack
     Properties:
       Code:
         S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
@@ -1274,12 +1267,14 @@ Resources:
 
   AssetModelIngestionLogGroup:
     Type: AWS::Logs::LogGroup
+    Condition: IfAMC
     DependsOn: AssetModelIngestionLambdaResource
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelIngestionLambdaResource}
 
   AssetModelIngestionDashboard:
     Type: AWS::CloudWatch::Dashboard
+    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelIngestionLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1353,7 +1348,6 @@ Resources:
   AssetModelConverterLambdaResource:
     Type: AWS::Lambda::Function
     Condition: IfAMC
-    DependsOn: CopyZipsStack
     Properties:
       ReservedConcurrentExecutions: 1
       Code:
@@ -1398,7 +1392,6 @@ Resources:
   AssetModelUpdaterLambdaResource:
     Type: AWS::Lambda::Function
     Condition: IfAMC
-    DependsOn: CopyZipsStack
     Properties:
       ReservedConcurrentExecutions: 1
       Code:
@@ -1428,11 +1421,13 @@ Resources:
   AssetModelUpdaterLogGroup:
     Type: AWS::Logs::LogGroup
     DependsOn: AssetModelUpdaterLambdaResource
+    Condition: IfAMC
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelUpdaterLambdaResource}
 
   AssetModelUpdaterDashboard:
     Type: AWS::CloudWatch::Dashboard
+    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelUpdaterLambdaResource}-dashboard
       DashboardBody: !Sub | 
