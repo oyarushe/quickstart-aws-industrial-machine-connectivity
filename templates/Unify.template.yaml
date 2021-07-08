@@ -200,9 +200,6 @@ Resources:
   
   UnifySourceIngestNotification:
     Type: 'AWS::CloudFormation::Stack'
-    DependsOn:
-      - UnifySourceIngest
-      - UnifyIncomingBucket
     Properties:
       TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/S3_Lambda_Notification.template.yaml
       Parameters:

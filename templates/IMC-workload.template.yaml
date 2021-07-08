@@ -17,7 +17,6 @@ Metadata:
           - UnifyOrgId
           - UnifyUsername
           - UnifyPassword
-          - DeploymentOption
       - Label:
           default: Edge-deployment configuration
         Parameters:
@@ -60,8 +59,6 @@ Metadata:
         default: Unify password
       UnifyOrgId:
         default: Unify organization id
-      DeploymentOption:
-        default: Dataflow option
       EC2KeyPairName:
         default: SSH key name
       EdgeDeviceID:
@@ -112,15 +109,6 @@ Parameters:
     Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
     Type: Number
     Default: 0
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core). If the Asset Modeling Configuration is set to Element Unify, Option1 will be used.
-    Type: String
-    Default: Option1 
   SitewiseMonitorEmail:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
@@ -546,9 +534,6 @@ Resources:
             Ref: AWS::StackName
 
   SiteWiseS3Dump:
-    DependsOn: 
-      - CopyZipsStack
-      - SiteWiseResourceDataBucket
     Type: AWS::Lambda::Function
     Properties:
       ReservedConcurrentExecutions: 1
@@ -611,7 +596,6 @@ Resources:
 
   sitewisemonitor:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZipsStack
     Properties:
       Runtime: python3.8
       Role:
@@ -676,7 +660,6 @@ Resources:
 
   processLambda:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZipsStack
     Properties:
       Runtime: nodejs12.x
       Role: !GetAtt LambdaExecRole.Arn
@@ -904,7 +887,6 @@ Resources:
           PolicyName: GGLambdaPolicy
   GreengrassLambdaResource:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZipsStack
     Properties:
       Code:
         S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
@@ -1109,12 +1091,12 @@ Resources:
           Type: FileSystem
           Component: GreengrassSystem
           Level: DEBUG
-          Space: '128'
+          Space: 128
         - Id: FileSystemLambda
           Type: FileSystem
           Component: Lambda
           Level: DEBUG
-          Space: '128'
+          Space: 128
         - Id: AWSCloudWatchGreengrassSystem
           Type: AWSCloudWatch
           Component: GreengrassSystem
@@ -1265,7 +1247,6 @@ Resources:
   AssetModelIngestionLambdaResource:
     Type: AWS::Lambda::Function
     Condition: IfAMC
-    DependsOn: CopyZipsStack
     Properties:
       Code:
         S3Bucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
@@ -1286,12 +1267,14 @@ Resources:
 
   AssetModelIngestionLogGroup:
     Type: AWS::Logs::LogGroup
+    Condition: IfAMC
     DependsOn: AssetModelIngestionLambdaResource
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelIngestionLambdaResource}
 
   AssetModelIngestionDashboard:
     Type: AWS::CloudWatch::Dashboard
+    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelIngestionLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1365,7 +1348,6 @@ Resources:
   AssetModelConverterLambdaResource:
     Type: AWS::Lambda::Function
     Condition: IfAMC
-    DependsOn: CopyZipsStack
     Properties:
       ReservedConcurrentExecutions: 1
       Code:
@@ -1393,12 +1375,14 @@ Resources:
   
   AssetModelConverterLogGroup:
     Type: AWS::Logs::LogGroup
+    Condition: IfAMC
     DependsOn: AssetModelConverterLambdaResource
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelConverterLambdaResource}
 
   AssetModelConverterDashboard:
     Type: AWS::CloudWatch::Dashboard
+    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelConverterLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1408,7 +1392,6 @@ Resources:
   AssetModelUpdaterLambdaResource:
     Type: AWS::Lambda::Function
     Condition: IfAMC
-    DependsOn: CopyZipsStack
     Properties:
       ReservedConcurrentExecutions: 1
       Code:
@@ -1438,11 +1421,13 @@ Resources:
   AssetModelUpdaterLogGroup:
     Type: AWS::Logs::LogGroup
     DependsOn: AssetModelUpdaterLambdaResource
+    Condition: IfAMC
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelUpdaterLambdaResource}
 
   AssetModelUpdaterDashboard:
     Type: AWS::CloudWatch::Dashboard
+    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelUpdaterLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1860,7 +1845,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Baytown-Primary']]
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
+        DeploymentOption: Option1
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
@@ -1898,7 +1883,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         EdgeDeviceID: !Join ['', [!Ref EdgeDeviceID, 'Houston-Secondary']]
         DeploymentType: !Ref DeploymentType
-        DeploymentOption: !Ref DeploymentOption
+        DeploymentOption: Option1
         DeviceBucketRes: !Ref DevicesBucketResource
         EC2KeyPairName: !Ref EC2KeyPairName
         IgnitionInstanceType: !Ref IgnitionInstanceType
