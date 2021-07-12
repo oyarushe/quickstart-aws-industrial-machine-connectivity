@@ -37,8 +37,6 @@ Metadata:
         default: Quick Start S3 key prefix
       QSS3BucketRegion:
         default: Quick Start S3 bucket Region
-      DeploymentOption:
-        default: Dataflow option
       EC2KeyPairName:
         default: SSH key name
       EdgeDeviceID:
@@ -65,15 +63,6 @@ Metadata:
         default: Availability Zone launch selection
 
 Parameters:
-  DeploymentOption:
-    AllowedValues:
-      - Option1
-      - Option2a
-      - Option2b
-    ConstraintDescription: Must be a valid dataflow option. 
-    Description: Default dataflow ("Option1") is OPC UA to SiteWise. You can also choose "Option2a" (MQTT to Iot Core) or "Option2b" (MQTT to Greengrass to Iot Core).
-    Type: String
-    Default: Option1 
   SitewiseMonitorEmail:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
