@@ -347,7 +347,6 @@ Resources:
           scripts/physical-brownfield-all-options.sh,
           scripts/physical-greenfield-option1.sh,
           scripts/physical-greenfield-option2a.sh,
-          scripts/physical-greenfield-option2b.sh,
           functions/packages/UnifyServiceAccountHandler/UnifyServiceAccountHandler.zip,
           functions/packages/UnifySiteWiseIngest/UnifySiteWiseIngest.zip,
           functions/packages/UnifySiteWiseUpdater/UnifySiteWiseUpdater.zip,

@@ -227,6 +227,7 @@ Resources:
 
 Outputs:
   IgnitionURL:
+    Condition: IfVirtual
     Value: !GetAtt 'Workload.Outputs.IgnitionURL'
   DependenciesBucket:
     Condition: IfPhysical

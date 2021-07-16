@@ -193,6 +193,9 @@ Conditions:
   IfPhysical: !Equals
     - !Ref DeploymentType
     - 'Physical'
+  IfVirtual: !Equals
+    - !Ref DeploymentType
+    - 'Virtual'
  
 Resources:
   VPC:
@@ -252,8 +255,10 @@ Resources:
 
 Outputs:
   IgnitionURL1:
+    Condition: IfVirtual
     Value: !GetAtt 'Workload.Outputs.IgnitionURL1'
   IgnitionURL2:
+    Condition: IfVirtual
     Value: !GetAtt 'Workload.Outputs.IgnitionURL2'
   DependenciesBucket:
     Condition: IfPhysical

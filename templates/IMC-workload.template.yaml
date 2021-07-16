@@ -1153,14 +1153,12 @@ Resources:
 
   AssetModelIngestionLogGroup:
     Type: AWS::Logs::LogGroup
-    Condition: IfAMC
     DependsOn: AssetModelIngestionLambdaResource
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelIngestionLambdaResource}
 
   AssetModelIngestionDashboard:
     Type: AWS::CloudWatch::Dashboard
-    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelIngestionLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1256,14 +1254,12 @@ Resources:
   
   AssetModelConverterLogGroup:
     Type: AWS::Logs::LogGroup
-    Condition: IfAMC
     DependsOn: AssetModelConverterLambdaResource
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelConverterLambdaResource}
 
   AssetModelConverterDashboard:
     Type: AWS::CloudWatch::Dashboard
-    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelConverterLambdaResource}-dashboard
       DashboardBody: !Sub | 
@@ -1301,13 +1297,11 @@ Resources:
   AssetModelUpdaterLogGroup:
     Type: AWS::Logs::LogGroup
     DependsOn: AssetModelUpdaterLambdaResource
-    Condition: IfAMC
     Properties:
       LogGroupName: !Sub /aws/lambda/${AssetModelUpdaterLambdaResource}
 
   AssetModelUpdaterDashboard:
     Type: AWS::CloudWatch::Dashboard
-    Condition: IfAMC
     Properties:
       DashboardName: !Sub ${AssetModelUpdaterLambdaResource}-dashboard
       DashboardBody: !Sub | 

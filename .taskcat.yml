@@ -3,31 +3,31 @@ project:
   owner: quickstart@amazon.com
   package_lambda: false
   shorten_stack_name: true
+  s3_regional_buckets: true
   parameters:
-      QSS3BucketName: $[taskcat_autobucket] # will need to follow 'virtual deployment' instructions in user guide 
-      QSS3KeyPrefix: quickstart-aws-industrial-machine-connectivity/ # will need to follow 'virtual deployment' instructions in user guide 
-      QSS3BucketRegion: $[taskcat_current_region]
-  template: templates/IMC-main.template.yaml
+    QSS3BucketName: $[taskcat_autobucket] # will need to follow 'virtual deployment' instructions in user guide 
+    QSS3KeyPrefix: quickstart-aws-industrial-machine-connectivity/ # will need to follow 'virtual deployment' instructions in user guide 
+    QSS3BucketRegion: $[taskcat_current_region]
+  s3_bucket: tcat-quickstart-awsmv450lzj
 
 tests:
-  ICLTestVirtual:
-    parameters:
-      ModelingVendorType: "Asset Model Converter"
-      AMCDriver: "IgnitionCirrusLink"
-      DeploymentType: "Virtual"
-      EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: Virtual
-      GreengrassInstanceType: t3.small
-      IgnitionInstanceType: t3.large
-      PublicSubnet1CIDR: 10.0.128.0/20
-      SitewiseMonitorEmail: OVERRIDE
-      UserPublicIP: OVERRIDE
-      VPCCIDR: 10.0.0.0/16
-      VPCTenancy: default
-      UnifyUsername: OVERRIDE
-      UnifyPassword: OVERRIDE
-    regions:
-      - eu-central-1
+  # ICLTestVirtual:
+  #   parameters:
+  #     ModelingVendorType: "Asset Model Converter"
+  #     AMCDriver: "IgnitionCirrusLink"
+  #     DeploymentType: "Virtual"
+  #     EC2KeyPairName: OVERRIDE
+  #     EdgeDeviceID: Virtual
+  #     GreengrassInstanceType: t3.small
+  #     IgnitionInstanceType: t3.large
+  #     PublicSubnet1CIDR: 10.0.128.0/20
+  #     SitewiseMonitorEmail: OVERRIDE
+  #     UserPublicIP: OVERRIDE
+  #     VPCCIDR: 10.0.0.0/16
+  #     VPCTenancy: default
+  #   regions:
+  #     - eu-central-1
+  #   template: templates/IMC-main.template.yaml
   
   ICLTestPhysical:
     parameters:
@@ -43,28 +43,28 @@ tests:
       UserPublicIP: OVERRIDE
       VPCCIDR: 10.0.0.0/16
       VPCTenancy: default
+    regions:
+      - us-east-1
+    template: templates/IMC-main.template.yaml
+
+  ElementUnify:
+    parameters:
+      ModelingVendorType: "Element Unify"
+      AMCDriver: "Element Unify"
+      DeploymentType: "Physical"
+      EC2KeyPairName: OVERRIDE
+      EdgeDeviceID: Virtual
+      GreengrassInstanceType: t3.small
+      IgnitionInstanceType: t3.large
+      PublicSubnet1CIDR: 10.0.128.0/20
+      SitewiseMonitorEmail: OVERRIDE
+      UserPublicIP: OVERRIDE
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
       UnifyUsername: OVERRIDE
       UnifyPassword: OVERRIDE
+      UnifyHostname: OVERRIDE
+      UnifyOrgId: OVERRIDE
     regions:
       - eu-central-1
-  
-  # ElementUnify:
-  #   parameters:
-  #     ModelingVendorType: "Element Unify"
-  #     AMCDriver: "Element Unify"
-  #     DeploymentType: "Physical"
-  #     EC2KeyPairName: OVERRIDE
-  #     EdgeDeviceID: Virtual
-  #     GreengrassInstanceType: t3.small
-  #     IgnitionInstanceType: t3.large
-  #     PublicSubnet1CIDR: 10.0.128.0/20
-  #     SitewiseMonitorEmail: OVERRIDE
-  #     UserPublicIP: OVERRIDE
-  #     VPCCIDR: 10.0.0.0/16
-  #     VPCTenancy: default
-  #     UnifyUsername: OVERRIDE
-  #     UnifyPassword: OVERRIDE
-  #     UnifyHostname: https://app001-aws.elementanalytics.com/
-  #     UnifyOrgId: OVERRIDE
-  #   regions:
-  #     - eu-central-1
+    template: templates/IMC-unify-main.template.yaml
