@@ -39,13 +39,15 @@ Each deployment takes about {deployment_time} to complete.
 [start=2]
 .. *Option 2 - Element Unify* Element Unify uses a no code/low code approach to build and publish models to AWS IoT SiteWise.
 +
+To use Element Unify, sign up for an account before deploying through https://www.elementanalytics.com/solutions/element-unify-for-aws[Element website^] or the https://aws.amazon.com/marketplace/pp/prodview-trvx6gn4vqeok[AWS Marketplace^].
++
 [cols="3,1"]
 |===
-^|https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-imc-unify&templateURL=https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-main.template.yaml&param_ModelingVendorType=Element%20Unify&param_VPCCIDR=10.0.0.0/16&param_EdgeDeviceID=Virtual&param_PublicSubnet1CIDR=10.0.128.0/20&param_VPCTenancy=default&param_UnifyHostname=https://app001-aws.elementanalytics.com/&param_UnifyOrgId=0&param_DeploymentType=Virtual&param_AMCDriver=Element%20Unify&param_GreengrassInstanceType=t3.small&param_IgnitionInstanceType=t3.large&param_QSS3BucketRegion=us-east-1&param_DeploymentOption=Option1&param_QSS3BucketName=aws-quickstart&param_QSS3KeyPrefix=quickstart-aws-industrial-machine-connectivity/[Deploy Industrial Machine Connectivity with Element Unify into a new VPC on AWS^]
-^|https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-main.template.yaml[View template^]
+^|https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=aws-imc&templateURL=https://aws-quickstart.s3.us-east-1.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-main.template.yaml[Deploy Industrial Machine Connectivity with Element Unify into a new VPC on AWS^]
+^|https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-main.template.yaml[View template^]
 
-^|https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=aws-imc-unify&templateURL=https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-workload.template.yaml&param_ModelingVendorType=Element%20Unify&param_VPCCIDR=10.0.0.0/16&param_EdgeDeviceID=Virtual&param_VPCTenancy=default&param_UnifyHostname=https://app001-aws.elementanalytics.com/&param_UnifyOrgId=0&param_DeploymentType=Virtual&param_AMCDriver=Element%20Unify&param_GreengrassInstanceType=t3.small&param_IgnitionInstanceType=t3.large&param_QSS3BucketRegion=us-east-1&param_DeploymentOption=Option1&param_QSS3BucketName=aws-quickstart&param_QSS3KeyPrefix=quickstart-aws-industrial-machine-connectivity/[Deploy Industrial Machine Connectivity with Element Unify into a new VPC on AWS^]
-^|https://imc-unify-demo.s3.amazonaws.com/unify-quickstart-aws-imc-integration/templates/IMC-workload.template.yaml[View template^]
+^|https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=aws-imc&templateURL=https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-workload.template.yaml[Deploy Industrial Machine Connectivity with Element Unify into a existing VPC on AWS^]
+^|https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-workload.template.yaml[View template^]
 |===
 
 [start=2]

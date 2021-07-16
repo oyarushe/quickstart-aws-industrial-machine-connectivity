@@ -1,2 +1,2 @@
 typing-extensions==3.7.4.3
-unify-sitewise-agent == 0.0.6
+unify-sitewise-agent == 0.0.7

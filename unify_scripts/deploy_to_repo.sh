@@ -47,12 +47,12 @@ deploy_all() {
     deploy_stack_cleanup
     deploy_ggdeployer
 
-# change s3://imc-unify/unify-quickstart-aws-imc-integratio to the repo you want to deploy
-    aws s3 sync . s3://imc-unify/unify-quickstart-aws-imc-integration \
+# deploy to a testing repo s3://imc-unify-demo/unify-quickstart-aws-imc-integratio
+    aws s3 sync . s3://imc-unify-demo/unify-quickstart-aws-imc-integration \
     --exclude "*" --include "functions/packages/*" --include "templates/*" --include "scripts/*"
 }
 
 deploy_all
 
 # manual run this command if only sync templates:
-# aws s3 sync . s3://imc-unify/unify-quickstart-aws-imc-integration --exclude "*"  --include "templates/*"
+# aws s3 sync . s3://imc-unify-demo/unify-quickstart-aws-imc-integration --exclude "*"  --include "templates/*"
