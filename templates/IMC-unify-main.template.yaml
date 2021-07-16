@@ -56,7 +56,7 @@ Metadata:
       UnifyPassword:
         default: Unify password
       UnifyOrgId:
-        default: Unify organization id
+        default: Unify organization Id
       VPCCIDR:
         default: VPC CIDR
       EC2KeyPairName:
@@ -182,7 +182,7 @@ Parameters:
     Type: String
     NoEcho: true
   UnifyOrgId:
-    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<orgId>.
+    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<organization Id>.
     Type: Number
     Default: 0
 Conditions:
