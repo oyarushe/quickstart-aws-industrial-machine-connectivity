@@ -77,20 +77,20 @@ Metadata:
 
 Parameters:
   UnifyHostname:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
+    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/.
     Type: String
     Default: https://app001-aws.elementanalytics.com/
   UnifyUsername:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
-    Description: If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
     Type: String
   UnifyPassword:
-    Description: If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Description: Enter your Element Unify password. You can get credentials from your Element Unify support engineer.
     Type: String
     NoEcho: true
   UnifyOrgId:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
+    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<orgId>.
     Type: Number
     Default: 0
   SitewiseMonitorEmail:
@@ -315,7 +315,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - PolicyName: lambda-endpoint
           PolicyDocument:
@@ -379,6 +379,7 @@ Resources:
         - !Join
           - ','
           - - !Ref EdgeDeviceID
+        DeleteGreengrass: 'Yes'
 
   LambdaExecRole:
     Type: AWS::IAM::Role
@@ -694,7 +695,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
-                Resource: arn:aws:logs:*:*:*
+                Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
               - Action: iot:*
                 Effect: Allow
                 Resource: "*"
@@ -722,7 +723,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
-                Resource: arn:aws:logs:*:*:*
+                Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
               - Action: iot:*
                 Effect: Allow
                 Resource: "*"
@@ -996,7 +997,7 @@ Resources:
               - Action: s3:GetObject
                 Effect: Allow
                 Resource: 
-                  - !Sub 'arn:aws:s3:::${DevicesBucketResource}*'
+                  - !Sub 'arn:${AWS::Partition}:s3:::${DevicesBucketResource}*'
             Version: "2012-10-17"
           PolicyName: Ec2S3Access
   EdgeSecurityGroupResource:

@@ -29,7 +29,6 @@ Metadata:
           - EC2KeyPairName
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - AMCDriver
           - UserPublicIP
           - SitewiseMonitorEmail
       - Label:
@@ -170,20 +169,20 @@ Parameters:
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})
     Description: Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
   UnifyHostname:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify hostname. If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
+    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/.
     Type: String
     Default: https://app001-aws.elementanalytics.com/
   UnifyUsername:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
-    Description: If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
     Type: String
   UnifyPassword:
-    Description: If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Description: Enter your Element Unify password. You can get credentials from your Element Unify support engineer.
     Type: String
     NoEcho: true
   UnifyOrgId:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
+    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<orgId>.
     Type: Number
     Default: 0
 Conditions:
