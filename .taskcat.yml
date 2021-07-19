@@ -28,7 +28,7 @@ tests:
   #   regions:
   #     - eu-central-1
   #   template: templates/IMC-main.template.yaml
-  
+
   ICLTestPhysical:
     parameters:
       ModelingVendorType: "Asset Model Converter"
@@ -46,12 +46,12 @@ tests:
     regions:
       - us-east-1
     template: templates/IMC-main.template.yaml
-
-  ElementUnifyVirtual:
+  
+  UnifyVirtual:
     parameters:
       DeploymentType: "Virtual"
       EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: tcatVirtual
+      EdgeDeviceID: tcat-virtual
       GreengrassInstanceType: t3.small
       IgnitionInstanceType: t3.large
       PublicSubnet1CIDR: 10.0.128.0/20
@@ -67,11 +67,11 @@ tests:
       - us-east-1
     template: templates/IMC-unify-main.template.yaml
 
-  ElementUnifyPhysical:
+  UnifyPhysical:
     parameters:
       DeploymentType: "Physical"
       EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: tcatPhysical
+      EdgeDeviceID: tcat-physical
       GreengrassInstanceType: t3.small
       IgnitionInstanceType: t3.large
       PublicSubnet1CIDR: 10.0.128.0/20
