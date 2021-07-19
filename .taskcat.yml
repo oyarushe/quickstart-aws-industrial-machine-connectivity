@@ -51,7 +51,7 @@ tests:
     parameters:
       DeploymentType: "Virtual"
       EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: tcat-virtual
+      EdgeDeviceID: tcatvirtual
       GreengrassInstanceType: t3.small
       IgnitionInstanceType: t3.large
       PublicSubnet1CIDR: 10.0.128.0/20
@@ -71,7 +71,7 @@ tests:
     parameters:
       DeploymentType: "Physical"
       EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: tcat-physical
+      EdgeDeviceID: tcatphysical
       GreengrassInstanceType: t3.small
       IgnitionInstanceType: t3.large
       PublicSubnet1CIDR: 10.0.128.0/20
