@@ -47,13 +47,11 @@ tests:
       - us-east-1
     template: templates/IMC-main.template.yaml
 
-  ElementUnify:
+  ElementUnifyVirtual:
     parameters:
-      ModelingVendorType: "Element Unify"
-      AMCDriver: "Element Unify"
-      DeploymentType: "Physical"
+      DeploymentType: "Virtual"
       EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: Virtual
+      EdgeDeviceID: tcatVirtual
       GreengrassInstanceType: t3.small
       IgnitionInstanceType: t3.large
       PublicSubnet1CIDR: 10.0.128.0/20
@@ -66,5 +64,26 @@ tests:
       UnifyHostname: OVERRIDE
       UnifyOrgId: OVERRIDE
     regions:
-      - eu-central-1
+      - us-east-1
     template: templates/IMC-unify-main.template.yaml
+
+  ElementUnifyPhysical:
+    parameters:
+      DeploymentType: "Physical"
+      EC2KeyPairName: OVERRIDE
+      EdgeDeviceID: tcatPhysical
+      GreengrassInstanceType: t3.small
+      IgnitionInstanceType: t3.large
+      PublicSubnet1CIDR: 10.0.128.0/20
+      SitewiseMonitorEmail: OVERRIDE
+      UserPublicIP: OVERRIDE
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
+      UnifyUsername: OVERRIDE
+      UnifyPassword: OVERRIDE
+      UnifyHostname: OVERRIDE
+      UnifyOrgId: OVERRIDE
+    regions:
+      - us-east-1
+    template: templates/IMC-unify-main.template.yaml
+

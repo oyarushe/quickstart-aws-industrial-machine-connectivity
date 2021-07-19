@@ -378,7 +378,10 @@ Resources:
         - !Join
           - ','
           - - !Ref EdgeDeviceID
-        DeleteGreengrass: 'Yes'
+        DeleteGreengrass: !If
+        - IfVirtual
+        - 'Yes'
+        - 'No'
 
   LambdaExecRole:
     Type: AWS::IAM::Role

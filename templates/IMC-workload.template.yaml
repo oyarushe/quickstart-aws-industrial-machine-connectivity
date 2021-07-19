@@ -380,7 +380,11 @@ Resources:
         EdgeDeviceIDs: !Join
         - ','
         - - !Ref EdgeDeviceID
-  
+        DeleteGreengrass: !If
+        - IfVirtual
+        - 'Yes'
+        - 'No'
+
   LambdaExecRole:
     Type: AWS::IAM::Role
     DependsOn: CopyZipsStack
