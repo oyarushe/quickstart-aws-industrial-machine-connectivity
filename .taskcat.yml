@@ -84,6 +84,6 @@ tests:
       UnifyHostname: OVERRIDE
       UnifyOrgId: OVERRIDE
     regions:
-      - us-east-1
+      - eu-central-1
     template: templates/IMC-unify-main.template.yaml
 
