@@ -9,17 +9,49 @@ project:
     QSS3KeyPrefix: quickstart-aws-industrial-machine-connectivity/ # will need to follow 'virtual deployment' instructions in user guide 
     QSS3BucketRegion: $[taskcat_current_region]
   s3_bucket: tcat-quickstart-awsmv450lzj
-    QSS3BucketName: imc-unify-demo # will need to follow 'virtual deployment' instructions in user guide 
-    QSS3KeyPrefix: unify-quickstart-aws-imc-integration/ # will need to follow 'virtual deployment' instructions in user guide 
-    QSS3BucketRegion: us-east-1
 
 tests:
+  # ICLTestVirtual:
+  #   parameters:
+  #     ModelingVendorType: "Asset Model Converter"
+  #     AMCDriver: "IgnitionCirrusLink"
+  #     DeploymentType: "Virtual"
+  #     EC2KeyPairName: OVERRIDE
+  #     EdgeDeviceID: Virtual
+  #     GreengrassInstanceType: t3.small
+  #     IgnitionInstanceType: t3.large
+  #     PublicSubnet1CIDR: 10.0.128.0/20
+  #     SitewiseMonitorEmail: OVERRIDE
+  #     UserPublicIP: OVERRIDE
+  #     VPCCIDR: 10.0.0.0/16
+  #     VPCTenancy: default
+  #   regions:
+  #     - eu-central-1
+  #   template: templates/IMC-main.template.yaml
 
-  unify:
+  # ICLTestPhysical:
+  #   parameters:
+  #     ModelingVendorType: "Asset Model Converter"
+  #     AMCDriver: "IgnitionCirrusLink"
+  #     DeploymentType: "Physical"
+  #     EC2KeyPairName: OVERRIDE
+  #     EdgeDeviceID: Physical
+  #     GreengrassInstanceType: t3.small
+  #     IgnitionInstanceType: t3.large
+  #     PublicSubnet1CIDR: 10.0.128.0/20
+  #     SitewiseMonitorEmail: OVERRIDE
+  #     UserPublicIP: OVERRIDE
+  #     VPCCIDR: 10.0.0.0/16
+  #     VPCTenancy: default
+  #   regions:
+  #     - us-east-1
+  #   template: templates/IMC-main.template.yaml
+  
+  UnifyVirtual:
     parameters:
       DeploymentType: "Virtual"
       EC2KeyPairName: OVERRIDE
-      EdgeDeviceID: tcat
+      EdgeDeviceID: tcatvirtual
       GreengrassInstanceType: t3.small
       IgnitionInstanceType: t3.large
       PublicSubnet1CIDR: 10.0.128.0/20
@@ -33,4 +65,24 @@ tests:
       UnifyOrgId: OVERRIDE
     regions:
       - us-east-1
+    template: templates/IMC-unify-main.template.yaml
+
+  UnifyPhysical:
+    parameters:
+      DeploymentType: "Physical"
+      EC2KeyPairName: OVERRIDE
+      EdgeDeviceID: tcatphysical
+      GreengrassInstanceType: t3.small
+      IgnitionInstanceType: t3.large
+      PublicSubnet1CIDR: 10.0.128.0/20
+      SitewiseMonitorEmail: OVERRIDE
+      UserPublicIP: OVERRIDE
+      VPCCIDR: 10.0.0.0/16
+      VPCTenancy: default
+      UnifyUsername: OVERRIDE
+      UnifyPassword: OVERRIDE
+      UnifyHostname: OVERRIDE
+      UnifyOrgId: OVERRIDE
+    regions:
+      - eu-central-1
     template: templates/IMC-unify-main.template.yaml
