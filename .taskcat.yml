@@ -8,7 +8,7 @@ project:
     QSS3BucketName: $[taskcat_autobucket] # will need to follow 'virtual deployment' instructions in user guide 
     QSS3KeyPrefix: quickstart-aws-industrial-machine-connectivity/ # will need to follow 'virtual deployment' instructions in user guide 
     QSS3BucketRegion: $[taskcat_current_region]
-  s3_bucket: tcat-quickstart-awsmv450lzj
+  # s3_bucket: tcat-quickstart-awsmv450lzj
 
 tests:
   # ICLTestVirtual:
