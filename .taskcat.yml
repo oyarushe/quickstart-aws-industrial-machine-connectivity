@@ -86,4 +86,3 @@ tests:
     regions:
       - eu-central-1
     template: templates/IMC-unify-main.template.yaml
-

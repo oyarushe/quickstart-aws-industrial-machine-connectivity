@@ -398,24 +398,45 @@ Resources:
                 Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
               - Action:
                   - iot:AttachPolicy
+                  - iot:DeleteCertificate
+                  - iot:DescribeCertificate
+                  - iot:DetachPolicy
+                  - iot:UpdateCertificate
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+              - Action:
+                  - iot:AttachPolicy
+                  - iot:CreateThingGroup
+                  - iot:DeletePolicy
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
+              - Action:
+                  - iot:CreatePolicy
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:policy/*"
+              - Action:
+                  - iot:CreateThing
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:billinggroup/*"
+              - Action:
+                  - iot:CreateThing
+                  - iot:DeleteThing
+                  - iot:DescribeThing
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+              - Action:
+                  - iot:DeletePolicy
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:policy/*"
+              - Action:
                   - iot:AttachThingPrincipal
                   - iot:CreateKeysAndCertificate
-                  - iot:CreatePolicy
-                  - iot:CreateThing
-                  - iot:CreateThingGroup
-                  - iot:DeleteCertificate
-                  - iot:DeletePolicy
-                  - iot:DeleteThing
-                  - iot:DescribeCertificate
-                  - iot:DescribeThing
-                  - iot:DetachPolicy
                   - iot:DetachThingPrincipal
                   - iot:ListThingGroups
                   - iot:ListThingPrincipals
-                  - iot:UpdateCertificate
                   - iot:DescribeEndpoint
                 Effect: Allow
-                Resource: !Sub "arn:${AWS::Partition}:*::${AWS::AccountId}:*"
+                Resource: "*"
               - Action:
                   - greengrass:GetServiceRoleForAccount
                   - greengrass:AssociateServiceRoleToAccount
