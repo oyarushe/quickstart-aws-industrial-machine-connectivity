@@ -146,6 +146,9 @@ Prerequisites:
 ... The manifest file is named `imcquicksightdata.json`. The URL follows this naming convention:
 .... `https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
 
+*Q.* If I am an ISV partner, how can I create a connector to interface my software to Element Unify?
+
+*A.* Documentation for developing connectors for ISV partners is found in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide]. A reference guide can also be found within https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal].
 
 == Troubleshooting
 
