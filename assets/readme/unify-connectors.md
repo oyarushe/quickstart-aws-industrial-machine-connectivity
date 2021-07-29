@@ -1,6 +1,6 @@
 ## Element Unify AWS resources
 
-The Element Unify asset modeling component of the IMC consists of a series of AWS resources to orchestrate the tag and model ingestion from source systems into Element Unify, model sync to AWS IoT SiteWise, and credential management. The Element Unify asset modeling components are listed below:
+The Element Unify asset modeling component of the IMC consists of a series of AWS resources to orchestrate the tag and model ingestion from source systems into Element Unify, model sync to AWS IoT SiteWise, and credential management. The Element Unify asset modeling components are listed below. If you are an ISV partner looking to develop a custom connector for Element Unify, refer to the [Unify Connector Development Guide](unify-connector-development-guide.md)
 
 ### Lambdas
 - UnifySourceIngest (name: ***-UnifySourceIngest-***) - Main Lambda that will call specific Unify connector to read tag definition exports from edge devices (ie. Ignition or KepServerEx), and upload into Element Unify as asset templates and/or asset datasets.

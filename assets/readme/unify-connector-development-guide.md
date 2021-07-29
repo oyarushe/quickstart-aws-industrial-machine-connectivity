@@ -160,7 +160,7 @@ A full list of available methods is found in the **Connector Framework Reference
 
 ### Deploy Connector as part of IMC
 
-To deploy the new connector, you will need to update the UnifySourceIngest/lambda_function.py to 1) include the library, 2) add a s3 key prefix, and 3) call the connector when a file is uploaded into the key prefix location
+Then update the UnifySourceIngest/lambda_function.py to 1) include the module, 2) add a s3 key prefix, and 3) call the connector when a file is uploaded into the key prefix location
 
 #### Include library
 
