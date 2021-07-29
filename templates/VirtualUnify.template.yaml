@@ -425,9 +425,12 @@ Resources:
                 Effect: Allow
                 Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
               - Action:
+                  - iot:DeletePolicy
+                Effect: Allow
+                Resource: !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:policy/*"
+              - Action:
                   - iot:AttachThingPrincipal
                   - iot:CreateKeysAndCertificate
-                  - iot:DeletePolicy
                   - iot:DetachThingPrincipal
                   - iot:ListThingGroups
                   - iot:ListThingPrincipals
