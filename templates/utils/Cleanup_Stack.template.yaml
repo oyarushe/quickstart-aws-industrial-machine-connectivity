@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Template to copy lambda zip code to s3 bucket'
+Description: 'Template to copy lambda zip code to s3 bucket. (qs-1qtb0iudq)'
 
 Parameters:
   LambdaZipsBucket:
@@ -54,7 +54,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /
       Policies:
         - PolicyName: stack-cleanup
@@ -67,7 +67,11 @@ Resources:
                   - greengrass:ResetDeployments
                   - greengrass:GetGroup
                   - iot:UpdateThingShadow
-                  - s3:*
+                  - s3:ListBucket
+                  - s3:DeleteBucket
+                  - s3:DeleteObject
+                  - s3:DeleteObjects
+                  - s3:ListBucketVersions
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
@@ -94,8 +98,17 @@ Resources:
                   - quicksight:DeleteDataSet
                   - quicksight:DeleteDataSource
                   - dynamodb:Scan
-                Resource: "*"
-  
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:*"
+                  - !Sub "arn:${AWS::Partition}:sts::${AWS::AccountId}:*"
+                  - !Sub "arn:${AWS::Partition}:greengrass:*:${AWS::AccountId}:*"
+                  - !Sub "arn:${AWS::Partition}:iot:*:${AWS::AccountId}:*"
+                  - !Sub "arn:${AWS::Partition}:iotsitewise:*:${AWS::AccountId}:*"
+                  - !Sub "arn:${AWS::Partition}:s3:::*"
+                  - !Sub "arn:${AWS::Partition}:logs:*:*:*"
+                  - !Sub "arn:${AWS::Partition}:sso:::*"
+                  - !Sub "arn:${AWS::Partition}:quicksight:*:*:*"
+                  - !Sub "arn:${AWS::Partition}:dynamodb:*:*:*"
   StackCleanupFunction:
     Type: AWS::Lambda::Function
     Properties:

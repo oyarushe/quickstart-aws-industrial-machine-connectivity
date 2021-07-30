@@ -1,2 +1,2 @@
 typing-extensions==3.7.4.3
-unify-sitewise-model-sync == 0.0.5
+unify-sitewise-model-sync == 0.0.6

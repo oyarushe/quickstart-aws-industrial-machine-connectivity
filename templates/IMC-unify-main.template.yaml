@@ -1,0 +1,309 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template to deploy the Industrial Machine Connectivity Quick Start into a new VPC. (qs-1qtb0iua4)
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying into a new VPC"
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network configuration
+        Parameters:
+          - VPCCIDR
+          - PublicSubnet1CIDR
+          - VPCTenancy
+      - Label:
+          default: Element Unify configuration
+        Parameters:
+          - UnifyHostname
+          - UnifyUsername
+          - UnifyPassword
+          - UnifyOrgId
+      - Label:
+          default: Edge-deployment configuration
+        Parameters:
+          - EdgeDeviceID
+          - DeploymentType
+      - Label:
+          default: Amazon EC2 configuration
+        Parameters:
+          - EC2KeyPairName
+          - GreengrassInstanceType
+          - IgnitionInstanceType
+          - UserPublicIP
+          - SitewiseMonitorEmail
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+
+    ParameterLabels:
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
+      PublicSubnet1CIDR:
+        default: Public subnet 1 CIDR
+      VPCTenancy:
+        default: VPC tenancy
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      UnifyHostname:
+        default: Unify host
+      UnifyUsername:
+        default: Unify username (email)
+      UnifyPassword:
+        default: Unify password
+      UnifyOrgId:
+        default: Unify organization Id
+      VPCCIDR:
+        default: VPC CIDR
+      EC2KeyPairName:
+        default: SSH key-pair name
+      EdgeDeviceID:
+        default: Name for the edge-gateway device 
+      DeploymentType:
+        default: Type of deployment
+      GreengrassInstanceType:
+        default: Greengrass EC2 instance type
+      IgnitionInstanceType:
+        default: Ignition EC2 instance type
+      UserPublicIP:
+        default: Your public IP address  
+      SitewiseMonitorEmail:
+        default: Email address for the SiteWise portal administrator
+
+  cfn-lint: { config: { ignore_checks: [E9007] } }
+Parameters:
+  SitewiseMonitorEmail:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address.
+    Description: Enter the email address.
+    Type: String
+  PublicSubnet1CIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.128.0/20
+    Description: CIDR block for the public DMZ subnet.
+    Type: String
+  VPCTenancy:
+    AllowedValues:
+      - default
+      - dedicated
+    Default: default
+    Description: Allowed tenancy of instances deployed into the VPC.
+    Type: String
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: The Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: Name of the S3 bucket for your copy of the Quick Start assets. 
+      Keep the default name unless you are customizing the template. 
+      Changing the name updates code references to point to a new Quick 
+      Start location. This name can include numbers, lowercase letters, 
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+      See https://aws-quickstart.github.io/option1.html.
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: ^([0-9a-zA-Z-.]+/)*$
+    ConstraintDescription: The Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), dots (.) and forward slash (/). The prefix should end with a forward slash (/).
+    Default: quickstart-aws-industrial-machine-connectivity/
+    Description: S3 key prefix that is used to simulate a directory for your copy of the 
+      Quick Start assets. Keep the default prefix unless you are customizing 
+      the template. Changing this prefix updates code references to point to 
+      a new Quick Start location. This prefix can include numbers, lowercase 
+      letters, uppercase letters, hyphens (-), and forward slashes (/). 
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+      and https://aws-quickstart.github.io/option1.html.
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. Keep the default Region unless you are customizing the template. Changing this Region updates code references to point to a new Quick Start location. When using your own bucket, specify the Region. See https://aws-quickstart.github.io/option1.html.
+    Type: String
+  VPCCIDR:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC.
+    Type: String
+  EdgeDeviceID:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Edge-gateway device name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Type: String
+    Default: Virtual
+    Description: If your deployment uses a physical edge-gateway device (industrial PC), enter a name. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).
+  EC2KeyPairName:
+    Description: Name of an existing EC2 key pair. All instances will launch with
+      this key pair.
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: keypairtest
+  DeploymentType:
+    AllowedValues:
+      - Virtual
+      - Physical
+    ConstraintDescription: Must contain a valid deployment type.
+    Description: Type of edge deployment. If your deployment uses physical edge hardware, choose "Physical."
+    Type: String
+    Default: Virtual
+  GreengrassInstanceType:
+    Description: Amazon EC2 instance type for the Greengrass EC2 instances.
+    Type: String
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+      - t3.medium
+  IgnitionInstanceType:
+    Description: Amazon EC2 instance type for the Ignition EC2 instances.
+    Type: String
+    Default: t3.large
+    AllowedValues:
+      - t3.large
+      - t3.xlarge
+  UserPublicIP:
+    Type: String
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})
+    Description: Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
+  UnifyHostname:
+    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/.
+    Type: String
+    Default: https://app001-aws.elementanalytics.com/
+  UnifyUsername:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address.
+    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Type: String
+  UnifyPassword:
+    Description: Enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Type: String
+    NoEcho: true
+  UnifyOrgId:
+    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<organization Id>.
+    Type: Number
+    Default: 0
+Conditions:
+  UsingDefaultBucket: !Equals
+    - !Ref QSS3BucketName
+    - 'aws-quickstart'
+  IfPhysical: !Equals
+    - !Ref DeploymentType
+    - 'Physical'
+  IfVirtual: !Equals
+    - !Ref DeploymentType
+    - 'Virtual'
+ 
+Resources:
+  VPC:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        AvailabilityZones: !Sub "${AWS::Region}a,${AWS::Region}b,${AWS::Region}c"
+        PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+        VPCCIDR: !Ref VPCCIDR
+        VPCTenancy: !Ref VPCTenancy
+        NumberOfAZs: 3
+
+  Workload:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/IMC-unify-workload.template.yaml
+        - S3Bucket: !If
+            - UsingDefaultBucket
+            - !Sub 'aws-quickstart-${AWS::Region}'
+            - !Ref 'QSS3BucketName'
+          S3Region: !If
+            - UsingDefaultBucket
+            - !Ref 'AWS::Region'
+            - !Ref 'QSS3BucketRegion'
+      Parameters:
+        AZ: !Sub ${AWS::Region}a
+        EC2Subnet:
+          Fn::GetAtt: [VPC, Outputs.PublicSubnet1ID]        
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        VpcId:
+          Fn::GetAtt: [VPC, Outputs.VPCID]        
+        EdgeDeviceID: !Ref EdgeDeviceID
+        DeploymentType: !Ref DeploymentType
+        EC2KeyPairName: !Ref EC2KeyPairName
+        GreengrassInstanceType: !Ref GreengrassInstanceType
+        IgnitionInstanceType: !Ref IgnitionInstanceType
+        UserPublicIP: !Ref UserPublicIP
+        PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+        SitewiseMonitorEmail: !Ref SitewiseMonitorEmail
+        UnifyHostname: !Ref UnifyHostname
+        UnifyUsername: !Ref UnifyUsername
+        UnifyPassword: !Ref UnifyPassword
+        UnifyOrgId: !Ref UnifyOrgId
+
+Outputs:
+  IgnitionURL1:
+    Condition: IfVirtual
+    Value: !GetAtt 'Workload.Outputs.IgnitionURL1'
+  IgnitionURL2:
+    Condition: IfVirtual
+    Value: !GetAtt 'Workload.Outputs.IgnitionURL2'
+  DependenciesBucket:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DependenciesBucket'
+  BootupScriptGreenfieldOption1:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptGreenfieldOption1'
+  BootupScriptGreenfieldOption2a:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptGreenfieldOption2a'
+  BootupScriptGreenfieldOption2b:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptGreenfieldOption2b'
+  BootupScriptBrownfieldAllOptions:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.BootupScriptBrownfieldAllOptions'
+  DeviceBucket:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DeviceBucket'
+  DeviceKeyGreengrass:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DeviceKeyGreengrass'
+  DeviceKeyAwareDevice:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.DeviceKeyAwareDevice'
+  RestAPIId:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.RestAPIId'
+  Region:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.Region'
+  EdgeDeviceID:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.EdgeDeviceID'
+  IoTEndpoint:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.IoTEndpoint'
+  FullScriptParamsGreenfield1and2a:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.FullScriptParamsGreenfield1and2a'
+  FullScriptParamsGreenfield2b:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.FullScriptParamsGreenfield2b'
+  FullScriptParamsBrownField:
+    Condition: IfPhysical
+    Value: !GetAtt 'Workload.Outputs.FullScriptParamsBrownField'
+  Postdeployment:
+    Value: https://fwd.aws/QPEw8
+    Description: See the deployment guide for post-deployment steps.

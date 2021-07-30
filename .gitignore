@@ -6,6 +6,7 @@ __pycache__/
 taskcat_outputs/
 env/
 docs/generated
+.taskcat_overrides.yml
 
 .DS_Store
 imcCdk/config.yaml

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Add s3 bucket trigger to lambda function'
+Description: 'Add s3 bucket trigger to lambda function. (qs-1qtb0iudq)'
 Parameters:
   BucketRes:
     Description: Reference to the s3 bucket
@@ -61,7 +61,7 @@ Resources:
         Statement:
           - Action: s3:PutBucketNotification
             Effect: Allow
-            Resource: "*"
+            Resource: !Ref BucketResArn
         Version: "2012-10-17"
       PolicyName: BucketNotificationsHandlerRoleDefaultPolicyResource
       Roles:
@@ -143,7 +143,7 @@ Resources:
         Fn::GetAtt:
           - BucketNotificationRole
           - Arn
-      Runtime: nodejs10.x
+      Runtime: nodejs12.x
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource

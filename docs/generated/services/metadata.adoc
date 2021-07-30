@@ -1,5 +1,6 @@
 
 :template_aws_cloudformation_stack:
+:template_aws_cloudwatch_dashboard:
 :template_aws_dynamodb_table:
 :template_aws_ec2_instance:
 :template_aws_ec2_securitygroup:
@@ -24,11 +25,13 @@
 :template_aws_kinesisfirehose_deliverystream:
 :template_aws_lambda_function:
 :template_aws_lambda_permission:
+:template_aws_logs_loggroup:
 :template_aws_s3_bucket:
 :template_aws_secretsmanager_resourcepolicy:
 :template_aws_secretsmanager_secret:
 :template_aws_serverless_api:
 :template_cloudformation:
+:template_cloudwatch:
 :template_custom_iotendpoint:
 :template_custom_iotthing:
 :template_custom_managegreengrass:
@@ -45,6 +48,7 @@
 :template_iotthing:
 :template_kinesisfirehose:
 :template_lambda:
+:template_logs:
 :template_managegreengrass:
 :template_s3:
 :template_s3bucketnotifications:
