@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Template to deploy the Industrial Machine Connectivity Quick Start into an existing VPC. (qs-1qtb0iud5)
 Metadata:
-  QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying into an existing VPC"
+  # QuickStartDocumentation:
+  #   EntrypointName: "Parameters for deploying into an existing VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
