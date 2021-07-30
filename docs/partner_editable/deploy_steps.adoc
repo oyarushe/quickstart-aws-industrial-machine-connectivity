@@ -23,10 +23,8 @@ endif::marketplace_subscription[]
 
 Each deployment takes about {deployment_time} to complete.
 
-. Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options] earlier in this guide. There are two options for asset data modeling:
+. Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options] earlier in this guide.
 
-.. *Option 1 - Asset Model Converter* The Asset model converter converts tag definitions and source data models from edge devices into AWS IoT SiteWise models.
-+
 [cols="3,1"]
 |===
 ^|https://fwd.aws/8QYNd[Deploy {partner-product-name} into a new VPC on AWS^]
@@ -35,24 +33,10 @@ Each deployment takes about {deployment_time} to complete.
 ^|https://fwd.aws/rYGxm[Deploy {partner-product-name} into an existing VPC on AWS^]
 ^|https://fwd.aws/6QEKM[View template^]
 |===
-+
-[start=2]
-.. *Option 2 - Element Unify* Element Unify uses a no code/low code approach to build and publish models to AWS IoT SiteWise.
-+
-To use Element Unify, sign up for an account before deploying through https://www.elementanalytics.com/solutions/element-unify-for-aws[Element website^] or the https://aws.amazon.com/marketplace/pp/prodview-trvx6gn4vqeok[AWS Marketplace^].
-+
-[cols="3,1"]
-|===
-^|https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=aws-imc&templateURL=https://aws-quickstart.s3.us-east-1.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-main.template.yaml[Deploy Industrial Machine Connectivity with Element Unify into a new VPC on AWS^]
-^|https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-main.template.yaml[View template^]
-
-^|https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=aws-imc&templateURL=https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-workload.template.yaml[Deploy Industrial Machine Connectivity with Element Unify into a existing VPC on AWS^]
-^|https://aws-quickstart.s3.amazonaws.com/quickstart-aws-industrial-machine-connectivity/templates/IMC-unify-workload.template.yaml[View template^]
-|===
 
 [start=2]
 . Check the AWS Region that's displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for {partner-product-name} is built. The template is launched in the {default_deployment_region} Region by default. For other choices, see link:#_supported_regions[Supported Regions] earlier in this guide. 
 
 [start=3]
 . On the *Create stack* page, keep the default setting for the template URL, and then choose *Next*.
-. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details on each parameter, see the link:#_parameter_reference[Parameter reference] section of this guide. When you finish reviewing and customizing the parameters, choose *Next*.
+. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details on each parameter, see the link:#_parameter_reference[Parameter reference] section of this guide. When you finish reviewing and customizing the parameters, choose *Next*.

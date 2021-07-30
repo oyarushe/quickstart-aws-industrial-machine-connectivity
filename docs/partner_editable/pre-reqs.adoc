@@ -26,7 +26,7 @@ Virtual deployment is intended for demonstration, training, and evaluation of th
 
 With physical deployment, you deploy software (AWS IoT Greengrass and a partner edge application) on an industrial PC that's ready to connect to physical devices (such as PLCs or historians or SCADA systems) on the customer's factory floor. The physical deployment has two types: greenfield and brownfield.
 
-* *Greenfield.* In a greenfield physical deployment, you build from scratch for a new environment. AWS IoT Greengrass and the partner edge application run on a single edge-gateway device (an industrial PC) with Ignition installed alongside AWS IoT Greengrass on the same PC, as shown in <<architecture-physical>> and <<architecture-element-physical>>.
+* *Greenfield.* In a greenfield physical deployment, you build from scratch for a new environment. AWS IoT Greengrass and the partner edge application run on a single edge-gateway device (an industrial PC) with Ignition installed alongside AWS IoT Greengrass on the same PC, as shown in <<architecture-physical>>.
 * *Brownfield.* In a brownfield physical deployment, you build within an existing environment. A brownfield deployment can demonstrate the capabilities of the {partner-product-short-name} Quick Start in cases where the customer already has a  application running on premises. AWS IoT Greengrass runs on a standalone industrial PC and connects to the partner edge application, which may be running on a virtual machine in the server room of a factory. Assume that your access to the hardware is limited or nonexistent and that your ability to reconfigure the edge-software server is limited to additive changes.  
 
 === Review edge devices (physical deployments only)
@@ -55,29 +55,27 @@ The {partner-product-short-name} Quick Start supports the following edge devices
 
 === Review the dataflow options
 
-When you deploy the {partner-product-short-name} Quick Start, you have the option to enable data collection in one of two ways. Each option ingests data differently from the edge environment into the AWS Cloud. For illustrations of these dataflows in the virtual and physical deployments, see (<<architecture-virtual>>) and (<<architecture-physical>>). 
+When you deploy the {partner-product-short-name} Quick Start, you choose between three dataflow options. Each option ingests data differently from the edge environment into the AWS Cloud. For illustrations of these dataflows in the virtual and physical deployments, see (<<architecture-virtual>>) and (<<architecture-physical>>). 
 
 * *Dataflow option 1 (OPC UA to AWS IoT SiteWise).* With this option, you configure the AWS IoT SiteWise connector to connect to the partner edge application OPC UA server. All telemetry data flows directly into AWS IoT SiteWise.
 * *Dataflow option 2a (MQTT to AWS IoT Core).* With this option, the partner edge-software server connects to AWS IoT Core from MQTT. All telemetry data is pushed from the edge-software server to AWS IoT Core. From there, the data is pushed to Amazon S3 for processing. Data is not forwarded to AWS IoT SiteWise. Custom development is required to populate data in AWS IoT SiteWise.
+* *Dataflow option 2b (MQTT to AWS IoT Greengrass to AWS IoT Core).* This option is identical to 2a except that the edge-software server pushes MQTT data messages to AWS IoT Greengrass core first. Then those messages are forwarded to AWS IoT Core. Data is not forwarded to AWS IoT SiteWise. Custom development is required to populate data in AWS IoT SiteWise.
 
 For physical deployments, you configure both the deployment type and the dataflow option during the post-deployment steps by using one of the following bootup scripts:
  
 * BootupScriptGreenfieldOption1 (greenfield deployment, dataflow option 1)
 * BootupScriptGreenfieldOption2a (greenfield deployment, dataflow option 2a)
+* BootupScriptGreenfieldOption2b (greenfield deployment, dataflow option 2b)
 * BootupScriptBrownfieldAllOptions (brownfield deployment, any dataflow option)
 
 === Review the AMC drivers
-When you deploy the {partner-product-short-name} Quick Start, you choose an AMC driver. This driver determines which edge application the {partner-product-short-name} Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack `AMCDriver` parameter, you can choose any of four drivers: IgnitionCirrusLink, IgnitionFileExport, KepwareFileExport, or Element Unify.
+When you deploy the {partner-product-short-name} Quick Start, you choose an AMC driver. This driver determines which edge application the {partner-product-short-name} Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack `AMCDriver` parameter, you can choose any of three drivers: IgnitionCirrusLink, IgnitionFileExport, or KepwareFileExport.
 
 * *IgnitionCirrusLink*. This is the default AMC driver. It runs automatically and creates the AWS IoT SiteWise resources automatically when you launch the {partner-product-short-name} Quick Start virtual option. The Cirrus Link transmission module runs on Ignition to publish birth certificates for all devices defined with Ignition's tag database. This module follows the Sparkplug version B specification for MQTT. For the AWS CloudFormation stack's `AMCDriver` parameter, you leave the default set to `IgnitionCirrusLink`.
 
 * *IgnitionFileExport*. This AMC driver uses the manual tag-definition file-export mechanism within Ignition. With this AMC driver, you manually export the tag-definition file and upload it to an S3 bucket to initiate the AMC process during the post-deployment steps. For the AWS CloudFormation stack's `AMCDriver` parameter, you choose `IgnitionFileExport`.
 
-* *KepwareFileExport*. This AMC driver uses the manual tag-definition file-export mechanism within Kepware. With this AMC driver, you manually export the tag-definition file and upload it to an S3 bucket to initiate the AMC process during the post-deployment steps. For the AWS CloudFormation stack's `AMCDriver` parameter, you choose `KepwareFileExport`.
-
-* *ElementUnify*. If choosing Element Unify as the Asset Modeling configuration parameter, then select `Element Unify` for the AMC driver. This will not deploy any drivers for the Asset Model Converter. With Element Unify, you manually export the tag-definition file from either edge application and upload it to an S3 bucket to initiate the automated import of the source system file into Element Unify.
-
-NOTE: If you choose to include Element Unify in the Quick Start deployment, a valid Element Unify account is required.
+* *KepwareFileExport*. This AMC driver uses the manual tag-definition file-export mechanism within Kepware. With this AMC driver, you manually export the tag-definition file and upload it to an S3 bucket to initiate the AMC process during the post-deployment steps. For the AWS CloudFormation stack's `AMCDriver` parameter, you choose `KepwareFileExport`. 
 
 === Enable AWS SSO
 If AWS SSO has not already been enabled in the Region where you are launching the AWS CloudFormation stack, enable it as follows.
@@ -95,13 +93,13 @@ If AWS SSO has not already been enabled in the Region where you are launching th
 .. Open the AWS SSO service in the AWS Management Console.
 .. Choose *Users* in the navigation bar.
 .. Choose *Add user*.
-.. Provide a username, and fill in the remaining boxes.
+.. Provide a user name, and fill in the remaining boxes.
 .. Choose *Next, Groups*.
 .. Choose a group, and then choose *Add user*. The AWS SSO user is now active. This user will be able to access the AWS IoT SiteWise Monitor dashboards.
 
 === Set up QuickSight
 
-. Open the QuickSight console and choose *Sign up for QuickSight*.
+. Open the QuickSight console, and choose *Sign up for QuickSight*.
 . Choose an edition: *Standard* or *Enterprise*.
 . Choose the AWS Region that you plan to deploy the {partner-product-short-name} Quick Start into. QuickSight is now enabled and is ready for use.
 
@@ -111,7 +109,7 @@ If you do not already have an EC2 SSH (Secure Shell) key pair available (PEM fil
 === Create an AWS IoT SiteWise service-linked role 
 Run the following command from the AWS CLI:
 
- aws iam create-service-linked-role --aws-service-name iotsitewise.amazonaws.com --description "Service-linked role to support IoT SiteWise"
+ +aws iam create-service-linked-role --aws-service-name iotsitewise.amazonaws.com --description "Service-linked role to support IoT SiteWise"+
 
 For more information about creating service-linked-roles, see https://docs.aws.amazon.com/iot-sitewise/latest/userguide/using-service-linked-roles.html[Using service-linked roles for AWS IoT SiteWise^].
 

@@ -11,9 +11,9 @@ Follow these steps to clean up the Quick Start AWS CloudFormation stack deployme
 
 ==== Clean up cloud assets
 
-. Open the AWS CloudFormation console, and delete the base stack (not the stack named *NESTED*) to clean up the account. If stack deletion fails due to nonempty S3 buckets and/or a deployed AWS IoT Greengrass group (for all virtual options by default, and for all physical deployments that have been completed on a piece of hardware), follow the steps below.
+. Open the AWS CloudFormation console, and delete the base stack (not the stack named *NESTED*) to clean up the account as much as possible. Most of the resources are deleted, but the stack deletion fails due to nonempty S3 buckets and potentially a deployed AWS IoT Greengrass group (for all virtual options by default, and for all physical deployments that have been completed on a piece of hardware).
 . Empty the S3 buckets.
-.. Sign into the AWS Management Console, and open the Amazon S3 service.
+.. Sign in to the AWS Management Console, and open the Amazon S3 service.
 .. In the search bar, enter your stack name.
 .. For each bucket that is associated with the stack, choose the bucket, and choose *Empty* under the search bar. This is the bucket-naming convention (replacing the bracketed elements): 
 
