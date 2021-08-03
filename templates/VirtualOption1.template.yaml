@@ -30,12 +30,6 @@ Parameters:
   DeploymentType:
     Description: Type of edge deployment
     Type: String
-  DeploymentOption:
-    Description: They further defined deployment type
-      --- Option1 (or OPC-UA Path via SiteWise)
-      --- Option 2a (MQTT Ignition --> Iot Core)
-      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
-    Type: String
   EIIgnitionInstanceProfile:
     Description: Profile for the ignition instance that is running at the edge
     Type: String
@@ -80,6 +74,18 @@ Parameters:
     Type: String
 
 Resources:
+  mqttProcessLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs12.x
+      Role: !Ref LambdaExecRole
+      Handler: mqttdataprocess.handler
+      Timeout: 120
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/MQTTDataProcess/mqttdataprocess.js.zip'
+      Description: Invoke a function during stack creation.
+
   AMCIncomingNotificationsResource:
     Type: Custom::S3BucketNotifications
     Properties:
@@ -216,6 +222,36 @@ Resources:
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource
 
+  KinesisDeliveryStreamMQTT:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      ExtendedS3DestinationConfiguration:
+        BucketARN: !Ref IMCBucketArn
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 50
+        CompressionFormat: UNCOMPRESSED
+        Prefix: mqtt/
+        ProcessingConfiguration:
+          Enabled: true
+          Processors:
+            - Parameters:
+                - ParameterName: LambdaArn
+                  ParameterValue: !GetAtt mqttProcessLambda.Arn 
+              Type: Lambda
+        RoleARN: !Ref KinesisDelRoleArn
+  DeviceDataRuleMQTT:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+        RuleDisabled: false
+        Sql: SELECT * FROM 'spBv1.0/AWS Smart Factory/DDATA/#'
+        Actions:
+          - Firehose:
+              DeliveryStreamName:
+                Ref: KinesisDeliveryStreamMQTT
+              RoleArn: !Ref IoTTopicRuleRoleArn
+
   EdgeInstanceGreengrassResource:
     Type: AWS::EC2::Instance
     Properties:
@@ -229,7 +265,8 @@ Resources:
       SubnetId: !Ref 'EC2Subnet'
       Tags:
         - Key: Name
-          Value: !Sub '${DeploymentType}/${DeploymentOption}/Greengrass' 
+          # Value: !Sub '${DeploymentType}/${DeploymentOption}/Greengrass' 
+          Value: !Sub '${DeploymentType}/Option1/Greengrass' 
       UserData:
         Fn::Base64:
           Fn::Join:
@@ -256,6 +293,9 @@ Resources:
                                 echo "deb https://dnw9lb6lzp2d8.cloudfront.net stable main" | tee /etc/apt/sources.list.d/greengrass.list
                                 apt update -y
                                 apt install aws-iot-greengrass-core unzip python3.7 openjdk-8-jre -y
+                                apt-cache madison openjdk-8-jdk
+                                wget https://download.bell-sw.com/java/8u282+8/bellsoft-jdk8u282+8-linux-amd64.deb
+                                apt install ./bellsoft-jdk8u282+8-linux-amd64.deb
                                 systemctl enable greengrass.service
                                 ln -s /usr/bin/java /usr/bin/java8
                                 mkdir /var/sitewise 
@@ -288,7 +328,8 @@ Resources:
       SubnetId: !Ref EC2Subnet
       Tags:
         - Key: Name
-          Value: !Sub '${DeploymentType}/${DeploymentOption}/Ignition'
+          # Value: !Sub '${DeploymentType}/${DeploymentOption}/Ignition'
+          Value: !Sub '${DeploymentType}/Option1/Ignition'
       UserData:
         Fn::Base64: !Join 
             - ""

@@ -1,0 +1,298 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Template to connect element unify. (qs-1qtb0iudq)'
+Parameters:
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: The Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Description: Name of the S3 bucket for your copy of the Quick Start assets. 
+      Keep the default name unless you are customizing the template. 
+      Changing the name updates code references to point to a new Quick 
+      Start location. This name can include numbers, lowercase letters, 
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+      See https://aws-quickstart.github.io/option1.html.
+    Type: String
+    Default: imc-unify
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: The Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
+    Description: S3 key prefix that is used to simulate a directory for your copy of the 
+      Quick Start assets. Keep the default prefix unless you are customizing 
+      the template. Changing this prefix updates code references to point to 
+      a new Quick Start location. This prefix can include numbers, lowercase 
+      letters, uppercase letters, hyphens (-), and forward slashes (/). 
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+      and https://aws-quickstart.github.io/option1.html.
+    Type: String
+    Default: unify-quickstart-aws-imc-integration/
+  UnifyHostname:
+    Description: If your asset modeling application is Element Unify, enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
+    Type: String
+    Default: https://app001-aws.elementanalytics.com/
+  UnifyUsername:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address.
+    Description: If your asset modeling application is Element Unify, enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Type: String
+  UnifyPassword:
+    Description: If your asset modeling application is Element Unify, enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Type: String
+    NoEcho: true
+  UnifyOrgId:
+    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
+    Type: Number
+  LambdaZipsBucket:
+    Type: String
+
+Resources:
+  UnifyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
+              - Action:
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                  - s3:PutObject
+                  - s3:GetObject
+                Effect: Allow
+                Resource:
+                  - !GetAtt UnifyIncomingBucket.Arn
+                  - !Join ["", [!GetAtt UnifyIncomingBucket.Arn, "*"]]
+                  - !GetAtt UnifyBucket.Arn
+                  - !Join ["", [!GetAtt UnifyBucket.Arn, "*"]]
+              - Action:
+                  - secretsmanager:PutSecretValue
+                  - secretsmanager:ListSecretVersionIds
+                  - secretsmanager:ListSecrets
+                  - secretsmanager:UpdateSecret
+                  - secretsmanager:DeleteSecret
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:CreateSecret
+                Effect: Allow
+                Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:*
+              - Action:
+                  - secretsmanager:GetRandomPassword
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                  - iot:Publish
+                Effect: Allow
+                Resource: !Sub arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:*
+              - Action:
+                  - iotsitewise:DescribeAssetModel
+                  - iotsitewise:UpdateAssetModel
+                  - iotsitewise:DeleteAssetModel
+                  - iotsitewise:CreateAsset
+                  - iotsitewise:DescribeAsset
+                  - iotsitewise:UpdateAssetProperty
+                  - iotsitewise:ListAssets
+                  - iotsitewise:ListAssociatedAssets
+                  - iotsitewise:DeleteAsset
+                  - iotsitewise:DisassociateAssets
+                  - iotsitewise:AssociateAssets
+                  - iotsitewise:DescribeGateway
+                  - iotsitewise:DescribeGatewayCapabilityConfiguration
+                  - iotsitewise:UpdateGatewayCapabilityConfiguration
+                  - iotsitewise:TagResource
+                  - iotsitewise:GetAssetPropertyValue
+                  - iotsitewise:BatchPutAssetPropertyValue
+                Effect: Allow
+                Resource: !Sub arn:${AWS::Partition}:iotsitewise:${AWS::Region}:${AWS::AccountId}:*
+              - Action:
+                  - iotsitewise:CreateAssetModel
+                  - iotsitewise:ListAssetModels
+                  - iotsitewise:ListGateways
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+          PolicyName: UnifyRolePolicy
+# secret
+  UnifySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: "Secret to connect to Element Unify"
+
+  UnifySecretResourcePolicy:
+      Type: 'AWS::SecretsManager::ResourcePolicy'
+      Properties:
+          SecretId: !Ref UnifySecret
+          ResourcePolicy:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Action: 
+                  - 'secretsmanager:PutSecretValue'
+                  - 'secretsmanager:UpdateSecret'
+                  - 'secretsmanager:GetSecretValue'
+                Effect: Deny
+                Principal: '*'
+                Condition:
+                  StringNotEquals:
+                    'aws:PrincipalArn': !GetAtt UnifyRole.Arn
+
+  UnifyServiceAccountHandler:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - UnifySecret
+    Properties:
+      Runtime: python3.7
+      ReservedConcurrentExecutions: 1
+      Code:
+        S3Bucket: !Ref LambdaZipsBucket
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/UnifyServiceAccountHandler/UnifyServiceAccountHandler.zip'
+      Handler: lambda_function.lambda_handler
+      Description: Set unify cluster secret for connection.
+      MemorySize: 128
+      Timeout: 120
+      Role: !GetAtt 'UnifyRole.Arn'
+  UnifyServiceAccountHandlerTrigger:
+    Type: Custom::SetSecret
+    DependsOn:
+      - UnifyRole
+    Properties:
+      ServiceToken: !GetAtt UnifyServiceAccountHandler.Arn
+      Region: !Ref AWS::Region
+      StackName: !Ref AWS::StackName
+      SecretName: !Ref  UnifySecret
+      UnifyHost: !Ref UnifyHostname
+      UserName: !Ref UnifyUsername
+      Password: !Ref UnifyPassword
+      OrgId: !Ref UnifyOrgId
+     
+      Timeout: 120
+  
+
+# UnifySourceIngest and s3 triggers: Upload tags into Element Unify as asset templates and/or asset datasets.
+  UnifyIncomingBucket:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  UnifyIncommingBucketFolder:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/S3_Folders.template.yaml
+      Parameters:
+        S3BucketName: !Ref UnifyIncomingBucket
+        DirsToCreate: KepServerEx,Ignition
+        RoleArn: !GetAtt UnifyRole.Arn
+  UnifySourceIngest:
+    Type: AWS::Lambda::Function
+    Properties:
+      ReservedConcurrentExecutions: 1
+      Code:
+        S3Bucket: !Ref LambdaZipsBucket
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/UnifySourceIngest/UnifySourceIngest.zip'
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt UnifyRole.Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          IncomingBucket:
+            Ref: UnifyIncomingBucket
+          RegionName:
+            Ref: AWS::Region
+          SecretName:
+            Ref: UnifySecret
+      Timeout: 900
+  
+  UnifySourceIngestNotification:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/S3_Lambda_Notification.template.yaml
+      Parameters:
+        BucketRes: !Ref UnifyIncomingBucket
+        BucketResArn: !GetAtt UnifyIncomingBucket.Arn
+        LambdaArn: !GetAtt UnifySourceIngest.Arn
+
+# UnifySiteWiseUpdater:  Deploys Element Unify asset templates and asset datasets as 
+# AWS IoT SiteWise asset models and asset hierarchies.
+  UnifyBucket:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  UnifySiteWiseUpdater:
+    Type: AWS::Lambda::Function
+    Properties:
+      ReservedConcurrentExecutions: 1
+      Code:
+        S3Bucket: !Ref LambdaZipsBucket
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/UnifySiteWiseUpdater/UnifySiteWiseUpdater.zip'
+      Handler: model_sync_lambda.handler
+      Role: !GetAtt UnifyRole.Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          modelSyncBucketName:
+            Ref: UnifyBucket
+          regionName:
+            Ref: AWS::Region
+          secretName:
+            Ref: UnifySecret
+      Timeout: 900
+  UnifySiteWiseUpdaterScheduledRule:
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: "Regularly invoke model sync from Unify to SiteWise."
+      ScheduleExpression: "rate(1 hour)"
+      State: "ENABLED"
+      Targets: 
+        - 
+          Arn: !GetAtt UnifySiteWiseUpdater.Arn
+          Id: "SitewiseModelSyncLambda"
+  PermissionForEventsToInvokeUnifySiteWiseUpdater:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !GetAtt UnifySiteWiseUpdater.Arn
+      Action: lambda:InvokeFunction
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          - UnifySiteWiseUpdaterScheduledRule
+          - Arn
+  
+# UnifySiteWiseIngest: Retrieve asset models and asset hierarchies from AWS IoT SiteWise, 
+# and upload into Element Unify as asset templates and asset datasets.
+  UnifySiteWiseIngest:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref LambdaZipsBucket
+        S3Key: !Sub '${QSS3KeyPrefix}functions/packages/UnifySiteWiseIngest/UnifySiteWiseIngest.zip'
+      Handler: sitewise_lambda.handler
+      Role: !GetAtt UnifyRole.Arn
+      Runtime: python3.7
+      Environment:
+        Variables:
+          templateSuffix: ''
+          regionName:
+            Ref: AWS::Region
+          secretName:
+            Ref: UnifySecret
+      Timeout: 900
+
+Outputs:
+  Secretes:
+    Value: !Ref UnifySecret
+  UnifyIncomingBucket:
+    Value: !Ref UnifyIncomingBucket
+  UnifyBucket:
+    Value: !Ref UnifyBucket

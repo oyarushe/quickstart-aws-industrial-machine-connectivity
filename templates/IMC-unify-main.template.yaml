@@ -12,6 +12,13 @@ Metadata:
           - PublicSubnet1CIDR
           - VPCTenancy
       - Label:
+          default: Element Unify configuration
+        Parameters:
+          - UnifyHostname
+          - UnifyUsername
+          - UnifyPassword
+          - UnifyOrgId
+      - Label:
           default: Edge-deployment configuration
         Parameters:
           - EdgeDeviceID
@@ -22,7 +29,6 @@ Metadata:
           - EC2KeyPairName
           - GreengrassInstanceType
           - IgnitionInstanceType
-          - AMCDriver
           - UserPublicIP
           - SitewiseMonitorEmail
       - Label:
@@ -43,6 +49,14 @@ Metadata:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
+      UnifyHostname:
+        default: Unify host
+      UnifyUsername:
+        default: Unify username (email)
+      UnifyPassword:
+        default: Unify password
+      UnifyOrgId:
+        default: Unify organization Id
       VPCCIDR:
         default: VPC CIDR
       EC2KeyPairName:
@@ -55,8 +69,6 @@ Metadata:
         default: Greengrass EC2 instance type
       IgnitionInstanceType:
         default: Ignition EC2 instance type
-      AMCDriver:
-        default: Asset Model Converter driver
       UserPublicIP:
         default: Your public IP address  
       SitewiseMonitorEmail:
@@ -156,14 +168,23 @@ Parameters:
     Type: String
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})
     Description: Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
-  AMCDriver:
+  UnifyHostname:
+    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/.
     Type: String
-    Default: IgnitionCirrusLink
-    AllowedValues:
-      - IgnitionCirrusLink
-      - IgnitionFileExport
-      - KepwareFileExport
-    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport.
+    Default: https://app001-aws.elementanalytics.com/
+  UnifyUsername:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address.
+    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Type: String
+  UnifyPassword:
+    Description: Enter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Type: String
+    NoEcho: true
+  UnifyOrgId:
+    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<organization Id>.
+    Type: Number
+    Default: 0
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
@@ -174,6 +195,7 @@ Conditions:
   IfVirtual: !Equals
     - !Ref DeploymentType
     - 'Virtual'
+ 
 Resources:
   VPC:
     Type: 'AWS::CloudFormation::Stack'
@@ -199,7 +221,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/IMC-workload.template.yaml
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/IMC-unify-workload.template.yaml
         - S3Bucket: !If
             - UsingDefaultBucket
             - !Sub 'aws-quickstart-${AWS::Region}'
@@ -222,15 +244,21 @@ Resources:
         EC2KeyPairName: !Ref EC2KeyPairName
         GreengrassInstanceType: !Ref GreengrassInstanceType
         IgnitionInstanceType: !Ref IgnitionInstanceType
-        AMCDriver: !Ref AMCDriver
         UserPublicIP: !Ref UserPublicIP
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         SitewiseMonitorEmail: !Ref SitewiseMonitorEmail
+        UnifyHostname: !Ref UnifyHostname
+        UnifyUsername: !Ref UnifyUsername
+        UnifyPassword: !Ref UnifyPassword
+        UnifyOrgId: !Ref UnifyOrgId
 
 Outputs:
-  IgnitionURL:
+  IgnitionURL1:
     Condition: IfVirtual
-    Value: !GetAtt 'Workload.Outputs.IgnitionURL'
+    Value: !GetAtt 'Workload.Outputs.IgnitionURL1'
+  IgnitionURL2:
+    Condition: IfVirtual
+    Value: !GetAtt 'Workload.Outputs.IgnitionURL2'
   DependenciesBucket:
     Condition: IfPhysical
     Value: !GetAtt 'Workload.Outputs.DependenciesBucket'

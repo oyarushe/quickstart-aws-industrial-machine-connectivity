@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Template to connect element unify. (qs-1qtb0iudq)'
+Parameters:
+  QSS3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: The Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Description: Name of the S3 bucket for your copy of the Quick Start assets. 
+      Keep the default name unless you are customizing the template. 
+      Changing the name updates code references to point to a new Quick 
+      Start location. This name can include numbers, lowercase letters, 
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+      See https://aws-quickstart.github.io/option1.html.
+    Type: String
+    Default: imc-unify
+  QSS3KeyPrefix:
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: The Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
+    Description: S3 key prefix that is used to simulate a directory for your copy of the 
+      Quick Start assets. Keep the default prefix unless you are customizing 
+      the template. Changing this prefix updates code references to point to 
+      a new Quick Start location. This prefix can include numbers, lowercase 
+      letters, uppercase letters, hyphens (-), and forward slashes (/). 
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+      and https://aws-quickstart.github.io/option1.html.
+    Type: String
+    Default: unify-quickstart-aws-imc-integration/
+  UnifyHostname:
+    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
+    Type: String
+    Default: https://app001-aws.elementanalytics.com/
+  UnifyUsername:
+    AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
+    ConstraintDescription: Must be a valid email address.
+    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Type: String
+  UnifyPassword:
+    Description: Eter your Element Unify password. You can get credentials from your Element Unify support engineer.
+    Type: String
+    NoEcho: true
+  UnifyOrgId:
+    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
+    Type: Number
+
+
+Resources:
+  CopyZips:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Copy_Zips.template.yaml
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        ZipFiles: >
+          functions/packages/StackCleanup/stackcleanupfunction.zip,
+          functions/packages/UnifyServiceAccountHandler/UnifyServiceAccountHandler.zip,
+          functions/packages/UnifySiteWiseIngest/UnifySiteWiseIngest.zip,
+          functions/packages/UnifySiteWiseUpdater/UnifySiteWiseUpdater.zip,
+          functions/packages/UnifySourceIngest/UnifySourceIngest.zip
+
+  Unify:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/Unify.template.yaml
+      Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        UnifyHostname: !Ref UnifyHostname
+        UnifyUsername: !Ref UnifyUsername
+        UnifyPassword: !Ref UnifyPassword
+        UnifyOrgId: !Ref UnifyOrgId
+        LambdaZipsBucket: !GetAtt CopyZips.Outputs.LambdaZipsBucketRef
+  
+  UnifyStackCleanup:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Cleanup_Stack.template.yaml
+      Parameters:
+        LambdaZipsBucket: !GetAtt CopyZips.Outputs.LambdaZipsBucketRef
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        DeleteModelsInDynamoDB: 'No'
+        DeleteGreengrass: 'No'
+        DynamoDBAssetTable: ''
+        DynamoDBModelTable: ''
+        Buckets: !Join
+        - ','
+        - - !GetAtt CopyZips.Outputs.LambdaZipsBucketRef
+          - !GetAtt Unify.Outputs.UnifyIncomingBucket
+          - !GetAtt Unify.Outputs.UnifyBucket
+        EdgeDeviceIDs: ''

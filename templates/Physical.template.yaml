@@ -40,6 +40,17 @@ Parameters:
   RestAPIId:
     Description: ID for the Rest API
     Type: String
+  CreateAMCNotify:
+    AllowedValues:
+      - true
+      - false
+    Default: true
+    Description: Set to false when apply Element Unify
+    Type: String
+
+Conditions:
+  ShouldCreateAMCNotify:
+    !Equals [true, !Ref CreateAMCNotify]
 
 Resources:
   mqttProcessLambda:
@@ -92,8 +103,10 @@ Resources:
       Principal: firehose.amazonaws.com
       SourceArn: !GetAtt KinesisDeliveryStreamMQTT.Arn
       
+# resources to create Incoming s3 bucket trigger. Do not create for unify since it is included in unify.template.yaml 
   AMCIncomingNotificationsResource:
     Type: Custom::S3BucketNotifications
+    Condition: ShouldCreateAMCNotify
     Properties:
       ServiceToken:
         Fn::GetAtt:
@@ -110,6 +123,7 @@ Resources:
 
   AMCAllowBucketNotifications:
     Type: AWS::Lambda::Permission
+    Condition: ShouldCreateAMCNotify
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref AMCConvertLambdaResArn
@@ -119,6 +133,7 @@ Resources:
 
   BucketNotificationRole:
     Type: AWS::IAM::Role
+    Condition: ShouldCreateAMCNotify
     Properties:
       AssumeRolePolicyDocument:
         Statement:
@@ -136,6 +151,7 @@ Resources:
 
   BucketNotificationsHandlerRoleDefaultPolicyResource:
     Type: AWS::IAM::Policy
+    Condition: ShouldCreateAMCNotify
     Properties:
       PolicyDocument:
         Statement:
@@ -149,6 +165,7 @@ Resources:
 
   BucketNotificationsHandlerResource:
     Type: AWS::Lambda::Function
+    Condition: ShouldCreateAMCNotify
     Properties:
       Description: AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)
       Code:
