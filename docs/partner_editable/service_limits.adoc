@@ -7,9 +7,10 @@
 |Security group |1
 |AWS Identity and Access Management (IAM) roles |12
 |DynamoDB tables |2
-|Lambda functions |10
+|Lambda functions |13
 |AWS IoT topic rules |6
 |Kinesis Data Firehose streams |2
-|S3 buckets |4
-|EC2 instances |2
+|S3 buckets |6
+|EC2 instances |4
+|Secrets Manager |1
 |===

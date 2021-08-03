@@ -22,15 +22,15 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 
 *A.* Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
 
-*Q.* Can I update a stack to a different deployment type (physical, virtual) or dataflow option (Option1, 2a, 2b)? 
+*Q.* Can I update a stack to a different deployment type (physical, virtual)? 
 
-*A.* Updates are not supported. To achieve a different deployment type or dataflow type, deploy a new stack. See the following question and answer for details on deploying more than one stack in an account. Then decide whether to delete your original stack before creating another.
+*A.* Updates are not supported. To achieve a different deployment type, deploy a new stack. See the following question and answer for details on deploying more than one stack in an account. Then decide whether to delete your original stack before creating another.
 
 *Q.* Can I deploy multiple times in the same AWS account? 
 
 *A.* Yes, you may deploy multiple stacks in the same account. Be wary of the following: 
 
-* For Option 1 deployments, AWS IoT SiteWise may receive data from multiple sources if, for example, two instances of Ignition are publishing data onto the topic `/Tag Providers/default/Line1/CNC/Temperature`.
+* AWS IoT SiteWise may receive data from multiple sources if, for example, two instances of Ignition are publishing data onto the topic `/Tag Providers/default/Line1/CNC/Temperature`.
 
 * If AWS IoT SiteWise models and assets exist in the Cloud from a previous deployment, a new deployment does not recreate the model or asset hierarchy. Instead, the Asset Model Converter operates by recognizing any changes in the existing models or assets and the new deployment hierarchy. For example: 
 ** If the previously deployed hierarchy is identical to the newly deployed one, nothing in AWS IoT SiteWise is changed.
@@ -88,23 +88,29 @@ image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 
 *AMC driver: KepServerFileExport*
 
-. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket:
+. Obtain your JSON file that represents the new hierarchy: 
+
+.. Open KepServerEx.
+.. Select the project you'd like to export by clicking on it.
+..Select Project
+[link=images/SelectProject.png]
+image::../images/SelectProject.png[Select Project]
+.. Hit File and Save As.
+..Save As
+[link=images/SaveAs.png]
+image::../images/SaveAs.png[Save As]
+.. Input the project encryption settings and hit "Ok".
+..Encryption Settings
+[link=images/EncryptionSettings.png]
+image::../images/EncryptionSettings.png[Encryption Settings]
+.. Name the export file, and save the file as a JSON Project File.
+..Name and Export
+[link=images/NameAndExport.png]
+image::../images/NameAndExport.png[Name and Export]
+
+. Drop it into the following S3 bucket:
+
 .. `<name_of_stack>-<amcincomingresource>-<hash>`
-
-*Q.* How do I add a QuickSight visual?
-
-*A.* You may create Amazon QuickSight visuals for the data that is put in the S3 bucket by the Kinesis Data Firehose. Before you create these visuals, complete the following prerequisite steps:
-
-Prerequisites:
-
-* Sign in to the AWS Management Console, and open the QuickSight service console.
-** If you have not previously used QuickSight, you are prompted to grant access to QuickSight. See https://docs.aws.amazon.com/quicksight/latest/user/getting-started.html[Getting Started with Data Analysis in Amazon QuickSight^] for additional details.
-* Create a QuickSight visual.
-** The data source is the S3 bucket that receives data from the AWS IoT Core rule. The S3 bucket is named `<stack_name>-imcs3bucket-<hash>` (replacing the information in brackets).
-** Open the Amazon QuickSight console home page, and choose *New analysis*, *New dataset*. Then choose the *Amazon S3* service icon. 
-** Add details for the dataset:
-** Data source name: Provide a name for the {partner-product-short-name} dataset, such as *IMC-QS-Dataset*.
-*** Manifest file: Leave the *URL* radio button chosen for the *Upload a manifest file* text entry option, and paste the URL of the S3 bucket manifest file. The manifest file is located in the same S3 bucket where the data is stored (S3 bucket name: `<stack_name>-imcs3bucket-<hash>`). The manifest file is named `imcquicksightdata.json`. The S3 URL follows this naming convention: `https:// <stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`.
 
 *Q.*
 How do I add a QuickSight visual?
@@ -125,14 +131,17 @@ Prerequisites:
 ... The manifest file is named `imcquicksightdata.json`. The URL follows this naming convention:
 .... `https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
 
+*Q.* If I am an ISV partner, how can I create a connector to interface my software to Element Unify?
+
+*A.* Documentation for developing connectors for ISV partners is found in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide]. A reference guide can also be found within https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal].
 
 == Troubleshooting
 
-*Quarantined certificate in Ignition doesn't show up (or data doesn't show up for dataflow option 1 deployments)*
+*Quarantined certificate in Ignition doesn't show up (or data doesn't show up for dataflow option 1 data path)*
 
 First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the AWS IoT SiteWise gateway:
 
-. Open the AWS IoT SiteWise console, and choose *Ingest*, *Gateways*. 
+. Open the AWS IoT SiteWise console, and choose *Edge*, *Gateways*.
 . Choose the gateway created during the stack launch (replacing the information in brackets):
 .. Naming convention: `<name_of_stack>_Automated_Gateway`
 . In the *Source Configuration for Automated Gateway Config* section, choose *Edit*.
