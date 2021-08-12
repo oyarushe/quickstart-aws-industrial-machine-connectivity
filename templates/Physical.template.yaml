@@ -16,9 +16,6 @@ Parameters:
   LambdaZipsBucket:
     Description: Bucket location of the project zip files
     Type: String
-  LambdaExecRole:
-    Description: IAM Role policy for project lambdas
-    Type: String
   IMCBucketArn:
     Description: ARN of the projects IMC Bucket
     Type: String
@@ -53,11 +50,30 @@ Conditions:
     !Equals [true, !Ref CreateAMCNotify]
 
 Resources:
+  mqttProcessLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+
   mqttProcessLambda:
     Type: AWS::Lambda::Function
     Properties:
       Runtime: nodejs12.x
-      Role: !Ref LambdaExecRole
+      Role:
+        Fn::GetAtt:
+          - mqttProcessLambdaRole
+          - Arn
       Handler: mqttdataprocess.handler
       Timeout: 120
       Code:
@@ -157,7 +173,7 @@ Resources:
         Statement:
           - Action: s3:PutBucketNotification
             Effect: Allow
-            Resource: "*"
+            Resource: !Ref AMCIncomingResArn
         Version: "2012-10-17"
       PolicyName: BucketNotificationsHandlerRoleDefaultPolicyResource
       Roles:
@@ -240,7 +256,7 @@ Resources:
         Fn::GetAtt:
           - BucketNotificationRole
           - Arn
-      Runtime: nodejs10.x
+      Runtime: nodejs12.x
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandlerRoleDefaultPolicyResource

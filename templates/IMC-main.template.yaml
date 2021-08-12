@@ -168,12 +168,12 @@ Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName
     - 'aws-quickstart'
-  IfPhysical: !Equals
-    - !Ref DeploymentType
-    - 'Physical'
   IfVirtual: !Equals
     - !Ref DeploymentType
     - 'Virtual'
+  IfPhysical: !Equals
+    - !Ref DeploymentType
+    - 'Physical'
 Resources:
   VPC:
     Type: 'AWS::CloudFormation::Stack'
