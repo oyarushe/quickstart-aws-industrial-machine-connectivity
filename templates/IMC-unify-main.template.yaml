@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Template to deploy the Industrial Machine Connectivity Quick Start into a new VPC. (qs-1qtb0iua4)
 Metadata:
-  QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying into a new VPC"
+  # QuickStartDocumentation:
+  #   EntrypointName: "Parameters for deploying into a new VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
