@@ -58,12 +58,12 @@ The {partner-product-short-name} Quick Start supports the following edge devices
 When you deploy the {partner-product-short-name} Quick Start, you have the option to enable data collection in one of two ways. Each option ingests data differently from the edge environment into the AWS Cloud. For illustrations of these dataflows in the virtual and physical deployments, see (<<architecture-virtual>>) and (<<architecture-physical>>). 
 
 * *Dataflow option 1 (OPC UA to AWS IoT SiteWise).* With this option, you configure the AWS IoT SiteWise connector to connect to the partner edge application OPC UA server. All telemetry data flows directly into AWS IoT SiteWise.
-* *Dataflow option 2a (MQTT to AWS IoT Core).* With this option, the partner edge-software server connects to AWS IoT Core from MQTT. All telemetry data is pushed from the edge-software server to AWS IoT Core. From there, the data is pushed to Amazon S3 for processing. Data is not forwarded to AWS IoT SiteWise. Custom development is required to populate data in AWS IoT SiteWise.
+* *Dataflow option 2 (MQTT to AWS IoT Core).* With this option, the partner edge-software server connects to AWS IoT Core from MQTT. All telemetry data is pushed from the edge-software server to AWS IoT Core. From there, the data is pushed to Amazon S3 for processing. Data is not forwarded to AWS IoT SiteWise. Custom development is required to populate data in AWS IoT SiteWise.
 
 For physical deployments, you configure both the deployment type and the dataflow option during the post-deployment steps by using one of the following bootup scripts:
  
 * BootupScriptGreenfieldOption1 (greenfield deployment, dataflow option 1)
-* BootupScriptGreenfieldOption2a (greenfield deployment, dataflow option 2a)
+* BootupScriptGreenfieldOption2 (greenfield deployment, dataflow option 2)
 * BootupScriptBrownfieldAllOptions (brownfield deployment, any dataflow option)
 
 === Review the AMC drivers
