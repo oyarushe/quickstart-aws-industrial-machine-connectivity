@@ -101,7 +101,7 @@ If AWS SSO has not already been enabled in the Region where you are launching th
 
 === Set up QuickSight
 
-. Open the QuickSight console and choose *Sign up for QuickSight*.
+. Open the QuickSight console, and choose *Sign up for QuickSight*.
 . Choose an edition: *Standard* or *Enterprise*.
 . Choose the AWS Region that you plan to deploy the {partner-product-short-name} Quick Start into. QuickSight is now enabled and is ready for use.
 
