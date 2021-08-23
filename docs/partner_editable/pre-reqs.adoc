@@ -95,7 +95,7 @@ If AWS SSO has not already been enabled in the Region where you are launching th
 .. Open the AWS SSO service in the AWS Management Console.
 .. Choose *Users* in the navigation bar.
 .. Choose *Add user*.
-.. Provide a username, and fill in the remaining boxes.
+.. Provide a user name, and fill in the remaining boxes.
 .. Choose *Next, Groups*.
 .. Choose a group, and then choose *Add user*. The AWS SSO user is now active. This user will be able to access the AWS IoT SiteWise Monitor dashboards.
 
