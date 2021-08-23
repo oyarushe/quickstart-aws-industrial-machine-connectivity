@@ -75,7 +75,7 @@ When you deploy the {partner-product-short-name} Quick Start, you choose an AMC 
 
 * *KepwareFileExport*. This AMC driver uses the manual tag-definition file-export mechanism within Kepware. With this AMC driver, you manually export the tag-definition file and upload it to an S3 bucket to initiate the AMC process during the post-deployment steps. For the AWS CloudFormation stack's `AMCDriver` parameter, you choose `KepwareFileExport`.
 
-*ElementUnify*. You can also choose to use Element Unify for Asset Modeling. This will not deploy any drivers for the Asset Model Converter. With Element Unify, you manually export the tag-definition file from either edge application and upload it to an S3 bucket to initiate the automated import of the source system file into Element Unify.
+*ElementUnify*. You can use Element Unify for asset modeling. It does not deploy any drivers for the Asset Model Converter. With Element Unify, you manually export the tag-definition file from either edge application and upload it to an S3 bucket. The source system file is automatically imported into Element Unify.
 
 NOTE: If you choose to include Element Unify in the Quick Start deployment, a valid Element Unify account is required.
 
