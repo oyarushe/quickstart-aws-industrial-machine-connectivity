@@ -1,7 +1,7 @@
 :quickstart-project-name: quickstart-aws-industrial-machine-connectivity
 :partner-product-name: Industrial Machine Connectivity
 :partner-product-short-name: IMC
-// :partner-company-name:
+//:partner-company-name:
 :doc-month: February
 :doc-year: 2021
 :partner-contributors: Thomas Cummins and Krishna Doddapaneni, AWS IoT Partner team
