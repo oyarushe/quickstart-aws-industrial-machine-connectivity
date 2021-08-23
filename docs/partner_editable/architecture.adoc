@@ -67,7 +67,7 @@ The AMC architecture, shown in <<amc-architecture>>, has a serverless sequence f
 
 === Element Unify
 
-Element Unify is a data management platform that integrates, contextualizes, and governs industrial IT/OT data. It standardizes the data into analyics-ready data sources and asset models. With Element Unify, industrial, systems integrator (SI), and global systems integrator (GSI) teams work collaboratively to build rich data contexts at scale with no code. Element Unify supports single-site and multiple-site deployments. It automates the deployment and updates of the data model directly to AWS IoT SiteWise.
+https://www.elementanalytics.com/solutions/element-unify-for-aws[Element Unify^] is a data-management platform that integrates, contextualizes, and governs industrial IT/OT data. It standardizes the data into analyics-ready data sources and asset models. With Element Unify, industrial, systems integrator (SI), and global systems integrator (GSI) teams work collaboratively to build rich data contexts at scale with no code. Element Unify supports single-site and multiple-site deployments. It automates the deployment and updates of the data model directly to AWS IoT SiteWise.
 
 Element Unify provides a single federated, contextualized source of data from which users can establish their own single version of the truth, all with a powerful governance engine ensuring data integrity across the enterprise.
 
