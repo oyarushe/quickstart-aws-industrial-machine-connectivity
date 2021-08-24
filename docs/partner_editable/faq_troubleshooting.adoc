@@ -64,53 +64,54 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 .. Table 1: `<stack-name>-asset-model-table`
 .. Table 2: `<stack-name>-asset-table`
 
-Depending on the AMC driver you used, take the follow actions to rerun the AMC: 
-
+. Depending on the AMC driver you used, take the follow actions to re-run the AMC: 
++
 *AMC driver: IgnitionCirrusLink*
-
++
 Initiate a rebirth (NBIRTH,DBIRTH) MQTT message that represents the your project hierarchy.
-
-. Connect to your Ignition server in Ignition Designer.
-. Launch Ignition Designer, open the tag browser, and choose *Tag providers*, *MQTT Transmission*, *Transmission Control*. 
-. Choose the *Refresh* button. A birth message is initiated.
-
++
+.. Connect to your Ignition server in Ignition Designer.
+.. Launch Ignition Designer, open the tag browser, and choose *Tag providers*, *MQTT Transmission*, *Transmission Control*. 
+.. Choose the *Refresh* button. A birth message is initiated. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
++
 .Refresh Sparkplug Birth Certificates
 [link=images/RefreshBirthCertificates.png]
 image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 
-.. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
-
++
+--
 *AMC driver: IgnitionFileExport*
 
-. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
-
-.. `<name_of_stack>-<amcincomingresource>-<hash>`
+.. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
++
+`<name_of_stack>-<amcincomingresource>-<hash>`
 
 *AMC driver: KepServerFileExport*
 
-. Obtain your JSON file that represents the new hierarchy: 
+.. Obtain your JSON file that represents the new hierarchy.
 
-.. Open KepServerEx.
-.. Select the project you'd like to export by clicking on it.
-..Select Project
+... Open KepServerEx.
+... Select the project you'd like to export by clicking on it.
++
 [link=images/SelectProject.png]
 image::../images/SelectProject.png[Select Project]
-.. Hit File and Save As.
-..Save As
-[link=images/SaveAs.png]
-image::../images/SaveAs.png[Save As]
-.. Input the project encryption settings and hit "Ok".
-..Encryption Settings
+
+... Select File menu and click Save As.
+
+... Input the project encryption settings and hit "Ok".
++
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
-.. Name the export file, and save the file as a JSON Project File.
-..Name and Export
+
+... Name the export file, and save the file as a JSON Project File.
++
 [link=images/NameAndExport.png]
 image::../images/NameAndExport.png[Name and Export]
 
-. Drop it into the following S3 bucket:
-
-.. `<name_of_stack>-<amcincomingresource>-<hash>`
+.. Drop JSON file into the following S3 bucket:
++
+`<name_of_stack>-<amcincomingresource>-<hash>`
+--
 
 *Q.*
 How do I add a QuickSight visual?
@@ -129,11 +130,12 @@ Prerequisites:
 ... Data source name: Provide a name for the {partner-product-short-name} dataset, such as *IMC-QS-Dataset*.
 ... Manifest file: Leave the *URL* radio button chosen for the *Upload a manifest file* text entry option, and paste the URL of the S3 bucket manifest file. The manifest file is located in the same S3 bucket where the data is stored (S3 bucket name: `<stack_name>-imcs3bucket-<hash>`). 
 ... The manifest file is named `imcquicksightdata.json`. The URL follows this naming convention:
-.... `https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
++
+`https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
 
 *Q.* If I am an ISV partner, how can I create a connector to interface my software to Element Unify?
 
-*A.* Documentation for developing connectors for ISV partners is found in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide]. A reference guide can also be found within https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal].
+*A.* You can find documentation for developing connectors for ISV partners in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide^]. You can also find a reference guide through the https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal^] after you sign in to your Element account.
 
 == Troubleshooting
 
