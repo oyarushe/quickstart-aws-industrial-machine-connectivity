@@ -64,55 +64,54 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 .. Table 1: `<stack-name>-asset-model-table`
 .. Table 2: `<stack-name>-asset-table`
 
-Depending on the AMC driver you used, take the follow actions to rerun the AMC: 
-
+. Depending on the AMC driver you used, take the follow actions to re-run the AMC: 
++
 *AMC driver: IgnitionCirrusLink*
-
++
 Initiate a rebirth (NBIRTH,DBIRTH) MQTT message that represents the your project hierarchy.
-
-. Connect to your Ignition server in Ignition Designer.
-. Launch Ignition Designer, open the tag browser, and choose *Tag providers*, *MQTT Transmission*, *Transmission Control*. 
-. Choose the *Refresh* button. A birth message is initiated. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
++
+.. Connect to your Ignition server in Ignition Designer.
+.. Launch Ignition Designer, open the tag browser, and choose *Tag providers*, *MQTT Transmission*, *Transmission Control*. 
+.. Choose the *Refresh* button. A birth message is initiated. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
 +
 .Refresh Sparkplug Birth Certificates
 [link=images/RefreshBirthCertificates.png]
 image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 
-
++
+--
 *AMC driver: IgnitionFileExport*
 
-. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
+.. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
 +
 `<name_of_stack>-<amcincomingresource>-<hash>`
 
 *AMC driver: KepServerFileExport*
 
-. Obtain your JSON file that represents the new hierarchy.
+.. Obtain your JSON file that represents the new hierarchy.
 
-.. Open KepServerEx.
-.. Select the project you'd like to export by clicking on it.
+... Open KepServerEx.
+... Select the project you'd like to export by clicking on it.
 +
 [link=images/SelectProject.png]
 image::../images/SelectProject.png[Select Project]
 
-.. Hit File and Save As.
-+
-[link=images/SaveAs.png]
-image::../images/SaveAs.png[Save As]
+... Select File menu and click Save As.
 
-.. Input the project encryption settings and hit "Ok".
+... Input the project encryption settings and hit "Ok".
 +
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
 
-.. Name the export file, and save the file as a JSON Project File.
+... Name the export file, and save the file as a JSON Project File.
 +
 [link=images/NameAndExport.png]
 image::../images/NameAndExport.png[Name and Export]
 
-. Drop JSON file into the following S3 bucket:
+.. Drop JSON file into the following S3 bucket:
 +
 `<name_of_stack>-<amcincomingresource>-<hash>`
+--
 
 *Q.*
 How do I add a QuickSight visual?
