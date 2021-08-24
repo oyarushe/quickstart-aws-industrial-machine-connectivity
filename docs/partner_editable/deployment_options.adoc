@@ -1,8 +1,12 @@
 // There are generally two deployment options. If additional are required, add them here
 
-This Quick Start provides two deployment options:
+This Quick Start provides four deployment options - 2 for Asset model converter(AMC) drivers and 2 for Element Unify. The Asset model converter converts tag definitions and source data models from edge devices into AWS IoT SiteWise models. Whereas,  Element Unify uses a no code/low code approach to build and publish models to AWS IoT SiteWise.
 
-* *Deploy {partner-product-name} into a new VPC*. This option builds a new AWS environment consisting of the VPC, subnet, security group, and other infrastructure components. It then deploys {partner-product-name} into this new VPC.
-* *Deploy {partner-product-name} into an existing VPC*. This option provisions {partner-product-name} in the default VPC of your existing AWS infrastructure.
+* *Deploy {partner-product-name} into a new VPC*. This option builds a new AWS environment consisting of the VPC, subnet, security group, and other infrastructure components. It then deploys {partner-product-name} with AMC drivers into this new VPC.
+* *Deploy {partner-product-name} into an existing VPC*. This option provisions {partner-product-name} with AMC drivers in the default VPC of your existing AWS infrastructure.
+* *Deploy {partner-product-name} with Element Unify into a new VPC*. This option builds a new AWS environment consisting of the VPC, subnet, security group, and other infrastructure components. It then deploys {partner-product-name} with Element Unify into this new VPC.
+* *Deploy {partner-product-name} with Element Unify into an existing VPC*. This option provisions {partner-product-name} with Element Unify in the default VPC of your existing AWS infrastructure.
+
+To use Element Unify, sign up for an account before deploying through https://www.elementanalytics.com/solutions/element-unify-for-aws[Element website^] or the https://aws.amazon.com/marketplace/pp/prodview-trvx6gn4vqeok[AWS Marketplace^].
 
 The Quick Start provides separate templates for these options.

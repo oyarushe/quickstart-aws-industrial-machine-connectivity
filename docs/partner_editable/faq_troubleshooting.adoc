@@ -72,45 +72,47 @@ Initiate a rebirth (NBIRTH,DBIRTH) MQTT message that represents the your project
 
 . Connect to your Ignition server in Ignition Designer.
 . Launch Ignition Designer, open the tag browser, and choose *Tag providers*, *MQTT Transmission*, *Transmission Control*. 
-. Choose the *Refresh* button. A birth message is initiated.
-
+. Choose the *Refresh* button. A birth message is initiated. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
++
 .Refresh Sparkplug Birth Certificates
 [link=images/RefreshBirthCertificates.png]
 image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 
-.. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
 
 *AMC driver: IgnitionFileExport*
 
 . Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
-
-.. `<name_of_stack>-<amcincomingresource>-<hash>`
++
+`<name_of_stack>-<amcincomingresource>-<hash>`
 
 *AMC driver: KepServerFileExport*
 
-. Obtain your JSON file that represents the new hierarchy: 
+. Obtain your JSON file that represents the new hierarchy.
 
 .. Open KepServerEx.
 .. Select the project you'd like to export by clicking on it.
-..Select Project
++
 [link=images/SelectProject.png]
 image::../images/SelectProject.png[Select Project]
+
 .. Hit File and Save As.
-..Save As
++
 [link=images/SaveAs.png]
 image::../images/SaveAs.png[Save As]
+
 .. Input the project encryption settings and hit "Ok".
-..Encryption Settings
++
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
+
 .. Name the export file, and save the file as a JSON Project File.
-..Name and Export
++
 [link=images/NameAndExport.png]
 image::../images/NameAndExport.png[Name and Export]
 
-. Drop it into the following S3 bucket:
-
-.. `<name_of_stack>-<amcincomingresource>-<hash>`
+. Drop JSON file into the following S3 bucket:
++
+`<name_of_stack>-<amcincomingresource>-<hash>`
 
 *Q.*
 How do I add a QuickSight visual?
@@ -129,7 +131,8 @@ Prerequisites:
 ... Data source name: Provide a name for the {partner-product-short-name} dataset, such as *IMC-QS-Dataset*.
 ... Manifest file: Leave the *URL* radio button chosen for the *Upload a manifest file* text entry option, and paste the URL of the S3 bucket manifest file. The manifest file is located in the same S3 bucket where the data is stored (S3 bucket name: `<stack_name>-imcs3bucket-<hash>`). 
 ... The manifest file is named `imcquicksightdata.json`. The URL follows this naming convention:
-.... `https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
++
+`https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
 
 *Q.* If I am an ISV partner, how can I create a connector to interface my software to Element Unify?
 

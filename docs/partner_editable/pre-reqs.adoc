@@ -67,7 +67,9 @@ For physical deployments, you configure both the deployment type and the dataflo
 * BootupScriptBrownfieldAllOptions (brownfield deployment, any dataflow option)
 
 === Review the AMC drivers
-When you deploy the {partner-product-short-name} Quick Start, you choose an AMC driver. This driver determines which edge application the {partner-product-short-name} Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack `AMCDriver` parameter, you can choose any of four drivers: IgnitionCirrusLink, IgnitionFileExport, or KepwareFileExport.
+When you deploy the {partner-product-short-name} Quick Start, you have an option to choose between an AMC driver and Element Unify. 
+
+If you choose to deploy the Quick Start with an AMC driver, your choice determines which edge application the {partner-product-short-name} Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack `AMCDriver` parameter, you can choose any of the three drivers: IgnitionCirrusLink, IgnitionFileExport, or KepwareFileExport. 
 
 * *IgnitionCirrusLink*. This is the default AMC driver. It runs automatically and creates the AWS IoT SiteWise resources automatically when you launch the {partner-product-short-name} Quick Start virtual option. The Cirrus Link transmission module runs on Ignition to publish birth certificates for all devices defined with Ignition's tag database. This module follows the Sparkplug version B specification for MQTT. For the AWS CloudFormation stack's `AMCDriver` parameter, you leave the default set to `IgnitionCirrusLink`.
 
