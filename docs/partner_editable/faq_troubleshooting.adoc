@@ -133,7 +133,7 @@ Prerequisites:
 
 *Q.* If I am an ISV partner, how can I create a connector to interface my software to Element Unify?
 
-*A.* Documentation for developing connectors for ISV partners is found in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide]. A reference guide can also be found within https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal].
+*A.* You can find documentation for developing connectors for ISV partners in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide^]. You can also find a reference guide through the https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal^] after you sign in to your Element account.
 
 == Troubleshooting
 
