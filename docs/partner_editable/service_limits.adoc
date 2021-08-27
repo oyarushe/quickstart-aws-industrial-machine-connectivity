@@ -14,3 +14,7 @@
 |EC2 instances |4
 |Secrets Manager |1
 |===
+
+//TODO Shivansh, Are we missing a word here: "AWS IoT ____ topic rules"?
+
+//TODO Shivansh, What's the Secrets Manager resource that we have 1 of?

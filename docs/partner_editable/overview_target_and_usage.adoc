@@ -2,6 +2,6 @@
 // Identify your target audience and explain how/why they would use this Quick Start.
 //Avoid borrowing text from partner websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
 
-This guide provides instructions for deploying the {partner-product-name} ({partner-product-short-name}) Quick Start reference architecture on the AWS Cloud. It also includes an option to deploy Element Unify to increase data-modeling and metadata-integration capabilities.
+This guide provides instructions for deploying the {partner-product-name} ({partner-product-short-name}) Quick Start reference architecture on the AWS Cloud.
 
 The Quick Start helps you bring data from your Industrial Internet of Things (IIoT) assets to the AWS Cloud in a structured way. It's for developers and AWS Partners, regional and global systems integrators, independent software vendors, and original equipment manufacturers who want to generate immediate business value from an IIoT architecture.

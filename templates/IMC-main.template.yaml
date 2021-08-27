@@ -1,8 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Template to deploy the Industrial Machine Connectivity Quick Start into a new VPC. (qs-1qtb0iua4)
+Description: Template to deploy the Industrial Machine Connectivity Quick Start with AMC into a new VPC. (qs-1qtb0iua4)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying AMC into a new VPC"
+    EntrypointName: "Parameters for deploying with AMC into a new VPC"
+    Order: "1"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -58,7 +59,7 @@ Metadata:
       AMCDriver:
         default: Asset Model Converter driver
       UserPublicIP:
-        default: Your public IP address  
+        default: User public IP address  
       SitewiseMonitorEmail:
         default: Email address for the SiteWise portal administrator
 
@@ -163,7 +164,7 @@ Parameters:
       - IgnitionCirrusLink
       - IgnitionFileExport
       - KepwareFileExport
-    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport.
+    Description: Driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver (IgnitionCirrusLink), choose IgnitionFileExport or KepwareFileExport.
 Conditions:
   UsingDefaultBucket: !Equals
     - !Ref QSS3BucketName

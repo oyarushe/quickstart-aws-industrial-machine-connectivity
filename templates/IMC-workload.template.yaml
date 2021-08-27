@@ -1,9 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Template to deploy the Industrial Machine Connectivity Quick Start into an existing VPC. (qs-1qtb0iud5)
+Description: Template to deploy the Industrial Machine Connectivity Quick Start with AMC into an existing VPC. (qs-1qtb0iud5)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying AMC into an existing VPC"
+    EntrypointName: "Parameters for deploying with AMC into an existing VPC"
+    Order: "2"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -54,7 +55,7 @@ Metadata:
       AMCDriver:
         default: Asset Model Converter driver
       UserPublicIP:
-        default: Your public IP address  
+        default: User public IP address  
       PublicSubnet1CIDR:
         default: CIDR block for Ignition/Greengrass access
       SitewiseMonitorEmail:
@@ -84,7 +85,7 @@ Parameters:
       - IgnitionCirrusLink
       - IgnitionFileExport
       - KepwareFileExport
-    Description: The driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver, choose IgnitionFileExport or KepwareFileExport.
+    Description: Driver that the Asset Model Converter uses to translate hierarchy data. If you're not using the default driver (IgnitionCirrusLink), choose IgnitionFileExport or KepwareFileExport.
   EdgeDeviceID:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Edge-gateway device name can include numbers, lowercase

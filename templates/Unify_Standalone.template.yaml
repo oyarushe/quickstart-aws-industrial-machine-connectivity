@@ -28,20 +28,20 @@ Parameters:
     Type: String
     Default: unify-quickstart-aws-imc-integration/
   UnifyHostname:
-    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/
+    Description: If your asset-modeling application is Element Unify and you want a hostname that's different from the default, enter the desired hostname.
     Type: String
     Default: https://app001-aws.elementanalytics.com/
   UnifyUsername:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
-    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Description: Enter the Element Unify user name (email address). You can get credentials from your Element Unify support engineer.
     Type: String
   UnifyPassword:
     Description: Eter your Element Unify password. You can get credentials from your Element Unify support engineer.
     Type: String
     NoEcho: true
   UnifyOrgId:
-    Description: If your asset modeling application is Element Unify, enter the Element Unify organization Id. The organization id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<org id>
+    Description: If your asset-modeling application is Element Unify, enter the Element Unify organization ID. You can find the organization ID in the URL (https://UnifyHostName/#/org/<organization-id>) after you log in to Element Unify.
     Type: Number
 
 

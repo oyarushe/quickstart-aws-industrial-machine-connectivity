@@ -2,3 +2,5 @@
 // Describe or link to specific knowledge requirements; for example: "familiarity with basic concepts in the areas of networking, database operations, and data encryption" or "familiarity with <software>."
 
 This Quick Start also assumes familiarity with AWS IoT Core, AWS IoT SiteWise, AWS IoT Greengrass, the partner edge application to be used, such as Inductive Automation's Ignition, PTC's KEPServerEX, and Element Unify.
+
+//TODO Shivansh, Element Unify is not a partner edge application, so it doesn't belong in this list. Please revise for accuracy.

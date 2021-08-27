@@ -2,7 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Template to deploy the Industrial Machine Connectivity Quick Start into a new VPC. (qs-1qtb0iua4)
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying Element Unify into a new VPC"
+    EntrypointName: "Parameters for deploying with Element Unify into a new VPC"
+    Order: "3"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -50,13 +51,13 @@ Metadata:
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
       UnifyHostname:
-        default: Unify host
+        default: Element Unify hostname
       UnifyUsername:
-        default: Unify username (email)
+        default: Element Unify user name
       UnifyPassword:
-        default: Unify password
+        default: Element Unify password
       UnifyOrgId:
-        default: Unify organization Id
+        default: Element Unify organization ID
       VPCCIDR:
         default: VPC CIDR
       EC2KeyPairName:
@@ -70,7 +71,7 @@ Metadata:
       IgnitionInstanceType:
         default: Ignition EC2 instance type
       UserPublicIP:
-        default: Your public IP address  
+        default: User public IP address  
       SitewiseMonitorEmail:
         default: Email address for the SiteWise portal administrator
 
@@ -169,20 +170,20 @@ Parameters:
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})
     Description: Enter your public IP for Ignition UI, SSH access to EC2 instances. Format - (x.x.x.x)
   UnifyHostname:
-    Description: Enter the Element Unify hostname. Typically https://app001-aws.elementanalytics.com/.
+    Description: If your asset-modeling application is Element Unify and you want a hostname that's different from the default, enter the desired hostname.
     Type: String
     Default: https://app001-aws.elementanalytics.com/
   UnifyUsername:
     AllowedPattern: ^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$
     ConstraintDescription: Must be a valid email address.
-    Description: Enter the Element Unify username (email). You can get credentials from your Element Unify support engineer.
+    Description: Enter the Element Unify user name (email address). You can get credentials from your Element Unify support engineer.
     Type: String
   UnifyPassword:
     Description: Enter your Element Unify password. You can get credentials from your Element Unify support engineer.
     Type: String
     NoEcho: true
   UnifyOrgId:
-    Description: Enter the Element Unify organization Id. The organization Id is found in the url after you log in to Element Unify. https://UnifyHostName/#/org/<organization Id>.
+    Description: If your asset-modeling application is Element Unify, enter the Element Unify organization ID. You can find the organization ID in the URL (https://UnifyHostName/#/org/<organization-id>) after you log in to Element Unify.
     Type: Number
     Default: 0
 Conditions:
