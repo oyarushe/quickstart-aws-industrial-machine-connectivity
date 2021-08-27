@@ -91,23 +91,23 @@ image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
 --
 *AMC driver: IgnitionFileExport*
 
-.. Obtain your JSON file that represents the new hierarchy and drop it into the following S3 bucket (replacing the information in brackets):
+.. Obtain your .json file that represents the new hierarchy, and move it into the following S3 bucket (replacing the information in brackets):
 +
 `<name_of_stack>-<amcincomingresource>-<hash>`
 
 *AMC driver: KepServerFileExport*
 
-.. Obtain your JSON file that represents the new hierarchy.
+.. Obtain your .json file that represents the new hierarchy.
 
 ... Open KepServerEx.
-... Select the project you'd like to export by clicking on it.
+... Select the project you'd like to export.
 +
 [link=images/SelectProject.png]
 image::../images/SelectProject.png[Select Project]
 
-... Select File menu and click Save As.
+... On the *File* menu, choose *Save As*.
 
-... Input the project encryption settings and hit "Ok".
+... Select the project encryption settings (password).
 +
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
@@ -116,12 +116,12 @@ image::../images/EncryptionSettings.png[Encryption Settings]
 
 //TODO Shivansh, Please remove all unused .png files from the repo.
 
-... Name the export file, and save the file as a JSON Project File.
+... Name the export file, and save it as a .json file.
 +
 [link=images/NameAndExport.png]
 image::../images/NameAndExport.png[Name and Export]
 
-.. Drop JSON file into the following S3 bucket:
+.. Move the .json file into the following S3 bucket:
 +
 `<name_of_stack>-<amcincomingresource>-<hash>`
 --
@@ -162,10 +162,10 @@ First, verify that the Ignition trial period (two hours) has not expired. If tha
 . Choose the gateway created during the stack launch (replacing the information in brackets):
 .. Naming convention: `<name_of_stack>_Automated_Gateway`
 . In the *Source Configuration for Automated Gateway Config* section, choose *Edit*.
-. Choose *Save* at the bottom. No changes are necessary. This action activates the AWS IoT SiteWise gateway to make sure that data flows from the OPC UA server. 
+. Choose *Save* at the bottom. No changes are necessary. This action activates the AWS IoT SiteWise gateway to ensure that data flows from the OPC UA server. 
 . If it hasn't already been done, navigate to Ignition, and look for and accept the quarantined certificate.
 
-* If using KepServer for Windows, make sure that your default firewalls have been turned off. They prevent the AWS IoT SiteWise gateway certificates from showing up.
+* If using KepServer for Windows, ensure that your default firewalls have been turned off. They prevent the AWS IoT SiteWise gateway certificates from showing up.
 
 '''
 *Can't access Ignition web UI*
@@ -173,7 +173,7 @@ First, verify that the Ignition trial period (two hours) has not expired. If tha
 Ensure that you're attempting to connect from the same network you defined as your public IP while setting up the stack. If you're attempting from a different network, edit the security group associated with the two EC2 instances. (It's the same security group.)
 
 . Open the EC2 console.
-. Highlight one of the two EC2 instances that has been created for your deployment.
+. Choose one of the two EC2 instances that has been created for your deployment.
 . Scroll to the right and choose the security group associated with the EC2 instance.
 . Edit the inbound rules for the rule associated with port 8088 to match the IP address you're attempting the connection from. 
 
@@ -184,7 +184,7 @@ Ensure that you're attempting to connect from the same network you defined as yo
 . Take note of the private IP addresses of the following:
 .. The AWS IoT Greengrass EC2 instance for the current deployment
 .. The Ignition EC2 instance for the current deployment
-. Highlight one of the two EC2 instances that has been created for your deployment.
+. Choose one of the two EC2 instances that has been created for your deployment.
 . Scroll to the right and choose the security group associated with the EC2 instance.
 . Edit the rule associated with port 8883 and replace *0.0.0.0/0* with the private IP address for the Ignition EC2 instance.
 . Edit the rule associated with port 62541 and replace *0.0.0.0/0* with the private IP address for the AWS IoT Greengrass EC2 instance.
@@ -227,7 +227,7 @@ If these settings are as shown in <<ignition-mqtt-filtered>> and you're still re
     `<name_of_stack>-AssetModelIngestionLambdaResource-<hash>`
 .. Choose the *Monitoring* tab.
 .. Choose *View logs in CloudWatch*.
-.. Click into the most recent log stream, and find the error message to troubleshoot.
+.. Select the most recent log stream, and find the error message to troubleshoot.
 
 '''
 *Data from the MQTT transmission module doesn't show up in the IoT cloud*
@@ -240,7 +240,7 @@ If these settings are as shown in <<ignition-mqtt-filtered>> and you're still re
 * User name: admin
 * Password: password (default password)
 . Choose *MQTT Transmission*, *Settings*, *Server*. Confirm that the connectivity shows 1 of 1. If it doesn't, choose *Edit* and do the following:
-.. Make sure that the URL is in the format: `ssl://<your_aws_account_iot_endpoint>:8883`
+.. Ensure that the URL is in this format: `ssl://<your_aws_account_iot_endpoint>:8883`
 .. Download the .tar.gz` file that represents the non-GreenGrass IoT thing from the following S3 bucket location (replacing the information in brackets):
 ... Bucket name: `<stack_name>-devicesbucketresource-<hash>`
 ... Key name: `<name_for_edge_device_parameter>/<name_for_edge_device_parameter>Device.tar.gz`
@@ -248,4 +248,4 @@ If these settings are as shown in <<ignition-mqtt-filtered>> and you're still re
 .. Replace the CA certificate file with `root.ca.pem` from the tarball package.
 .. Replace the client certificate file with the `.pem` file from the tarball package.
 .. Replace the client private key file with the `.private` file from the tarball package.
-.. Choose *Save Changes*, and make sure that the connectivity says *1 of 1*.
+.. Choose *Save Changes*, and verify that the connectivity says *1 of 1*.
