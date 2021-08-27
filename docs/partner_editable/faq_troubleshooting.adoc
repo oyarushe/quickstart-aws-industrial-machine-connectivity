@@ -18,22 +18,26 @@ WARNING: When you set *Rollback on failure* to *Disabled*, you continue to incur
 
 For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting AWS CloudFormation^].
 
+'''
 *Q.* I encountered a size-limitation error when I deployed the AWS CloudFormation templates.
 
 *A.* Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
 
+'''
 *Q.* Can I update a stack to a different deployment type (physical, virtual)? 
 
 *A.* Updates are not supported. To achieve a different deployment type, deploy a new stack. See the following question and answer for details on deploying more than one stack in an account. Then decide whether to delete your original stack before creating another.
 
+'''
 *Q.* Can I deploy multiple times in the same AWS account? 
 
 *A.* Yes, you may deploy multiple stacks in the same account. Be wary of the following: 
 
 * AWS IoT SiteWise may receive data from multiple sources if, for example, two instances of Ignition are publishing data onto the topic `/Tag Providers/default/Line1/CNC/Temperature`.
 
-* If AWS IoT SiteWise models and assets exist in the Cloud from a previous deployment, a new deployment does not recreate the model or asset hierarchy. Instead, the Asset Model Converter operates by recognizing any changes in the existing models or assets and the new deployment hierarchy. For example: 
+* If AWS IoT SiteWise models and assets exist in the AWS Cloud from a previous deployment, a new deployment does not recreate the model or asset hierarchy. Instead, the Asset Model Converter operates by recognizing any changes in the existing models or assets and the new deployment hierarchy. For example: 
 ** If the previously deployed hierarchy is identical to the newly deployed one, nothing in AWS IoT SiteWise is changed.
+
 ** If the newly deployed hierarchy has an identical structure to the previously deployed hierarchy with additional nodes that follow the hierarchy pattern, the new models or assets are created in AWS IoT SiteWise:
 *** Previous:
  
@@ -47,6 +51,11 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 * If the newly deployed hierarchy has a different hierarchy than the previously deployed hierarchy altogether, the Asset Model Converter does not create the new models and assets.
 * Refer to the instructions in the appendix showing how to add a line and device with tags to a project in Ignition using Ignition Designer.
 
+//TODO Shivansh, The above answer assumes an AMC deployment. Please update this answer to address Element Unify too. 
+
+//TODO Shivansh, Please review the whole FAQ section and adapt other answers for Element Unify wherever needed.
+
+'''
 *Q.* Does any hardening of the operating system occur during deployment? 
 
 *A.* Yes. Fail2ban is installed and enabled on the device, which bans IPs that show the following malicious signs: 
@@ -55,6 +64,7 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 * Seeking exploits.
 * Shared memory on the device is secured by `/etc/fstab`.
 
+'''
 *Q.* Can I rerun the AMC to create new models and assets? 
 
 *A.* Yes. Follow these steps:
@@ -74,10 +84,9 @@ Initiate a rebirth (NBIRTH,DBIRTH) MQTT message that represents the your project
 .. Launch Ignition Designer, open the tag browser, and choose *Tag providers*, *MQTT Transmission*, *Transmission Control*. 
 .. Choose the *Refresh* button. A birth message is initiated. This action initiates the {partner-product-short-name} Quick Start's AMC, which creates the models and assets that represent the Ignition hierarchy in AWS IoT SiteWise. 
 +
-.Refresh Sparkplug Birth Certificates
+.Refresh Sparkplug birth certificates
 [link=images/RefreshBirthCertificates.png]
 image::../images/RefreshBirthCertificates.png[Refresh birth certificates]
-
 +
 --
 *AMC driver: IgnitionFileExport*
@@ -103,6 +112,10 @@ image::../images/SelectProject.png[Select Project]
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
 
+//TODO Shivansh, Do you see value in the above screenshot for a tech-savvy customer? This seems like an image we could delete. Please review all the remaining screenshots in the guide, and delete any that simply illustrate UI elements that will be obvious in the moment.
+
+//TODO Shivansh, Please remove all unused .png files from the repo.
+
 ... Name the export file, and save the file as a JSON Project File.
 +
 [link=images/NameAndExport.png]
@@ -113,6 +126,7 @@ image::../images/NameAndExport.png[Name and Export]
 `<name_of_stack>-<amcincomingresource>-<hash>`
 --
 
+'''
 *Q.*
 How do I add a QuickSight visual?
 
@@ -133,15 +147,16 @@ Prerequisites:
 +
 `https://<stack_name>-imcs3bucket-<hash>.s3.amazonaws.com/imcquicksightdata.json`
 
-*Q.* If I am an ISV partner, how can I create a connector to interface my software to Element Unify?
+'''
+*Q.* I am an ISV partner. How can I create a connector to interface my software to Element Unify?
 
-*A.* You can find documentation for developing connectors for ISV partners in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify Connector Development Guide^]. You can also find a reference guide through the https://app001-aws.elementanalytics.com/docs[Element Unify's Developer Portal^] after you sign in to your Element account.
+*A.* You can find documentation for developing connectors for ISV partners in the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/unify-connector-development-guide.md[Element Unify connector development guide^]. You can also find a reference guide through the https://app001-aws.elementanalytics.com/docs[Element Unify developer portal^] after you sign in to your Element account.
 
 == Troubleshooting
 
-*Quarantined certificate in Ignition doesn't show up (or data doesn't show up for dataflow option 1 data path)*
+*Quarantined certificate in Ignition doesn't show up (or data doesn't show up for dataflow 1)*
 
-First, verify that the Ignition trial period (2 hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the AWS IoT SiteWise gateway:
+First, verify that the Ignition trial period (two hours) has not expired. If that action does not remediate the issue, repeat the process of refreshing the AWS IoT SiteWise gateway:
 
 . Open the AWS IoT SiteWise console, and choose *Edge*, *Gateways*.
 . Choose the gateway created during the stack launch (replacing the information in brackets):
@@ -152,7 +167,7 @@ First, verify that the Ignition trial period (2 hours) has not expired. If that 
 
 * If using KepServer for Windows, make sure that your default firewalls have been turned off. They prevent the AWS IoT SiteWise gateway certificates from showing up.
 
-
+'''
 *Can't access Ignition web UI*
 
 Ensure that you're attempting to connect from the same network you defined as your public IP while setting up the stack. If you're attempting from a different network, edit the security group associated with the two EC2 instances. (It's the same security group.)
@@ -162,6 +177,7 @@ Ensure that you're attempting to connect from the same network you defined as yo
 . Scroll to the right and choose the security group associated with the EC2 instance.
 . Edit the inbound rules for the rule associated with port 8088 to match the IP address you're attempting the connection from. 
 
+'''
 *Narrowing Ignition or AWS IoT Greengrass permissions (for workload template deployments only)*
 
 . Open the EC2 console.
@@ -173,45 +189,47 @@ Ensure that you're attempting to connect from the same network you defined as yo
 . Edit the rule associated with port 8883 and replace *0.0.0.0/0* with the private IP address for the Ignition EC2 instance.
 . Edit the rule associated with port 62541 and replace *0.0.0.0/0* with the private IP address for the AWS IoT Greengrass EC2 instance.
 
+'''
 *Models and assets weren't created in AWS IoT SiteWise*
 
 If models and assets were not created in AWS IoT SiteWise and the Cirrus Link AMC driver was used, follow these steps to troubleshoot.
 
 . Open the Ignition console, and navigate to MQTT transmission settings.
-
++
 .Ignition—Settings
 [link=images/IgnitionSettings.png]
 image::../images/IgnitionSettings.png[Ignition settings]
 
-[start=2]
 . Choose *Servers*, *Settings*, *Edit*. 
 . At the bottom of the screen, select the *Show advanced properties* check box.
 . Under *Data Format Type*, choose *Sparkplug_B_v1_0_JSON*. 
 . Choose *Save Changes*.
-
++
 .Ignition—MQTT transmission module settings
 [link=images/Ignition-MQTT-Settings.png]
 image::../images/Ignition-MQTT-Settings.png[Ignition MQTT settings]
++
+//TODO Shivansh, This is another example of a screenshot that I wonder if tech-savvy customers will find helpful. AWS style is to not illustrate the location of UI elements, such as this Save Changes button. Please scrutinize all screenshots and keep only those that add value. I'm pressing on this more as this doc grows. :)
 
-[start=6]
 . Verify that `tagPathConfiguration` is not being filtered out:
 .. In the MQTT transmission module settings, choose *Transmitters*, *Edit*. 
 .. At the bottom of the screen, select the *Show advanced properties* check box. 
 .. Verify that `tagPathConfiguration` is not being filtered out. 
-
++
 [#ignition-mqtt-filtered]
 .Ignition—MQTT transmission module filtered properties
 [link=images/Ignition-MQTT-Filtered-Properties.png]
 image::../images/Ignition-MQTT-Filtered-Properties.png[Ignition MQTT filtered properties]
-
++
 If these settings are as shown in <<ignition-mqtt-filtered>> and you're still receiving errors, check the Lambda function responsible for creating the models and assets in AWS IoT SiteWise for errors:
 
-. Open the AWS Lambda console, and navigate to the function with this name (replacing the information in brackets):
+.. Open the AWS Lambda console, and navigate to the function with this name (replacing the information in brackets):
     `<name_of_stack>-AssetModelIngestionLambdaResource-<hash>`
-. Choose the *Monitoring* tab.
-. Choose *View logs in CloudWatch*.
-. Click into the most recent log stream, and find the error message to troubleshoot.
+.. Choose the *Monitoring* tab.
+.. Choose *View logs in CloudWatch*.
+.. Click into the most recent log stream, and find the error message to troubleshoot.
 
+'''
 *Data from the MQTT transmission module doesn't show up in the IoT cloud*
 
 . Get the public IP address of that instance, and load a URL like this into any browser (replacing the information in brackets):

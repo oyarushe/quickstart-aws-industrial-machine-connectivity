@@ -1,9 +1,15 @@
 // This doc is for the "Post-deployment steps" section
 // Current URL: https://aws-quickstart.github.io/quickstart-aws-industrial-machine-connectivity/#_post_deployment_steps
 
-Stack deployment takes approximately {deployment_time}. You can track the progress of the stack launch by viewing the “Events” tab of the CloudFormation stack console. Once the CloudFormation stack is completed, follow the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/post-deployment.md[post-deployment steps^] to configure the IMC Quick Start to make it operational.
+//TODO Shivansh, It doesn't work any more to bounce customers between post-deployment steps documented in two places, especially since the README is not being updated. I recommend that you do the following: (1) Update the post-deployment steps in the old README (eliminating references to dataflow 2a and 2b, adding Element Unify, etc.). (2) Incorporate the updated steps into this section of the guide, avoiding redundancy. (3) Replace the README content with a pointer to the guide in case anyone goes to the old README URL. 
+
+After the CloudFormation stack is completed, follow the https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/main/assets/readme/post-deployment.md[post-deployment steps^] to configure the IMC Quick Start to make it operational.
+
+//TODO Shivansh, After you've incorporated the README content into this section, delete the above pointer to the README.
 
 NOTE: After post-deployment steps, return back to finish the deployment.
+
+//TODO Shivansh, After you've incorporated the README content into this section, remove the above note. 
 
 === Clean up the AWS CloudFormation stack deployment
 

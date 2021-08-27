@@ -29,7 +29,7 @@ include::./post_deployment.adoc[]
 
 //_Add any other details that will help the customer use the software on AWS._
 
-=== Additional resources
+== Resources
 
 * https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/amc.md[Asset Model Converter (AMC) and creating AMC drivers]
 * https://github.com/aws-quickstart/quickstart-aws-industrial-machine-connectivity/blob/develop/assets/readme/additional-info.md#amc-approved-dynamodb-format[AMC approved DyanamoDB table format]
