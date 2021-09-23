@@ -69,7 +69,7 @@ For physical deployments, you configure both the deployment type and the dataflo
 ==== Review the drivers
 When you deploy the {partner-product-short-name} Quick Start, you have choose either an AMC driver and an Element Unify driver. 
 
-//TODO Shivansh, Is "Element Unify" a driver too? I added the word "driver" because you added Element Unify to this section on drivers. If it's not a driver, please remove it from this section and specify "AMC drivers" in the heading.
+//TODO Shivansh, Is "Element Unify" a driver too? I added the word "driver" because you added Element Unify to this section on drivers. If it's not a driver, please remove it from this section and specify "AMC drivers" in the heading. - This looks good.
 
 *AMC drivers.* If you choose to deploy the Quick Start with an AMC driver, your choice determines which edge application the {partner-product-short-name} Quick Start connects to AWS IoT SiteWise. For the AWS CloudFormation stack `AMCDriver` parameter, you can choose any of the three drivers: IgnitionCirrusLink, IgnitionFileExport, or KepwareFileExport. 
 
@@ -79,9 +79,9 @@ When you deploy the {partner-product-short-name} Quick Start, you have choose ei
 
 * *KepwareFileExport.* This AMC driver uses the manual tag-definition file-export mechanism within Kepware. With this AMC driver, you manually export the tag-definition file and upload it to an S3 bucket to initiate the AMC process during the post-deployment steps. For the AWS CloudFormation stack's `AMCDriver` parameter, you choose `KepwareFileExport`.
 
-*ElementUnify driver.* You can use Element Unify for asset modeling. It does not deploy any of the Asset Model Converter drivers. With Element Unify, you manually export the tag-definition file from either edge application and upload it to an S3 bucket. The source system file is automatically imported into Element Unify.
+*Element Unify driver.* You can use Element Unify for asset modeling. It does not deploy any of the Asset Model Converter drivers. With Element Unify, you manually export the tag-definition file from either edge application and upload it to an S3 bucket. The source system file is automatically imported into Element Unify.
 
-//TODO Shivansh, Is "ElementUnify" intentionally one word above?
+//TODO Shivansh, Is "ElementUnify" intentionally one word above? - No its 2 words.
 
 
 ==== Enable AWS SSO

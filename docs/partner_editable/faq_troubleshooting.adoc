@@ -35,7 +35,7 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
 
 * AWS IoT SiteWise may receive data from multiple sources if, for example, two instances of Ignition are publishing data onto the topic `/Tag Providers/default/Line1/CNC/Temperature`.
 
-* If AWS IoT SiteWise models and assets exist in the AWS Cloud from a previous deployment, a new deployment does not recreate the model or asset hierarchy. Instead, the Asset Model Converter operates by recognizing any changes in the existing models or assets and the new deployment hierarchy. For example: 
+* If AWS IoT SiteWise models and assets exist in the AWS Cloud from a previous deployment, a new deployment does not recreate the model or asset hierarchy. Instead, the Asset Model Converter or Element Unify operates by recognizing any changes in the existing models or assets and the new deployment hierarchy. For example: 
 ** If the previously deployed hierarchy is identical to the newly deployed one, nothing in AWS IoT SiteWise is changed.
 
 ** If the newly deployed hierarchy has an identical structure to the previously deployed hierarchy with additional nodes that follow the hierarchy pattern, the new models or assets are created in AWS IoT SiteWise:
@@ -48,12 +48,12 @@ For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/U
  Line 1/CNC1/Temperature
  Line 1/CNC2/Temperature
 
-* If the newly deployed hierarchy has a different hierarchy than the previously deployed hierarchy altogether, the Asset Model Converter does not create the new models and assets.
+* If the newly deployed hierarchy has a different hierarchy than the previously deployed hierarchy altogether, the Asset Model Converter or Element Unify does not create the new models and assets.
 * Refer to the instructions in the appendix showing how to add a line and device with tags to a project in Ignition using Ignition Designer.
 
-//TODO Shivansh, The above answer assumes an AMC deployment. Please update this answer to address Element Unify too. 
+//TODO Shivansh, The above answer assumes an AMC deployment. Please update this answer to address Element Unify too. Done
 
-//TODO Shivansh, Please review the whole FAQ section and adapt other answers for Element Unify wherever needed.
+//TODO Shivansh, Please review the whole FAQ section and adapt other answers for Element Unify wherever needed.- Done
 
 '''
 *Q.* Does any hardening of the operating system occur during deployment? 
@@ -112,9 +112,9 @@ image::../images/SelectProject.png[Select Project]
 [link=images/EncryptionSettings.png]
 image::../images/EncryptionSettings.png[Encryption Settings]
 
-//TODO Shivansh, Do you see value in the above screenshot for a tech-savvy customer? This seems like an image we could delete. Please review all the remaining screenshots in the guide, and delete any that simply illustrate UI elements that will be obvious in the moment.
+//TODO Shivansh, Do you see value in the above screenshot for a tech-savvy customer? This seems like an image we could delete. Please review all the remaining screenshots in the guide, and delete any that simply illustrate UI elements that will be obvious in the moment. - These UIs are dense and during training PSAs have found people making mistakes without the screenshots. Images adds visual cues that help avoid those mistakes.
 
-//TODO Shivansh, Please remove all unused .png files from the repo.
+//TODO Shivansh, Please remove all unused .png files from the repo. Done.
 
 ... Name the export file, and save it as a .json file.
 +
@@ -209,17 +209,12 @@ image::../images/IgnitionSettings.png[Ignition settings]
 [link=images/Ignition-MQTT-Settings.png]
 image::../images/Ignition-MQTT-Settings.png[Ignition MQTT settings]
 +
-//TODO Shivansh, This is another example of a screenshot that I wonder if tech-savvy customers will find helpful. AWS style is to not illustrate the location of UI elements, such as this Save Changes button. Please scrutinize all screenshots and keep only those that add value. I'm pressing on this more as this doc grows. :)
+//TODO Shivansh, This is another example of a screenshot that I wonder if tech-savvy customers will find helpful. AWS style is to not illustrate the location of UI elements, such as this Save Changes button. Please scrutinize all screenshots and keep only those that add value. I'm pressing on this more as this doc grows. :) Done.
 
 . Verify that `tagPathConfiguration` is not being filtered out:
 .. In the MQTT transmission module settings, choose *Transmitters*, *Edit*. 
 .. At the bottom of the screen, select the *Show advanced properties* check box. 
 .. Verify that `tagPathConfiguration` is not being filtered out. 
-+
-[#ignition-mqtt-filtered]
-.Ignition—MQTT transmission module filtered properties
-[link=images/Ignition-MQTT-Filtered-Properties.png]
-image::../images/Ignition-MQTT-Filtered-Properties.png[Ignition MQTT filtered properties]
 +
 If these settings are as shown in <<ignition-mqtt-filtered>> and you're still receiving errors, check the Lambda function responsible for creating the models and assets in AWS IoT SiteWise for errors:
 

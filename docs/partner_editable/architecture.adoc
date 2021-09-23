@@ -12,8 +12,10 @@ For the difference between virtual and physical deployments, see link:#_industri
 The AMC module converts definitions of a customer's asset hierarchy (factory, lines, machines, and tags) from the partner edge application to equivalent definitions in AWS IoT SiteWise models and assets. The Element Unify module increases data-modeling and metadata-integration capabilities. It uses a low-code/no-code (LCNC) approach to building and publishing models to AWS IoT SiteWise.
 
 //TODO Shivansh, Throughout this doc, we call Element Unify various things: an "adapter," a "module," a "driver" (maybe), a "framework," and an "asset-modeling application." Best practice is to use the same word consistently for a given meaning. When should we use which word? Which redundant words should we avoid?
+// Shivansh - I agree with you on keeping it consistent. These words are used interchangably and different people relate more to one word over other. May be we should just stick to Element Unify, which is the partner product name.
 
 //TODO Shivansh, Ditto for AMD: Which of these words applies when?
+// Shivansh - Same as above. We should probably stick to AMC.
 
 === Virtual deployment with AMC
 
@@ -40,7 +42,8 @@ As shown in <<architecture-AMC-virtual>>, the virtual deployment of the {partner
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
 
-//TODO Shivansh, Some of the code files still refer to "option 2a" and "option 2b." Please address throughout the code. For example, the following lines appear in .taskcat.yml:
+//TODO Shivansh, Some of the code files still refer to "option 2a" and "option 2b." Please address throughout the code. For example, the following lines appear in .taskcat.yml: 
+// Shivansh - Fixed.
 
 //  # VOption2a:
 //  #   parameters:
@@ -72,17 +75,17 @@ When you deploy this Quick Start with Element Unify in virtual mode, as shown in
 .Architecture of the {partner-product-short-name} Quick Start with Element Unify—virtual deployment
 image::../images/IMCQuickStartArchitecture-ElementUnify-Virtual.png[Virtual Element Unify architecture]
 
-//TODO Shivansh, The architecture-element-virtual diagram still shows dataflow 2a and 2b; please update the dataflows. 
+//TODO Shivansh, The architecture-element-virtual diagram still shows dataflow 2a and 2b; please update the dataflows.  - Fixed
 
-//TODO Shivansh, In the diagram, update the title inside the yellow dotted lines to say "IMC Quick Start with Element Unify—virtual deployment." 
+//TODO Shivansh, In the diagram, update the title inside the yellow dotted lines to say "IMC Quick Start with Element Unify—virtual deployment."  - Fixed
 
-//TODO Shivansh, In the diagram, I suggest that we remove the Element Unify logo since we removed the other non-AWS logos. If it's important to use that logo, please paste their written permission into SIM. My recommendation: (1) Replace the logo with a simple box labeled "Element Unify." (2) In the title of the larger dotted box, add the word "module" after "Element Unify" so that those two labels are distinct.
+//TODO Shivansh, In the diagram, I suggest that we remove the Element Unify logo since we removed the other non-AWS logos. If it's important to use that logo, please paste their written permission into SIM. My recommendation: (1) Replace the logo with a simple box labeled "Element Unify." (2) In the title of the larger dotted box, add the word "module" after "Element Unify" so that those two labels are distinct. - Its important to use their logo. We have their permission to use the logo. I have mentioned it in the sim.
 
-//TODO Shivansh, In the diagram, the Element Unify logo (to be replaced with a box?) should be outside the AWS Cloud box, correct? 
+//TODO Shivansh, In the diagram, the Element Unify logo (to be replaced with a box?) should be outside the AWS Cloud box, correct?  - It can remain inside.
 
-//TODO Shivansh, Add this diagram to the .pptx file; the source diagram is missing. I've updated the .pptx file, so make sure to add it to the CURRENT file in the repo. 
+//TODO Shivansh, Add this diagram to the .pptx file; the source diagram is missing. I've updated the .pptx file, so make sure to add it to the CURRENT file in the repo. - Done
 
-//TODO Shivansh, Make sure that the .png file is high-res enough to be legible. 
+//TODO Shivansh, Make sure that the .png file is high-res enough to be legible.  - What's the resolution of the file we use?
 
 This architecture, which is similar to the one shown in <<architecture-AMC-virtual>>, uses Element Unify instead of AMC. The Element Unify module includes an Amazon S3 bucket, an AWS Lambda function, and AWS Secrets Manager. This framework automatically imports the partner edge application's metadata structure into Element Unify prior to deployment to AWS IoT SiteWise. Metadata is converted from the partner edge application's asset-hierarchy definition object (a .json file with definitions for factory, lines, machines, and tags) as datasets and asset templates in Element Unify. An AWS Partner or customer can then use Element Unify to manage the data model or integrate contextualization with metadata from IT systems or operational technology (OT) systems. At that point, the partner or customer can create AWS IoT SiteWise models and assets. For details, see <<element-unify-architecture>>.
 
@@ -109,17 +112,17 @@ image::../images/IMCQuickStartArchitecture-ElementUnify-Physical.png[Physical El
 
 The Element Unify module shown in <<architecture-element-physical>> is the same as the one shown in <<architecture-element-virtual>>. For a description of that module, see link:#_virtual_deployment_with_element_unify[Virtual deployment with Element Unify] earlier in this guide. For a description of how the physical and virtual architectures differ, see link:#_physical_deployment_with_amc[Physical deployment with AMC]. 
 
-//TODO Shivansh, The architecture-element-physical diagram still shows dataflow 2a and 2b; please update the dataflows. 
+//TODO Shivansh, The architecture-element-physical diagram still shows dataflow 2a and 2b; please update the dataflows. - Fxied
 
-//TODO Shivansh, In the diagram, update the title inside the yellow dotted lines to say "IMC Quick Start with Element Unify—physical deployment." 
+//TODO Shivansh, In the diagram, update the title inside the yellow dotted lines to say "IMC Quick Start with Element Unify—physical deployment." Fixed
 
-//TODO Shivansh, In the diagram, the Element Unify logo should be outside the AWS Cloud box, correct?
+//TODO Shivansh, In the diagram, the Element Unify logo should be outside the AWS Cloud box, correct? No.
 
-//TODO Shivansh, In the diagram, if you replace the other Element Unify logo with a box, do the same here.
+//TODO Shivansh, In the diagram, if you replace the other Element Unify logo with a box, do the same here. Addressed as mentioned earlier.
 
-//TODO Shivansh, Add this diagram to the .pptx file; the source diagram is missing. I've updated the .pptx file, so make sure to add it to the CURRENT file in the repo. 
+//TODO Shivansh, Add this diagram to the .pptx file; the source diagram is missing. I've updated the .pptx file, so make sure to add it to the CURRENT file in the repo. Done
 
-//TODO Shivansh, Make sure that the .png file is high-res enough to be legible. 
+//TODO Shivansh, Make sure that the .png file is high-res enough to be legible. Done
 
 === AMC module
 
@@ -152,8 +155,6 @@ image::../images/ElementUnifyArchitecture.png[Element Unify architecture]
 
 //TODO Shivansh, In the above diagram, (1) I don't think the S3 bucket should say "AMC," should it? (2)Please change "AWS S3" to "Amazon S3." (3) Change "are store in" to "are stored in" in step 4. (4) No hyphen in "asset-definitions" in step 5. (5) Remove the Element Unify logo? See my earlier comment.
 
-As shown in <<element-unify-architecture>>, the Element Unify module automatically imports the partner edge application's metadata structure into Element Unify prior to deployment to AWS IoT SitWise. Metadata is converted from the partner edge application’s asset-hierarchy definition object (a .json file with definitions for factory, lines, machines, and tags) as datasets and asset templates in Element Unify. An AWS Partner or customer can then use Element Unify to manage the data model or integrate contextualization with metadata from IT systems or operational technology (OT) systems. 
+As shown in <<element-unify-architecture>>, the Element Unify architecture has a serverless sequence flow. The Element Unify automatically imports the partner edge application's metadata structure into Element Unify prior to deployment to AWS IoT SitWise. A source connector ingests the asset-hierarchy definition or tag definition files generated by the partner edge application and converts the definitions into a schema compatible with Element Unify. An AWS Partner or customer can then use Element Unify to manage industrial data models and assets for either single-site or multiple-site deployments at scale. Element Unify contextualizes metadata from edge sources and maps them to complex asset templates and asset hierarchies. An AWS Lambda function automatically provisions a matching asset hierarchy (factory, lines, machines, and tags) to AWS IoT SiteWise. This Lambda function runs hourly, continuously monitoring both Element Unify and AWS IoT SiteWise to synchronize the underlying data model and maintain an evergreen state.
 
-The Element Unify architecture has a serverless sequence flow. A source connector ingests the asset-hierarchy definition or tag definition files generated by the partner edge application and converts the definitions into a schema compatible with Element Unify. An AWS Partner or customer can then use Element Unify to manage industrial data models and assets for either single-site or multiple-site deployments at scale. Element Unify contextualizes metadata from edge sources and maps them to complex asset templates and asset hierarchies. An AWS Lambda function automatically provisions a matching asset hierarchy (factory, lines, machines, and tags) to AWS IoT SiteWise. This Lambda function runs hourly, continuously monitoring both Element Unify and AWS IoT SiteWise to synchronize the underlying data model and maintain an evergreen state.
-
-//TODO Shivansh, Please revise the two paragraphs above to eliminate redundancy.
+//TODO Shivansh, Please revise the two paragraphs above to eliminate redundancy. Done

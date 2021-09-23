@@ -40,8 +40,7 @@ Parameters:
   DeploymentOption:
     Description: They further defined deployment type
       --- Option1 (or OPC-UA Path via SiteWise)
-      --- Option 2a (MQTT Ignition --> Iot Core)
-      --- Option 2b (MQTT Ignition --> Greengrass --> Iot Core)
+      --- Option 2 (MQTT Ignition --> Iot Core)
     Type: String
   EIIgnitionInstanceProfile:
     Description: Profile for the ignition instance that is running at the edge

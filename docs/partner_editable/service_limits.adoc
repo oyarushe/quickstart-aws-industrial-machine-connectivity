@@ -15,6 +15,6 @@
 |Secrets Manager |1
 |===
 
-//TODO Shivansh, Are we missing a word here: "AWS IoT ____ topic rules"?
+//TODO Shivansh, Are we missing a word here: "AWS IoT ____ topic rules"? - Nope.
 
-//TODO Shivansh, What's the Secrets Manager resource that we have 1 of?
+//TODO Shivansh, What's the Secrets Manager resource that we have 1 of? - Its created as part of Element unify deployment
