@@ -204,11 +204,6 @@ image::../images/IgnitionSettings.png[Ignition settings]
 . At the bottom of the screen, select the *Show advanced properties* check box.
 . Under *Data Format Type*, choose *Sparkplug_B_v1_0_JSON*. 
 . Choose *Save Changes*.
-+
-.Ignition—MQTT transmission module settings
-[link=images/Ignition-MQTT-Settings.png]
-image::../images/Ignition-MQTT-Settings.png[Ignition MQTT settings]
-+
 //TODO Shivansh, This is another example of a screenshot that I wonder if tech-savvy customers will find helpful. AWS style is to not illustrate the location of UI elements, such as this Save Changes button. Please scrutinize all screenshots and keep only those that add value. I'm pressing on this more as this doc grows. :) Done.
 
 . Verify that `tagPathConfiguration` is not being filtered out:
