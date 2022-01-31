@@ -342,7 +342,7 @@ Resources:
   CopyZipsStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Copy_Zips.template.yaml
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${QSS3BucketRegion}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Copy_Zips.template.yaml
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
@@ -364,7 +364,7 @@ Resources:
   AMCStackCleanup:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL: !Sub https://${QSS3BucketName}.s3.${AWS::Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Cleanup_Stack.template.yaml
+      TemplateURL: !Sub https://${QSS3BucketName}.s3.${QSS3BucketRegion}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/utils/Cleanup_Stack.template.yaml
       Parameters:
         LambdaZipsBucket: !GetAtt CopyZipsStack.Outputs.LambdaZipsBucketRef
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
